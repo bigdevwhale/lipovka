@@ -26,7 +26,7 @@ to, because the elderly do, because parcels and postcards need the post, because
 | id | district | unlocks at | what is there |
 |----|----------|-----------|----------------|
 | d0 | Липовка / Lipovka | start | the post office, the shop, the club with the library, the school, the watermill, the apiary, the medical post (ФАП) |
-| d1 | Заречье / Zarechye ("Across the River") | 40 km (the bridge is repaired) | an old farmstead (хутор), the forester's lodge, a woodcarver's workshop, twin sisters with goats |
+| d1 | Заречье / Zarechye ("Across the River") | 50 km (the bridge is repaired) | an old farmstead (хутор), the forester's lodge, a woodcarver's workshop, twin sisters with goats |
 | d2 | Разъезд 118 км / Halt 118 km (the station) | 150 km | a tiny railway halt with a telegraph, the local train "Kukushka" |
 | d3 | Озёрки / Ozyorki | 350 km | a fishing hamlet on a big lake, a boat shed, a painter's cottage |
 | d4 | Сосновый кордон / Pine Cordon | 700 km | a weather station deep in the forest, a large forest family |
