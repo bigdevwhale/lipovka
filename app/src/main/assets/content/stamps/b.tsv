@@ -1,0 +1,44 @@
+key	family	bg	value	name_ru	name_en	series
+b_bee_lipa	bee	gold	5	Пчела на липе	Bee on a linden	lipovka
+b_wintering	snowflake	night	4	Зимовка	Wintering	seasons
+b_bort	tree	green	12	Борть	The wild hive	far
+b_altai	mountain	sky	10	Алтай	The Altai	far
+b_queen_post	bee	cream	25	Живая посылка	Live parcel	post
+b_linden	flower	gold	6	Липа цветёт	Linden in bloom	seasons
+b_honey_fair	sun	gold	15	Медовая ярмарка	Honey fair	holidays
+b_yakutia	moon	night	20	Якутская ночь	Yakutian night	far
+b_bee_book	book	cream	8	Пчела знает	The Bee Knows	lipovka
+b_tea_kettle	kettle	red	3	Чайник	The kettle	lipovka
+b_spb	bridge	dusk	10	Петербург	St Petersburg	far
+b_new_year	fireworks	night	7	С Новым годом	Happy New Year	holidays
+b_samovar	kettle	gold	30	Тульский самовар	Tula samovar	lipovka
+b_heart	heart	red	10	С любовью	With love	holidays
+b_birthday	flower	red	5	С днём рождения	Happy birthday	holidays
+b_qsl_bureau	radio	blue	4	QSL-бюро	QSL bureau	radio
+b_crane_japan	crane	sky	40	Журавли Хоккайдо	Hokkaido cranes	far
+b_iss	rocket	night	12	На орбите	In orbit	radio
+b_parrot	bird	green	35	Амазония	Amazonia	far
+b_icebreaker	anchor	sea	15	Радист ледокола	Icebreaker operator	radio
+b_sedov	ship	sea	50	Барк «Седов»	Barque Sedov	far
+b_kordon	fir	green	6	Сосновый кордон	Pine Cordon	kordon
+b_blizzard	snowflake	night	8	Буран на кордоне	Blizzard at the cordon	kordon
+b_antarctica	snowflake	sky	60	Антарктида	Antarctica	radio
+b_globe	globe	sea	45	Антиподы	Antipodes	far
+b_telegram	telegram	cream	10	Телеграмма	Telegram	post
+b_iceland	lighthouse	sea	30	Исландия	Iceland	far
+b_birch	birch	sky	3	Берёза с антенной	Birch with an aerial	lipovka
+b_library	book	blue	4	Библиотека	The library	lipovka
+b_baltic	lighthouse	dusk	14	Балтика	The Baltic	far
+b_letters	letter	cream	5	Письма со всей страны	Letters from everywhere	post
+b_morozko	fir	night	9	Морозко	Morozko	holidays
+b_film	camera	dusk	7	Кино в клубе	Club cinema	lipovka
+b_star_award	star	gold	20	Лучшая библиотека	Best library	lipovka
+b_chimney	house	dusk	5	Дымок из трубы	Chimney smoke	lipovka
+b_frost	snowflake	sky	6	Минус тридцать	Thirty below	seasons
+b_seeds	flower	green	2	Рассада	Seedlings	seasons
+b_goat	goat	green	8	Коза Ириска	Iriska the goat	zarechye
+b_apple	apple	red	4	Яблоки	Apples	seasons
+b_baby_sun	sun	sky	10	Солнышко	Little sun	holidays
+b_rowan	berry	red	5	Рябина	Rowan	seasons
+b_siskin	bird	cream	6	Синица	Blue tit	post
+b_cat_post	cat	blue	10	Кот Сургуч	Surguch the cat	post

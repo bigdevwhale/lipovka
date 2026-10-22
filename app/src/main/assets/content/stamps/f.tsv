@@ -1,0 +1,60 @@
+key	family	bg	value	name_ru	name_en	series
+f_news	book	cream	3	«Сельская новь»	The Village News	gorodok
+f_pension	kettle	gold	10	Чай с пенсии	Pension-day tea	post
+f_science	star	night	6	Наука и жизнь	Science and Life	far
+f_bees	bee	gold	4	Медосбор	Honey harvest	lipovka
+f_radio	radio	sky	12	Эфир	On the air	radio
+f_sewing	flower	blue	3	Ситец в васильки	Cornflower chintz	lipovka
+f_knit	heart	red	5	Тёплые петли	Warm stitches	lipovka
+f_kids	cat	violet	2	Кот-почтальон	The postcat	post
+f_world	globe	blue	15	Вокруг света	Around the world	far
+f_garden	flower	green	4	Космея	Cosmos	seasons
+f_rail	train	dusk	8	Перегон 118	Stretch 118	station
+f_art	rainbow	cream	5	Палитра	The palette	ozerki
+f_tech	rocket	night	10	Техника — молодёжи	Tech for the young	far
+f_fish	fish	sea	6	Лещ на горох	Bream on peas	ozerki
+f_history	clock	cream	20	Почта-телеграф	Post and telegraph	post
+f_seeds	sun	green	3	Февральские семена	February seeds	seasons
+f_bill	lantern	cream	1	Лампочка Ильича	The village bulb	lipovka
+f_shop	house	red	2	Сельмаг	The village shop	lipovka
+f_library	book	red	7	Библиотека	The library	lipovka
+f_bday	heart	gold	10	С днём рождения	Happy birthday	holidays
+f_twins	goat	green	7	Две козы	Two goats	zarechye
+f_bday_kid	horse	red	5	Лошадка	Little horse	holidays
+f_ny_fir	fir	night	10	Ёлочка	Little fir	holidays
+f_ny_snow	snowflake	blue	5	Снежинка	Snowflake	holidays
+f_ny_sled	sled	cream	4	Санки	The sled	holidays
+f_ny_fireworks	fireworks	night	15	Салют	Fireworks	holidays
+f_mar8	flower	gold	8	Мимоза	Mimosa	holidays
+f_bell	bell	gold	7	Первый звонок	The first bell	holidays
+f_teacher	book	green	10	Учителю	To the teacher	holidays
+f_oldny	moon	night	6	Старый Новый год	Old New Year	holidays
+f_spring	sun	sky	3	Первый день весны	First day of spring	seasons
+f_elders	kettle	cream	9	Чай с вареньем	Tea with jam	holidays
+f_radioday	radio	red	7	День радио	Radio Day	radio
+f_fair	horse	red	12	Покровская ярмарка	The Pokrov fair	lipovka
+f_cranes	crane	dusk	9	Журавли улетают	Cranes leaving	seasons
+f_firstsnow	snowflake	sky	3	Первый снег	First snow	seasons
+f_freeze	lake	blue	5	Ледостав	The river freezes	seasons
+f_frost	star	night	4	Мороз и звёзды	Frost and stars	seasons
+f_clubtree	fir	green	6	Ёлка в клубе	The club tree	lipovka
+f_carols	lantern	night	5	Колядки	Carollers	holidays
+f_maslenitsa	sun	gold	8	Масленица	Maslenitsa	holidays
+f_icebreak	bridge	sea	6	Ледоход	The ice goes out	seasons
+f_swallows	swallow	sky	4	Ласточки	Swallows	seasons
+f_lilac	flower	violet	5	Сирень	Lilac	seasons
+f_lastbell	bell	green	3	Последний звонок	The last bell	lipovka
+f_hay	cow	green	4	Сенокос	Haymaking	seasons
+f_kupala	flower	night	9	Цвет папоротника	Fern flower	holidays
+f_berries	berry	red	3	Земляника	Wild strawberries	seasons
+f_mushrooms	mushroom	green	5	Боровик	The cep	seasons
+f_apples	apple	gold	6	Яблочный Спас	Apple Saviour Day	seasons
+f_railday	train	blue	11	День железнодорожника	Railway Day	station
+f_fishday	boat	sea	10	День рыбака	Fishermen's Day	ozerki
+f_forestday	tree	green	8	День леса	Forest Day	kordon
+f_townday	fireworks	violet	14	День Городка	Gorodok Day	gorodok
+f_starfall	star	dusk	7	Звездопад	Falling stars	seasons
+f_indian	birch	gold	4	Бабье лето	Indian summer	seasons
+f_icefish	fish	blue	5	Подлёдный лов	Ice fishing	ozerki
+f_potato	sun	cream	2	Копка картошки	Potato digging	lipovka
+f_cheese	goat	cream	6	Сырный день	Cheese day	zarechye

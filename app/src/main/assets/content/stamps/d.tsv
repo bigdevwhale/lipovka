@@ -1,0 +1,39 @@
+key	family	bg	value	name_ru	name_en	series
+d_far_dikson	lighthouse	night	12	Маяк на Диксоне	Dikson lighthouse	far
+d_ozr_kizhanka	boat	sea	6	Кижанка	A kizhanka boat	ozerki
+d_ozr_nerpa	anchor	blue	15	«Нерпа» на воде	The Nerpa afloat	ozerki
+d_far_flight	plane	sky	25	Рейс с Севера	Flight from the North	far
+d_far_zaonezhye	house	dusk	20	Заонежье	Zaonezhye	far
+d_ozr_shed	house	cream	8	Лодочный сарай	The boat shed	ozerki
+d_ozr_heart	heart	dusk	30	Две подписи	Two signatures	ozerki
+d_ozr_card	letter	cream	5	Открытка в пути	A postcard on its way	ozerki
+d_ozr_icebreak	lake	sky	6	Лёд тронулся	The ice breaks	ozerki
+d_ozr_moon	moon	night	10	Луна над озером	Moon over the lake	ozerki
+d_ozr_rainbow	rainbow	sky	20	Двенадцать месяцев	Twelve months	ozerki
+d_stn_kukushka	train	dusk	8	«Кукушка» у разъезда	The Cuckoo at the halt	station
+d_ozr_sun	sun	gold	15	Свет в Озёрках	Light in Ozyorki	ozerki
+d_kor_station	rain	sky	4	Метеостанция на кордоне	The Cordon weather station	kordon
+d_rad_kordon	radio	night	12	Позывной кордона	The Cordon call sign	radio
+d_kor_clearnight	star	night	20	Ясная ночь	A clear night	kordon
+d_kor_yasna	dog	cream	10	Ясна	Yasna	kordon
+d_kor_seventy	snowflake	blue	70	Семьдесят зим	Seventy winters	kordon
+d_kor_yearbook	book	green	15	Ежегодник наблюдений	The observations yearbook	kordon
+d_hol_ustyug	fir	red	10	Ёлка из Устюга	A fir tree from Ustyug	holidays
+d_kor_anthill	tree	green	8	Муравейник с юга	The anthill on the south side	kordon
+d_kor_internat	swallow	sky	12	Письмо из интерната	A letter from boarding school	kordon
+d_kor_lusha	sun	sky	5	Рисунок Луши	Lusha's drawing	kordon
+d_kor_sled	sled	sky	7	Сани для Морозко	A sleigh for Morozko	kordon
+d_post_pigeonhole	letter	cream	3	Ячейка «Сосн. кордон»	Pigeonhole: Pine Cordon	post
+d_gor_museum	house	cream	20	Музей в Городке	The Gorodok museum	gorodok
+d_kor_birthday	bell	gold	14	С днём рождения, папа	Happy birthday, Dad	kordon
+d_gor_kittens	cat	cream	6	Котята кошки Муси	Musya the cat's kittens	gorodok
+d_gor_garden	flower	green	4	Огород редактора	The editor's plot	gorodok
+d_gor_summer	sun	sky	10	Лето у деда	Summer at Grandpa's	gorodok
+d_gor_subscriber	letter	gold	61	Подписчица с 1961 года	A subscriber since 1961	gorodok
+d_gor_ninety	fireworks	gold	90	Девяносто лет газете	The paper turns ninety	gorodok
+d_post_airmail	plane	sky	40	Авиапочта	Airmail	post
+d_post_telegraph	telegram	blue	10	Телеграф разъезда	The halt's telegraph	post
+d_post_exhibit	letter	gold	25	Почта нашего района	The Post of Our District	post
+d_post_skier	snowflake	night	5	Лыжный почтальон	The postman on skis	post
+d_post_hall	clock	cream	30	Зал почтальонов	The Postmen's Hall	post
+d_post_1979	letter	sea	4	Письмо 1979 года	A letter from 1979	post

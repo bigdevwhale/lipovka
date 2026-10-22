@@ -1,0 +1,38 @@
+key	family	bg	value	name_ru	name_en	series
+e_order47	letter	cream	10	Приказ № 47	Order No. 47	post
+e_daisies	flower	sky	3	Ромашки у синего забора	Daisies by the blue fence	lipovka
+e_felt_cat	cat	red	1	Сургуч фломастером	Surguch in felt-tip	post
+e_secret_friend	letter	violet	8	Тайный друг	The Secret Friend	post
+e_porch_snow	snowflake	blue	6	Крыльцо в снегу	A porch in the snow	seasons
+e_ledger	book	cream	3	Страничка из амбарной книги	A page from the ledger	lipovka
+e_flood	boat	sky	8	Паводок на Липке	Flood on the Lipka	seasons
+e_obs_telegram	telegram	night	12	Телеграмма с обсерватории	A telegram from the observatory	far
+e_pigeon	bird	sky	5	Голубиная почта	Pigeon post	post
+e_takeoff	clock	cream	7	Вылет в 7:40	Take-off at 7:40	post
+e_stamp_1958	letter	cream	40	Марка с конверта 1958 года	A stamp off a 1958 envelope	post
+e_showcase	book	violet	25	Витрина «Письма из Липовки»	The Letters from Lipovka case	gorodok
+e_minus27	snowflake	sky	27	Минус двадцать семь	Minus twenty-seven	seasons
+e_orion	star	night	9	Орион над Липкой	Orion over the Lipka	seasons
+e_phacelia	flower	violet	6	Фацелия	Phacelia	lipovka
+e_porch_bee	bee	gold	8	Пчела на почтовом крыльце	A bee on the post office porch	lipovka
+e_volga	ship	blue	12	Волга у Ярославля	The Volga at Yaroslavl	far
+e_astrakhan	sun	gold	16	Астрахань. Конец пути	Astrakhan. The end of the line	far
+e_ural	mountain	green	10	Урал. Река Чусовая	The Urals. The Chusovaya	far
+e_palma	dog	red	6	Пальма	Palma	far
+e_minus38	snowflake	night	12	Минус тридцать восемь	Minus thirty-eight	far
+e_malachite	mountain	sea	20	Малахит	Malachite	far
+e_mail_boat	boat	sea	9	Почта приплыла	The post has sailed in	far
+e_kerosene	lantern	night	7	Ночь при керосинке	A night by the oil lamp	far
+e_ski_race	sled	blue	11	Лыжня связистов	The postal workers' ski race	far
+e_galina_telegram	telegram	cream	25	«Выехала!»	“On my way!”	far
+e_invitation	heart	red	30	Приглашение в Ключи	An invitation to Klyuchi	far
+e_bridge	bridge	sky	50	Мост в Заречье	The bridge to Zarechye	zarechye
+e_district_ny	fireworks	night	20	С Новым годом, узел!	Happy New Year from the district	holidays
+e_honour	bell	gold	99	Почётный почтальон	Honorary Postman	post
+e_3000	globe	sky	30	Три тысячи километров	Three thousand kilometres	post
+e_editorial	house	red	12	Редакция «Сельской нови»	The Village News office	gorodok
+e_readers	letter	blue	4	Письма читателей	Letters from readers	gorodok
+e_holiday_issue	fireworks	red	10	Новогодний номер	The New Year issue	holidays
+e_vladivostok	lighthouse	sea	40	Владивосток	Vladivostok	far
+e_bublik_scarf	dog	red	5	Бублик в шарфе	Bublik in a scarf	lipovka
+e_reader214	dog	dusk	3	Читатель № 214	Reader No. 214	lipovka

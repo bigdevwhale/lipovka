@@ -1,0 +1,49 @@
+key	family	bg	value	name_ru	name_en	series
+a_onega	ship	sea	12	Теплоход «Онега»	MV Onega	far
+a_lighthouse	lighthouse	dusk	8	Маяк Белого моря	A White Sea lighthouse	far
+a_seagull	bird	sea	6	Чайка над Соловками	A gull over the Solovki	far
+a_white_night	sun	night	15	Белая ночь	White night	seasons
+a_rowan_stamp	berry	red	4	Рябина	Rowan	lipovka
+a_telegram	telegram	cream	10	Телеграмма	Telegram	post
+a_lace	flower	cream	25	Вологодское кружево	Vologda lace	far
+a_heart	heart	red	20	Сердце	A heart	holidays
+a_ferry	boat	sky	7	Паром у Перевоза	The ferry at Perevoz	lipovka
+a_cow	cow	green	3	Липовская ферма	The Lipovka dairy	lipovka
+a_moon	moon	night	12	Колыбельная	Lullaby	seasons
+a_mill	mill	sky	5	Водяная мельница	The watermill	lipovka
+a_mill_gold	mill	gold	50	Памятник техники	A monument of engineering	lipovka
+a_fir	fir	night	3	Новогодняя ёлка	New Year fir	holidays
+a_onego	lake	blue	14	Онежское озеро	Lake Onega	far
+a_cloudberry	berry	gold	9	Морошка	Cloudberry	far
+a_linden	tree	green	2	Липа	Linden	lipovka
+a_cup	kettle	blue	3	Чай у Агафьи	Tea at Agafya's	lipovka
+a_observatory	star	night	30	Обсерватория	The observatory	far
+a_school_bell	bell	gold	1	Первый звонок	The first bell	holidays
+a_knight	horse	cream	11	Шахматы по почте	Chess by post	post
+a_icebreaker	ship	blue	40	Ледокол	Icebreaker	far
+a_book	book	green	6	Сорок выпусков	Forty Graduations	lipovka
+a_school	house	red	4	Липовская школа	Lipovka school	lipovka
+a_comet	star	dusk	60	Комета	The comet	far
+a_stars	star	violet	18	Кассиопея	Cassiopeia	far
+a_globe	globe	blue	30	Глобус с вмятиной	The dented globe	lipovka
+a_ustyug	snowflake	blue	10	Великий Устюг	Veliky Ustyug	holidays
+a_sleigh	sled	night	5	Сани Деда Мороза	Ded Moroz's sleigh	holidays
+a_xmas_star	star	gold	13	Новогодняя звезда	New Year star	holidays
+a_dog	dog	cream	4	Бублик	Bublik	lipovka
+a_cat	cat	cream	3	Сургуч	Surguch	post
+a_volcano	mountain	dusk	40	Авачинская сопка	Avachinsky volcano	far
+a_salmon	fish	sea	22	Кижуч	Coho salmon	far
+a_plane	plane	sky	35	Рейс на материк	Flight to the mainland	far
+a_autumn	tree	gold	2	Осень	Autumn	seasons
+a_aurora	star	green	28	Северное сияние	Northern lights	far
+a_anchor	anchor	sea	16	Мурманский порт	Murmansk port	far
+a_radio	radio	cream	12	Ламповый приёмник	Valve radio	radio
+a_birthday	fireworks	violet	8	С днём рождения	Happy birthday	holidays
+a_snow	snowflake	sky	1	Первый снег	First snow	seasons
+a_rain	rain	sky	2	Осенний дождь	Autumn rain	seasons
+a_swallow	swallow	sky	5	Ласточки вернулись	The swallows are back	seasons
+a_letter	letter	cream	7	Письмо	A letter	post
+a_clinic	house	cream	9	Амбулатория	The village clinic	lipovka
+a_clock	clock	cream	6	Ходики	Wall clock	post
+a_rainbow	rainbow	sky	10	Радуга над Липкой	Rainbow over the Lipka	seasons
+a_camera	camera	cream	20	Фотокарточка	A photograph	post

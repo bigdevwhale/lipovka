@@ -1,0 +1,40 @@
+key	family	bg	value	name_ru	name_en	series
+c_far_cape	radio	night	10	Мыс Желания	Cape Zhelaniya	far
+c_far_anapa	sun	sea	6	Анапа	Anapa	far
+c_far_krenkel	radio	dusk	90	Станция имени Кренкеля	Krenkel Station	far
+c_far_museum	book	cream	40	Музей Арктики	Museum of the Arctic	far
+c_far_aurora	star	night	50	Северное сияние	Northern Lights	far
+c_far_murmansk	ship	sea	12	Мурманск	Murmansk	far
+c_radio_contact	radio	blue	73	Приём, деда	Over, Grandad	radio
+c_zar_farmstead	house	cream	5	Хутор за рекой	The farmstead	zarechye
+c_zar_owl	owl	dusk	15	Неясыть	Tawny owl	zarechye
+c_zar_owlets	owl	night	30	Трое совят	Three owlets	zarechye
+c_zar_elk	tree	green	8	Лосиная тропа	Elk trail	zarechye
+c_zar_fox	snowflake	sky	7	Лисий след по насту	Fox tracks on the crust	zarechye
+c_zar_cedar	fir	green	9	Кедр на гари	A cedar on the burn	zarechye
+c_zar_lynx	fir	night	25	Рысь в квартале	A lynx in the forest	zarechye
+c_zar_window	house	blue	20	Наличник	Carved window frame	zarechye
+c_gor_moscow	bird	gold	35	Птица счастья	Bird of happiness	gorodok
+c_post_sign	letter	cream	3	Почта, 1956	Post office, 1956	post
+c_post_gold	letter	gold	60	Новая вывеска	The new sign	post
+c_zar_goat	goat	green	4	Коза Зорька	Zorka the goat	zarechye
+c_zar_kids	goat	sky	5	Козлята	Kids	zarechye
+c_zar_cheese	goat	gold	45	Сыр «Двойняшка»	The Twin cheese	zarechye
+c_zar_bell	bell	cream	6	Колокольчик на лугу	A bell in the meadow	zarechye
+c_zar_bridge	bridge	dusk	9	Лёд на Липке	Ice on the Lipka	zarechye
+c_far_kazan	house	red	16	Казанское окно	A Kazan window	far
+c_far_perm	bird	sky	11	Птица из Перми	A bird from Perm	far
+c_st_textbook	book	blue	3	Учебник телеграфиста	The telegraphist's textbook	station
+c_st_glass	lantern	red	22	Красное стекло	Red glass	station
+c_zar_tikhon	fir	sky	13	Лосеферма	The elk farm	zarechye
+c_st_telegraph	telegram	blue	4	Разъезд 118 км	Halt 118 km	station
+c_st_first	telegram	cream	2	Первая телеграмма	The first telegram	station
+c_st_snow	train	night	10	«Кукушка» в метель	The Cuckoo in a blizzard	station
+c_st_clock	clock	blue	38	Тридцать восемь лет	Thirty-eight years	station
+c_st_heart	heart	red	14	Семьдесят три	Seventy-three	station
+c_st_lantern	lantern	night	20	Сигнальный фонарь	Signal lantern	station
+c_st_museum	lantern	gold	50	Фонари в Петербурге	Lanterns in St Petersburg	station
+c_st_cuckoo	train	green	30	Гудок «ку-ку»	The cuckoo whistle	station
+c_st_midnight	fireworks	night	12	Полночь на переезде	Midnight at the crossing	holidays
+c_st_ring	heart	gold	25	Мамино кольцо	Mother's ring	station
+c_st_anapa	sun	sky	18	Разъезд на тебе	The halt is yours	station
