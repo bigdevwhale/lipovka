@@ -305,7 +305,7 @@ class PostOffice(
         Props.jar(b, 62, 134, R.jam)
         b.line(68, 131, 72, 126, rgb(0xb4b0a8)); b.p(72, 125, rgb(0xd6d2ca)); b.p(73, 125, rgb(0xd6d2ca))
         // the pile of today's letters, its height telling how many
-        val pile = letters.coerceIn(0, 6)
+        val pile = letters.coerceIn(0, 4)
         val colors = intArrayOf(rgb(0xf8eed4), rgb(0xdce8f0), rgb(0xf4dcd4), rgb(0xecdcb6), rgb(0xf8eed4), rgb(0xf6dc84))
         if (pile > 0) {
             for (i in 0 until pile) Props.envelope(b, 73 + (i % 2) * 2, 140 - i * 3, 40, 8, colors[i])
@@ -333,7 +333,7 @@ class PostOffice(
     }
 
     /** The y of the top envelope on the desk (one lies there even when the bag is empty). */
-    private fun pileTop() = 140 - (letters.coerceIn(1, 6) - 1) * 3
+    private fun pileTop() = 140 - (letters.coerceIn(1, 4) - 1) * 3
 
     /** A wall lamp by the clock, lit at dusk. */
     private fun lamp(b: Buf) {

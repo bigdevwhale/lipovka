@@ -45,9 +45,9 @@ object Weather {
 
     private fun get(url: String): String {
         val c = URL(url).openConnection() as HttpURLConnection
-        c.connectTimeout = 8000
+        c.connectTimeout = 6000
         c.readTimeout = 8000
-        c.setRequestProperty("User-Agent", "Lipovka/1.0 (Android)")
+        c.setRequestProperty("User-Agent", "Lipovka/1.0 github.com/bigdevwhale/lipovka")
         try {
             if (c.responseCode !in 200..299) error("HTTP ${c.responseCode}")
             return c.inputStream.bufferedReader().use { it.readText() }
@@ -56,11 +56,42 @@ object Weather {
         }
     }
 
-    /** The current weather at a place from Open-Meteo (no key, nothing but the coordinates is sent). */
-    fun fetch(lat: Double, lon: Double, now: Long = System.currentTimeMillis()): WeatherNow {
+    /**
+     * The current weather at a place: from Open-Meteo, or from MET Norway when Open-Meteo can't be
+     * reached (some networks block it). No key; nothing but the coordinates is sent.
+     */
+    fun fetch(lat: Double, lon: Double, now: Long = System.currentTimeMillis()): WeatherNow =
+        runCatching { openMeteo(lat, lon, now) }.getOrElse { metNo(lat, lon, now) }
+
+    private fun openMeteo(lat: Double, lon: Double, now: Long): WeatherNow {
         val j = JSONObject(get("https://api.open-meteo.com/v1/forecast?latitude=%.3f&longitude=%.3f&current=temperature_2m,weather_code,wind_speed_10m".format(java.util.Locale.US, lat, lon)))
         val cur = j.getJSONObject("current")
         return WeatherNow(Sky.wmo(cur.getInt("weather_code")), cur.getDouble("temperature_2m"), cur.optDouble("wind_speed_10m", 0.0), now)
+    }
+
+    private fun metNo(lat: Double, lon: Double, now: Long): WeatherNow {
+        val j = JSONObject(get("https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=%.3f&lon=%.3f".format(java.util.Locale.US, lat, lon)))
+        val first = j.getJSONObject("properties").getJSONArray("timeseries").getJSONObject(0).getJSONObject("data")
+        val d = first.getJSONObject("instant").getJSONObject("details")
+        val symbol = first.optJSONObject("next_1_hours")?.optJSONObject("summary")?.optString("symbol_code")
+            ?: first.optJSONObject("next_6_hours")?.optJSONObject("summary")?.optString("symbol_code") ?: "cloudy"
+        return WeatherNow(symbol(symbol), d.getDouble("air_temperature"), d.optDouble("wind_speed", 0.0) * 3.6, now)
+    }
+
+    /** MET Norway's symbol codes ("lightrainshowers_day", "fog"…) as the village's skies. */
+    fun symbol(code: String): Sky {
+        val c = code.substringBefore('_')
+        return when {
+            "thunder" in c -> Sky.STORM
+            "sleet" in c -> Sky.SLEET
+            "snow" in c -> Sky.SNOW
+            c.startsWith("light") && "rain" in c -> Sky.DRIZZLE
+            "rain" in c -> Sky.RAIN
+            c == "fog" -> Sky.FOG
+            c == "cloudy" -> Sky.OVERCAST
+            c == "partlycloudy" -> Sky.CLOUDY
+            else -> Sky.CLEAR
+        }
     }
 
     /** Towns matching a name, for the settings search. */

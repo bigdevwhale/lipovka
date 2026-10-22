@@ -35,7 +35,7 @@
 
 ## Privacy
 
-No account, no ads, no analytics. Steps, letters and the diary stay on the phone. The only network request is the weather: the chosen town's coordinates go to Open-Meteo, nothing else.
+No account, no ads, no analytics. Steps, letters and the diary stay on the phone. The only network request is the weather: the chosen town's coordinates go to Open-Meteo (or to MET Norway when Open-Meteo can't be reached), nothing else.
 
 ## Building
 
@@ -52,4 +52,4 @@ Kotlin, Jetpack Compose, Room, DataStore, WorkManager. Every picture is pixel ar
 
 ## License
 
-[MIT](LICENSE). Font: m6x11 by Daniel Linssen, Cyrillic by Natto Games (free with attribution). Weather: [Open-Meteo.com](https://open-meteo.com).
+[MIT](LICENSE). Font: m6x11 by Daniel Linssen, Cyrillic by Natto Games (free with attribution). Weather: [Open-Meteo.com](https://open-meteo.com) and [MET Norway](https://api.met.no) (CC BY 4.0).

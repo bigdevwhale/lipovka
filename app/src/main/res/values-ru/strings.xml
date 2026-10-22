@@ -77,7 +77,7 @@
     <string name="no_days">Дневник начнётся с первой прогулки.</string>
     <string name="settings">Настройки</string>
     <string name="weather">Погода</string>
-    <string name="weather_hint">Найдите свой город, и в Липовке будет та же погода. В Open-Meteo уходят только его координаты.</string>
+    <string name="weather_hint">Найдите свой город, и в Липовке будет та же погода. В сервис погоды уходят только его координаты.</string>
     <string name="weather_search">Город</string>
     <string name="weather_find">Найти</string>
     <string name="weather_none">Своя погода Липовки</string>
@@ -91,7 +91,7 @@
     <string name="language">Язык</string>
     <string name="lang_system">Как в телефоне</string>
     <string name="about">О приложении</string>
-    <string name="credits">Шрифт m6x11: Daniel Linssen, кириллица: Natto Games. Погода: Open-Meteo.com. Без рекламы и аккаунтов, всё остаётся в телефоне.</string>
+    <string name="credits">Шрифт m6x11: Daniel Linssen, кириллица: Natto Games. Погода: Open-Meteo.com и MET Norway (CC BY 4.0). Без рекламы и аккаунтов, всё остаётся в телефоне.</string>
     <string name="steps_ok">Шагомер: работает</string>
     <string name="steps_off">Шагомер: нет разрешения</string>
     <string name="next">Дальше</string>

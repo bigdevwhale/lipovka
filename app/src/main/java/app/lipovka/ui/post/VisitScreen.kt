@@ -84,7 +84,7 @@ fun Gate(home: Home, m: Mail, total: Int = 1, preview: Boolean = false, onDone: 
                     Spacer(Modifier.width(8.dp))
                     Text(t.from, style = T.Sub, maxLines = 2)
                 }
-                if (kind == Kind.NOTICE) {
+                if (m.src.startsWith("evt:")) {
                     Panel(fill = C.telegram) { Text(t.news, style = T.Letter) }
                 } else {
                     Text(who?.name?.invoke(home.ru) ?: "", style = T.Heading)

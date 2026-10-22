@@ -79,7 +79,7 @@ fun PlacePicker(ru: Boolean, onPicked: (Place) -> Unit) {
             PixelButton(stringResource(R.string.weather_find), { search() })
         }
         if (failed) Text(stringResource(R.string.weather_fail), style = T.Small.copy(color = C.red))
-        for (p in results) Panel(onClick = { onPicked(p) }, fill = C.paper2) {
+        for (p in results) Panel(Modifier.fillMaxWidth(), onClick = { results = emptyList(); q = p.name; onPicked(p) }, fill = C.paper2) {
             Text(p.name, style = T.Body)
             Text(p.region, style = T.Small)
         }

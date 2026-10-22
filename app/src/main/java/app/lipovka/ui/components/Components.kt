@@ -144,9 +144,10 @@ fun TopBar(title: String, onBack: () -> Unit, modifier: Modifier = Modifier, dar
             Canvas(Modifier.size(20.dp)) {
                 val p = size.width / 10
                 val col = if (dark) C.light else C.ink
+                // "<": the tip on the left, two arms going right
                 for (i in 0 until 5) {
-                    drawRect(col, Offset((4 - i) * p + p, (5 - i) * p - p / 2), Size(p * 2, p))
-                    drawRect(col, Offset((4 - i) * p + p, (4 + i) * p + p / 2), Size(p * 2, p))
+                    drawRect(col, Offset((1 + i) * p, (5 - i) * p - p / 2), Size(p * 2, p))
+                    drawRect(col, Offset((1 + i) * p, (4 + i) * p + p / 2), Size(p * 2, p))
                 }
             }
         }

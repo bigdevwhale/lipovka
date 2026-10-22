@@ -34,7 +34,7 @@
 
 ## Приватность
 
-Без аккаунта, рекламы и аналитики. Шаги, письма и дневник остаются в телефоне. Единственный сетевой запрос — погода: в Open-Meteo уходят только координаты выбранного города.
+Без аккаунта, рекламы и аналитики. Шаги, письма и дневник остаются в телефоне. Единственный сетевой запрос — погода: в Open-Meteo (или в MET Norway, если Open-Meteo недоступен) уходят только координаты выбранного города.
 
 ## Сборка
 
@@ -49,4 +49,4 @@ Kotlin, Jetpack Compose, Room, DataStore, WorkManager. Вся графика —
 
 ## Лицензия
 
-[MIT](LICENSE). Шрифт m6x11: Daniel Linssen, кириллица: Natto Games. Погода: [Open-Meteo.com](https://open-meteo.com).
+[MIT](LICENSE). Шрифт m6x11: Daniel Linssen, кириллица: Natto Games. Погода: [Open-Meteo.com](https://open-meteo.com) и [MET Norway](https://api.met.no) (CC BY 4.0).

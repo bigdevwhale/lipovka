@@ -77,7 +77,7 @@
     <string name="no_days">The diary begins with your first walk.</string>
     <string name="settings">Settings</string>
     <string name="weather">Weather</string>
-    <string name="weather_hint">Find your town and Lipovka will have the same weather. Only its coordinates go to Open-Meteo.</string>
+    <string name="weather_hint">Find your town and Lipovka will have the same weather. Only its coordinates go to the weather service.</string>
     <string name="weather_search">Town</string>
     <string name="weather_find">Find</string>
     <string name="weather_none">Lipovka\'s own weather</string>
@@ -91,7 +91,7 @@
     <string name="language">Language</string>
     <string name="lang_system">As the phone</string>
     <string name="about">About</string>
-    <string name="credits">Font m6x11 by Daniel Linssen, Cyrillic by Natto Games. Weather by Open-Meteo.com. No ads, no accounts: everything stays on the phone.</string>
+    <string name="credits">Font m6x11 by Daniel Linssen, Cyrillic by Natto Games. Weather by Open-Meteo.com and MET Norway (CC BY 4.0). No ads, no accounts: everything stays on the phone.</string>
     <string name="steps_ok">Step counter: on</string>
     <string name="steps_off">Step counter: not allowed</string>
     <string name="next">Next</string>

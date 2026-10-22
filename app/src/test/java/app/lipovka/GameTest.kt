@@ -102,3 +102,14 @@ class GameTest {
         assertTrue(r.emptyDays < 40)
     }
 }
+
+class WeatherTest {
+    @Test fun metSymbols() {
+        assertEquals(app.lipovka.domain.Sky.DRIZZLE, app.lipovka.domain.Weather.symbol("lightrainshowers_day"))
+        assertEquals(app.lipovka.domain.Sky.STORM, app.lipovka.domain.Weather.symbol("heavyrainandthunder"))
+        assertEquals(app.lipovka.domain.Sky.OVERCAST, app.lipovka.domain.Weather.symbol("cloudy"))
+        assertEquals(app.lipovka.domain.Sky.CLOUDY, app.lipovka.domain.Weather.symbol("partlycloudy_night"))
+        assertEquals(app.lipovka.domain.Sky.SNOW, app.lipovka.domain.Weather.symbol("lightsnow"))
+        assertEquals(app.lipovka.domain.Sky.CLEAR, app.lipovka.domain.Weather.symbol("clearsky_day"))
+    }
+}
