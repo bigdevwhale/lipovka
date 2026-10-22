@@ -309,7 +309,10 @@ class PostOffice(
         val colors = intArrayOf(rgb(0xf8eed4), rgb(0xdce8f0), rgb(0xf4dcd4), rgb(0xecdcb6), rgb(0xf8eed4), rgb(0xf6dc84))
         if (pile > 0) {
             for (i in 0 until pile) Props.envelope(b, 73 + (i % 2) * 2, 140 - i * 3, 40, 8, colors[i])
-            b.r(92, 140 - pile * 3, 2, pile * 3 + 8, rgb(0x8a5a2a)); b.r(74, 141 - pile * 3 + 4, 40, 1, rgb(0x8a5a2a))
+            // string tied round the stack, only as tall as the stack
+            val top = pileTop()
+            b.r(92, top, 2, 148 - top, rgb(0x8a5a2a))
+            for (i in 0 until pile) b.r(73 + (i % 2) * 2, 140 - i * 3 + 4, 40, 1, rgb(0x8a5a2a))
         } else {
             Props.envelope(b, 76, 140, 36, 8, rgb(0xecdcb6))
         }
@@ -328,6 +331,9 @@ class PostOffice(
         b.r(152, 141, 14, 2, rgb(0x141c34))
         b.r(156, 131, 6, 3, rgb(0x1e2a4a)); b.r(158, 126, 2, 5, rgb(0x8e5a34)); b.ball(159, 124, 3, R.wood, rgb(0x1e100a))
     }
+
+    /** The y of the top envelope on the desk (one lies there even when the bag is empty). */
+    private fun pileTop() = 140 - (letters.coerceIn(1, 6) - 1) * 3
 
     /** A wall lamp by the clock, lit at dusk. */
     private fun lamp(b: Buf) {
@@ -374,9 +380,10 @@ class PostOffice(
             val y = (wy + 10 + (rnd(i + 40) * 120 + sin(t * .08 + i) * 4 + t * .05) % 120).roundToInt()
             if (inBeam(x, y) && (t + i) % 9 > 1) b.p(x, y, rgb(0xfff8e0), .75f)
         }
-        if (dog) People.dogLying(b, 12, 198, (sin(t * .2) + 1) / 2)
+        if (dog) People.dogLying(b, 16, 192, (sin(t * .2) + 1) / 2)
         // the cat asleep on the letters (or on the desk when there are none)
-        val catY = 108 - (letters.coerceIn(0, 6) * 3) + if (letters == 0) 3 else 0
+        // the cat lies right on top of the stack: its belly (row 25 of the sprite) on the top envelope
+        val catY = pileTop() - 24
         Props.cat(b, 72, catY, (sin(t * .18) + 1) / 2)
         if (dim > .3f) {
             b.glow(70, 64, 18, rgb(0xfff0b0), (.05 + .03 * sin(t * .6)).toFloat(), 3)

@@ -389,11 +389,29 @@ object People {
         b.spr(listOf(if (frame % 2 == 0) ".t.t.t.t" else "..t.t.t."), x, feetY - 1, dogPal)
     }
 
-    /** A dog lying asleep by the stove. */
+    /** Bublik asleep on his mat: head on his paws, an ear flopped over, the tail curled into a bagel. */
     fun dogLying(b: Buf, x: Int, y: Int, br: Double) {
-        b.vol(x, y, 26, 12, ell(13.0, 7.0 - br * .4, 12.0, 5.0 + br * .4), sph(10.0, 4.0, 12.0, 6.0, .3), intArrayOf(rgb(0x6e4a28), rgb(0x8e643a), rgb(0xb88a52), rgb(0xd8b07a), rgb(0xecd2a2)), rgb(0x2a1608))
-        b.vol(x - 4, y + 3, 11, 9, ell(5.5, 4.5, 5.0, 4.0), sph(4.0, 3.0, 5.0, 4.0, .3), intArrayOf(rgb(0x6e4a28), rgb(0x8e643a), rgb(0xb88a52), rgb(0xd8b07a), rgb(0xecd2a2)), rgb(0x2a1608))
-        b.r(x - 3, y + 2, 3, 3, rgb(0x8e643a)); b.p(x - 4, y + 7, rgb(0x140c08)); b.p(x, y + 6, rgb(0x2a1608)); b.p(x + 1, y + 6, rgb(0x2a1608))
-        for (i in 0..4) b.p(x + 24 + i / 2, y + 4 - i, rgb(0xc99a5e))
+        val fur = intArrayOf(rgb(0x6e4a28), rgb(0x8e643a), rgb(0xb88a52), rgb(0xd8b07a), rgb(0xecd2a2))
+        val ol = rgb(0x2a1608)
+        // the mat
+        for (j in 0 until 4) for (i in -3..32) b.p(x + i, y + 10 + j, if ((i + j) % 4 < 2) rgb(0xa33a2c) else rgb(0x842a24))
+        for (i in -3..32 step 2) b.p(x + i, y + 14, rgb(0xd8c4a0))
+        // body
+        b.vol(x + 6, y, 22, 12, ell(11.0, 6.5 - br * .4, 11.0, 5.0 + br * .5), sph(8.0, 3.0, 11.0, 6.0, .3), fur, ol)
+        // the tail: a ring on the rump
+        for (a in 0 until 14) {
+            val an = a / 14.0 * 2 * Math.PI
+            b.p(x + 25 + (kotlin.math.cos(an) * 3).toInt(), y + 1 + (kotlin.math.sin(an) * 2.5).toInt(), if (a < 7) fur[3] else fur[2])
+        }
+        // front paws stretched forward
+        b.vol(x - 2, y + 7, 10, 4, ell(5.0, 2.0, 5.0, 2.0), sph(4.0, 1.0, 5.0, 2.0, .45), fur, ol)
+        // head resting on the paws
+        b.vol(x - 1, y - 1, 11, 9, ell(5.5, 4.5, 5.5, 4.5), sph(4.0, 3.0, 5.5, 4.5, .3), fur, ol)
+        b.vol(x - 5, y + 3, 6, 5, ell(3.0, 2.5, 3.0, 2.5), sph(2.0, 1.5, 3.0, 2.5, .5), fur, ol)
+        b.p(x - 5, y + 4, rgb(0x140c08)); b.p(x - 4, y + 4, rgb(0x140c08))
+        b.p(x + 1, y + 3, rgb(0x3a2010)); b.p(x + 2, y + 3, rgb(0x3a2010))
+        // the floppy ear
+        for (j in 0 until 5) b.r(x + 4, y + j, 3 - j / 3, 1, fur[0])
+        b.p(x + 4, y - 1, ol); b.p(x + 5, y - 1, ol)
     }
 }
