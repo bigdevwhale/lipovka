@@ -70,11 +70,12 @@ fun PlacePicker(ru: Boolean, onPicked: (Place) -> Unit) {
     }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(Modifier.weight(1f).pixelBox(C.light).padding(horizontal = 10.dp, vertical = 10.dp)) {
-                BasicTextField(q, { q = it }, textStyle = T.Body, singleLine = true, cursorBrush = SolidColor(C.ink),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search), keyboardActions = KeyboardActions(onSearch = { search() }),
-                    decorationBox = { inner -> Box { if (q.isEmpty()) Text(stringResource(R.string.weather_search), style = T.Body.copy(color = C.faint)); inner() } })
-            }
+            // The field is the whole box, so a tap anywhere on it starts typing.
+            BasicTextField(q, { q = it }, Modifier.weight(1f).pixelBox(C.light), textStyle = T.Body, singleLine = true, cursorBrush = SolidColor(C.ink),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search), keyboardActions = KeyboardActions(onSearch = { search() }),
+                decorationBox = { inner ->
+                    Box(Modifier.padding(horizontal = 10.dp, vertical = 10.dp)) { if (q.isEmpty()) Text(stringResource(R.string.weather_search), style = T.Body.copy(color = C.faint)); inner() }
+                })
             Spacer(Modifier.width(8.dp))
             PixelButton(stringResource(R.string.weather_find), { search() })
         }

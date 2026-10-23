@@ -5,6 +5,7 @@
 More fixes from running it on a phone.
 
 - The keyboard no longer hides what you type: the screen moves up with it (town search, the diary), and the tab bar steps aside meanwhile.
+- The town search box answers a tap anywhere on it, not only on the word in it.
 - Putting out the lamp shows: the room goes dark but for the window, the keyboard closes, and the button offers to light it again.
 - Steps show up while the app is open, without the old ten-second wait, and phones that hold the counter back are asked for it on every step.
 - The widget starts the new day at midnight and redraws whenever you leave the app.
