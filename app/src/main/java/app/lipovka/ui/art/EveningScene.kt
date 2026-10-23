@@ -5,9 +5,9 @@ import app.lipovka.domain.Look
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
-/** The evening table: the kerosene lamp, tea with jam, the open diary, the cat on the windowsill. */
-class EveningScene(private val e: Env) : Scene(170, 148) {
-    override val key = e.copy(minute = e.minute / 10)
+/** The evening table: the kerosene lamp, tea with jam, the open diary, the cat on the windowsill. Put out, only the window gives light. */
+class EveningScene(private val e: Env, private val lit: Boolean = true) : Scene(170, 148) {
+    override val key = e.copy(minute = e.minute / 10) to lit
 
     private val x0 = 92
     private val y0 = 8
@@ -66,16 +66,20 @@ class EveningScene(private val e: Env) : Scene(170, 148) {
         b.line(84, 104, 88, 96, rgb(0xc4c0b8))
         if (e.has(Look.NEWYEAR)) for (k in 0 until 6) b.ball(150 + (k % 3) * 6, 136 + (k / 3) * 5, 2, if (k % 2 == 0) R.apple else R.gold)
         else if (e.has(Look.MASLENITSA)) b.vol(130, 134, 24, 8, ell(12.0, 4.0, 12.0, 4.0), { _, v -> .7 - v * .08 }, R.honey, rgb(0x5a3006))
-        b.glow(21, 84, 140, rgb(0xffc060), .42f, 7)
-        b.glow(21, 84, 40, rgb(0xfff0b0), .32f, 5)
+        if (lit) {
+            b.glow(21, 84, 140, rgb(0xffc060), .42f, 7)
+            b.glow(21, 84, 40, rgb(0xfff0b0), .32f, 5)
+        }
         b.vignette(rgb(0x1a0a14), .7f, 30.0, 80.0, 170.0, 130.0)
     }
 
     override fun anim(b: Buf, t: Int) {
         val fl = if (Art.still) 0 else sin(t * .9).roundToInt()
-        b.vol(18, 80 + fl, 6, 12, { u, v -> kotlin.math.abs(u - 3.0) <= if (v < 4) v * .6 else 3 - (v - 4) * .25 }, { _, v -> 1 - v / 14.0 },
-            intArrayOf(rgb(0xd08c24), rgb(0xf8b040), rgb(0xfff0a0), rgb(0xffffff)))
-        b.glow(21, 86, 16, rgb(0xfff0b0), (.12 + .05 * sin(t * .7)).toFloat(), 4)
+        if (lit) {
+            b.vol(18, 80 + fl, 6, 12, { u, v -> kotlin.math.abs(u - 3.0) <= if (v < 4) v * .6 else 3 - (v - 4) * .25 }, { _, v -> 1 - v / 14.0 },
+                intArrayOf(rgb(0xd08c24), rgb(0xf8b040), rgb(0xfff0a0), rgb(0xffffff)))
+            b.glow(21, 86, 16, rgb(0xfff0b0), (.12 + .05 * sin(t * .7)).toFloat(), 4)
+        }
         Props.kettle(b, 36, 90, .85)
         Props.steam(b, 64, 96, t, 5, 16, .55f)
         Props.cup(b, 64, 106)
@@ -86,5 +90,6 @@ class EveningScene(private val e: Env) : Scene(170, 148) {
         Air.glassDrops(b, e, t, x0, y0, ww, wh) { x, y -> inWin(x, y) }
         Air.fog(b, e, t, x0, y0 + 30, ww, wh - 30, .4f) { x, y -> inWin(x, y) }
         Props.cat(b, 112, 62, (sin(t * .18) + 1) / 2)
+        if (!lit) for (y in 0 until h) for (x in 0 until w) if (!inWin(x, y)) b.mul(x, y, rgb(0x1c2440), .78f)
     }
 }

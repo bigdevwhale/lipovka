@@ -1,5 +1,6 @@
 package app.lipovka.work
 
+import android.app.AlarmManager
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
@@ -24,6 +25,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.ZoneId
 
 /**
  * The bag on the home screen: who the next letter is for and how many steps are left. Drawn as one
@@ -62,6 +64,17 @@ class PostWidget : AppWidgetProvider() {
                 views.setOnClickPendingIntent(R.id.widget_image, open)
                 manager.updateAppWidget(id, views)
             }
+            atMidnight(context, ids)
+        }
+
+        /** The step count is today's, so the widget redraws itself just after midnight even if nothing else wakes it. */
+        private fun atMidnight(context: Context, ids: IntArray) {
+            val intent = Intent(context, PostWidget::class.java)
+                .setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                .putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+            val pending = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+            val at = LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli() + 60_000
+            context.getSystemService(AlarmManager::class.java).setAndAllowWhileIdle(AlarmManager.RTC, at, pending)
         }
 
         private fun render(context: Context, title: String, big: String, small: String, bag: Int): Bitmap {

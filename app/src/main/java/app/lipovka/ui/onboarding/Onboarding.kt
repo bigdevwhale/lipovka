@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,7 +52,7 @@ fun Onboarding(startPage: Int = 0) {
     val env = remember { c.env(LocalDateTime.now(), Settings(), null) }
     val stepsPerm = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { page = 2 }
     val notifyPerm = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { finish(c) }
-    Column(Modifier.fillMaxSize().background(C.paper).verticalScroll(rememberScrollState())) {
+    Column(Modifier.fillMaxSize().background(C.paper).imePadding().verticalScroll(rememberScrollState())) {
         val scene = remember(page) {
             when (page) {
                 0 -> PostOffice(env, 4, false)

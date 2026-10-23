@@ -5,6 +5,10 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,6 +56,7 @@ import app.lipovka.ui.theme.C
 import app.lipovka.ui.theme.T
 import app.lipovka.ui.village.ResidentSheet
 import app.lipovka.ui.village.VillageScreen
+import app.lipovka.work.PostWidget
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
@@ -80,6 +85,7 @@ sealed interface Overlay {
     data object Settings : Overlay
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun LipovkaRoot(settings: Settings) {
     val ctx = LocalContext.current
@@ -92,12 +98,14 @@ fun LipovkaRoot(settings: Settings) {
     }
     // While the app is open: read the counter as it ticks, sort the post, fetch the weather.
     LifecycleResumeEffect(Unit) {
+        now = LocalDateTime.now()
         val job = c.scope.launch {
-            runCatching { c.refreshWeather() }
-            c.sync()
-            if (c.sensor.allowed) c.sensor.counts().conflate().collect { v -> c.post.reading(v); delay(1500) }
+            launch { runCatching { c.refreshWeather() } }
+            // The counter's own first value comes as soon as it's subscribed, so no separate read to wait on.
+            c.post.tick()
+            if (c.sensor.allowed) c.sensor.live().conflate().collect { v -> c.post.reading(v); delay(1000) }
         }
-        onPauseOrDispose { job.cancel() }
+        onPauseOrDispose { job.cancel(); c.write { PostWidget.updateAll(app) } }
     }
     if (!settings.onboarded) {
         Onboarding()
@@ -113,7 +121,8 @@ fun LipovkaRoot(settings: Settings) {
     fun pop() { if (overlays.isNotEmpty()) overlays.removeAt(overlays.lastIndex) }
     BackHandler(enabled = overlays.isNotEmpty() || tab != Tab.POST) { if (overlays.isNotEmpty()) pop() else tab = Tab.POST }
 
-    Box(Modifier.fillMaxSize().background(C.bg)) {
+    // The keyboard pushes everything up, so the field being typed in stays in sight.
+    Box(Modifier.fillMaxSize().background(C.bg).imePadding()) {
         Column(Modifier.fillMaxSize()) {
             Box(Modifier.weight(1f).fillMaxWidth()) {
                 when (tab) {
@@ -124,7 +133,7 @@ fun LipovkaRoot(settings: Settings) {
                     Tab.DIARY -> DiaryScreen(home) { push(Overlay.Letter(it)) }
                 }
             }
-            TabBar(tab, home) { tab = it }
+            if (!WindowInsets.isImeVisible) TabBar(tab, home) { tab = it }
         }
         when (val o = overlays.lastOrNull()) {
             Overlay.Visits -> VisitScreen(home, onDone = { pop() })

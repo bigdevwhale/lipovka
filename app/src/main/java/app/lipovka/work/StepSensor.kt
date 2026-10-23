@@ -47,6 +47,31 @@ class StepSensor(private val context: Context) {
         awaitClose { manager.unregisterListener(l) }
     }
 
+    /**
+     * The counter while the app is open. Many phones hold the counter's values back and hand them over
+     * in batches; the step detector speaks up on each step, and is used to ask for the batch at once.
+     */
+    fun live(): Flow<Long> = callbackFlow {
+        val s = sensor
+        if (s == null || !allowed) {
+            close()
+            return@callbackFlow
+        }
+        val detector = manager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+        var asked = 0L
+        val l = object : SensorEventListener {
+            override fun onSensorChanged(e: SensorEvent) {
+                if (e.sensor.type == Sensor.TYPE_STEP_COUNTER) trySend(e.values[0].toLong())
+                else if (e.timestamp - asked > 2_000_000_000L) { asked = e.timestamp; manager.flush(this) }
+            }
+
+            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
+        }
+        manager.registerListener(l, s, SensorManager.SENSOR_DELAY_UI, 0)
+        if (detector != null) manager.registerListener(l, detector, SensorManager.SENSOR_DELAY_UI, 0)
+        awaitClose { manager.unregisterListener(l) }
+    }
+
     /** One reading, or null if the sensor is missing, not allowed or silent. */
     suspend fun read(timeoutMs: Long = 10_000): Long? {
         if (sensor == null || !allowed) return null

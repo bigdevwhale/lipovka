@@ -32,6 +32,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.lipovka.R
@@ -86,38 +87,42 @@ fun VillageScreen(home: Home, onHouse: (String) -> Unit) {
     val round = roundOf(home)
     val scene = remember(home.env, home.open, round, home.dog) { MapScene(home.env, home.open, round, home.dog) }
     val scroll = rememberScrollState()
-    BoxWithConstraints(Modifier.fillMaxSize().background(C.paper)) {
-        val scale = maxWidth / World.W
-        val density = LocalDensity.current
-        LaunchedEffect(Unit) {
-            // open on the postman
-            val y = with(density) { (scale * round.postman.y.toFloat()).toPx() } - with(density) { maxHeight.toPx() } / 2
-            scroll.scrollTo(y.roundToInt().coerceAtLeast(0))
-        }
-        Box(Modifier.fillMaxSize().verticalScroll(scroll)) {
-            Box(Modifier.fillMaxWidth().pointerInput(home.open) {
-                detectTapGestures { o ->
-                    val x = o.x / size.width * World.W
-                    val y = o.y / size.width * World.W
-                    val hit = World.houses.filter { it.district <= home.open }.minByOrNull { hypot(it.at.x - x, it.at.y - 8 - y) }
-                    if (hit != null && hypot(hit.at.x - x, hit.at.y - 8 - y) < 22) onHouse(hit.id)
-                }
-            }) {
-                PixelView(scene, Modifier.fillMaxWidth())
-                for (h in World.houses) {
-                    if (h.district > home.open) continue
-                    Label(Words.house(h.id, home.ru), h.at.x, h.at.y + 9, scale)
-                }
-                Label(Words.house("post", home.ru), World.POST.x, World.POST.y + 10, scale)
-                val next = (home.open + 1).takeIf { it <= 5 }
-                if (next != null) {
-                    val y = when (next) { 1 -> 290.0; 2 -> 200.0; 3 -> 140.0; 4 -> 120.0; else -> 40.0 }
-                    val left = (World.OPENS_AT_KM[next] - home.s.km).coerceAtLeast(.1)
-                    Label("${Words.district(next, home.ru)} · " + stringResource(R.string.locked, String.format("%.0f", left)), 85.0, y, scale, dim = true)
+    Column(Modifier.fillMaxSize().background(C.paper)) {
+        // The hint has its own strip above the map, so it never sits on a house's name.
+        Text(stringResource(R.string.village_hint), style = T.Small.copy(color = C.ink, textAlign = TextAlign.Center),
+            modifier = Modifier.fillMaxWidth().background(C.paper2).statusBarsPadding().padding(horizontal = 8.dp, vertical = 6.dp))
+        BoxWithConstraints(Modifier.fillMaxWidth().weight(1f)) {
+            val scale = maxWidth / World.W
+            val density = LocalDensity.current
+            LaunchedEffect(Unit) {
+                // open on the postman
+                val y = with(density) { (scale * round.postman.y.toFloat()).toPx() } - with(density) { maxHeight.toPx() } / 2
+                scroll.scrollTo(y.roundToInt().coerceAtLeast(0))
+            }
+            Box(Modifier.fillMaxSize().verticalScroll(scroll)) {
+                Box(Modifier.fillMaxWidth().pointerInput(home.open) {
+                    detectTapGestures { o ->
+                        val x = o.x / size.width * World.W
+                        val y = o.y / size.width * World.W
+                        val hit = World.houses.filter { it.district <= home.open }.minByOrNull { hypot(it.at.x - x, it.at.y - 8 - y) }
+                        if (hit != null && hypot(hit.at.x - x, hit.at.y - 8 - y) < 22) onHouse(hit.id)
+                    }
+                }) {
+                    PixelView(scene, Modifier.fillMaxWidth())
+                    for (h in World.houses) {
+                        if (h.district > home.open) continue
+                        Label(Words.house(h.id, home.ru), h.at.x, h.at.y + 9, scale)
+                    }
+                    Label(Words.house("post", home.ru), World.POST.x, World.POST.y + 10, scale)
+                    val next = (home.open + 1).takeIf { it <= 5 }
+                    if (next != null) {
+                        val y = when (next) { 1 -> 290.0; 2 -> 200.0; 3 -> 140.0; 4 -> 120.0; else -> 40.0 }
+                        val left = (World.OPENS_AT_KM[next] - home.s.km).coerceAtLeast(.1)
+                        Label("${Words.district(next, home.ru)} · " + stringResource(R.string.locked, String.format("%.0f", left)), 85.0, y, scale, dim = true)
+                    }
                 }
             }
         }
-        Text(stringResource(R.string.village_hint), style = T.Small.copy(color = C.ink), modifier = Modifier.align(Alignment.TopCenter).statusBarsPadding().padding(8.dp).pixelBox(C.light).padding(horizontal = 8.dp, vertical = 4.dp))
     }
 }
 

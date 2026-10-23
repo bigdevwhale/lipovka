@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -239,8 +240,10 @@ private fun NextDistrict(home: Home) {
 fun Evening(home: Home) {
     val ctx = LocalContext.current
     val c = ctx.container
-    val scene = remember(home.env) { EveningScene(home.env) }
+    val focus = LocalFocusManager.current
     val day = home.now.toLocalDate().toEpochDay()
+    var lit by rememberSaveable(day) { mutableStateOf(true) }
+    val scene = remember(home.env, lit) { EveningScene(home.env, lit) }
     val diary by c.post.diary.collectAsState(initial = emptyList())
     var text by rememberSaveable(day) { mutableStateOf("") }
     LaunchedEffect(diary, day) { if (text.isEmpty()) text = diary.firstOrNull { it.day == day }?.text.orEmpty() }
@@ -263,12 +266,16 @@ fun Evening(home: Home) {
             Spacer(Modifier.height(10.dp))
             Eyebrow(stringResource(R.string.diary_title))
             BasicTextField(
-                value = text, onValueChange = { text = it.take(240) },
+                value = text, onValueChange = { text = it.take(240); lit = true },
                 textStyle = T.Hand, cursorBrush = SolidColor(C.blue),
                 modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
                 decorationBox = { inner -> Box { if (text.isEmpty()) Text(stringResource(R.string.diary_hint), style = T.Hand.copy(color = C.faint)); inner() } },
             )
-            PixelButton(stringResource(R.string.lamp_off), { c.write { post.diary(day, text) } }, Modifier.fillMaxWidth(), kind = BtnKind.LAMP)
+            // Putting the lamp out writes the line down and ends the evening; lighting it again lets you go on.
+            PixelButton(stringResource(if (lit) R.string.lamp_off else R.string.lamp_on), {
+                if (lit) { focus.clearFocus(); c.write { post.diary(day, text) } }
+                lit = !lit
+            }, Modifier.fillMaxWidth(), kind = if (lit) BtnKind.LAMP else BtnKind.GHOST)
         }
     }
 }
