@@ -41,6 +41,7 @@ import app.lipovka.domain.Place
 import app.lipovka.domain.Weather
 import app.lipovka.ui.Home
 import app.lipovka.ui.Words
+import app.lipovka.ui.components.CommunityLinks
 import app.lipovka.ui.components.Eyebrow
 import app.lipovka.ui.components.Kind
 import app.lipovka.ui.components.Panel
@@ -123,6 +124,9 @@ fun SettingsScreen(home: Home, onBack: () -> Unit) {
                     }, Modifier.weight(1f), kind = if (cur == tag) Kind.PRIMARY else Kind.GHOST)
                 }
             }
+
+            Eyebrow(stringResource(R.string.community))
+            CommunityLinks()
 
             Eyebrow(stringResource(R.string.about))
             Text(stringResource(if (c.sensor.allowed && c.sensor.present) R.string.steps_ok else R.string.steps_off), style = T.Body)
