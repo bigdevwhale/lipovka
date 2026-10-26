@@ -67,14 +67,15 @@ class RoomScene(private val e: Env, private val gifts: List<Gift>, private val d
     }
 
     private fun window(b: Buf) {
+        val wall = IntArray(4 * wr * wr) { b.get(wx - wr + it % (2 * wr), wy - wr + it / (2 * wr)) }
         for (j in -wr - 4..wr + 4) for (i in -wr - 4..wr + 4) {
             val d = hypot(i.toDouble(), j.toDouble())
             if (d > wr + 4) continue
             if (d > wr) b.p(wx + i, wy + j, rp(R.wood, .6 - (i + j) / 60.0, wx + i, wy + j))
         }
         b.vgrad(wx - wr, wy - wr, 2 * wr, 2 * wr, Air.skyRamp(e).let { if (e.phase.dark) it else it })
-        // clear the corners outside the circle back to wood
-        for (j in -wr..wr) for (i in -wr..wr) if (!inWin(wx + i, wy + j) && hypot(i.toDouble(), j.toDouble()) <= wr + 4) b.p(wx + i, wy + j, rp(R.wood, .6 - (i + j) / 60.0, wx + i, wy + j))
+        // the sky is drawn as a square: put the frame and the wall back outside the glass
+        frame(b, wall)
         if (e.phase.dark && !e.sky.grey) Air.moon(b, wx + 10, wy - 10, 4, e.date, rgb(0x151d34))
         if (!e.phase.dark && !e.sky.grey) b.disc(wx - 10, wy - 12, 3, rgb(0xfffbe8))
         for (i in -wr..wr) {
@@ -90,7 +91,7 @@ class RoomScene(private val e: Env, private val gifts: List<Gift>, private val d
         }
         Air.grade(b, e, wx - wr, wy - wr, 2 * wr, 2 * wr) { x, y -> inWin(x, y) }
         Air.frost(b, e, wx - wr, wy - wr, 2 * wr, 2 * wr)
-        for (j in -wr..wr) for (i in -wr..wr) if (!inWin(wx + i, wy + j) && hypot(i.toDouble(), j.toDouble()) <= wr + 4) b.p(wx + i, wy + j, rp(R.wood, .6 - (i + j) / 60.0, wx + i, wy + j))
+        frame(b, wall)
         b.r(wx - wr, wy - 1, 2 * wr, 2, rgb(0x3a2214))
         b.r(wx - 1, wy - wr, 2, 2 * wr, rgb(0x3a2214))
         for (a in 0 until 64) {
@@ -101,6 +102,16 @@ class RoomScene(private val e: Env, private val gifts: List<Gift>, private val d
             val t = y - wy
             val cx = wx - t * .45
             if (kotlin.math.abs(x - cx) < wr * .7 - t * .02 && bay(x, y) < 6) b.scr(x, y, rgb(0xfff0c0), .1f)
+        }
+    }
+
+    /** Outside the glass: the round frame, and beyond it the wall as it was before the window. */
+    private fun frame(b: Buf, wall: IntArray) {
+        for (j in -wr until wr) for (i in -wr until wr) {
+            val x = wx + i
+            val y = wy + j
+            if (inWin(x, y)) continue
+            b.p(x, y, if (hypot(i.toDouble(), j.toDouble()) <= wr + 4) rp(R.wood, .6 - (i + j) / 60.0, x, y) else wall[(j + wr) * 2 * wr + i + wr])
         }
     }
 
