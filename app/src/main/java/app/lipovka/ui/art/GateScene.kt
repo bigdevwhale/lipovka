@@ -18,7 +18,7 @@ class GateScene(private val e: Env, private val house: House, private val who: R
     private val winter = e.snow
     private val lit = e.phase.lamps
     private val town = house.id == "museum" || house.id == "newspaper"
-    private val planks = house.id in setOf("halt", "stationhouse", "meteo", "painter")
+    private val face = Facades.of(house.id)
     private val hx = 66
     private val hy = 78
     private val hw = 94
@@ -93,99 +93,408 @@ class GateScene(private val e: Env, private val house: House, private val who: R
     }
 
     private fun izba(b: Buf) {
-        // walls: logs, or painted planks for the halt and the station houses
-        for (y in hy until hy + hh) for (x in hx until hx + hw) {
-            if (planks) {
-                val k = (x - hx) % 6
-                val base = if (house.id == "halt") rgb(0xc8b070) else if (house.id == "meteo") rgb(0x9ab0a0) else rgb(0x8aa0c0)
-                b.p(x, y, if (k == 0) base.dim(.45f) else base.dim(((x - hx) / hw.toFloat()) * .2f + (fbm(x * .2, y * .3) * .1).toFloat()))
-            } else {
-                val k = (y - hy) % 5
-                val l = when (k) { 0 -> .78; 1 -> .66; 2 -> .55; 3 -> .44; else -> .22 }
-                b.p(x, y, rp(R.wood, l + (fbm(x * .15, y * .6) - .5) * .18 - (x - hx) / hw.toDouble() * .12, x, y))
-            }
+        val f = face
+        if (f.left == Annex.VERANDA) veranda(b)
+        when (f.right) {
+            Annex.SHED -> shed(b)
+            Annex.WHEEL -> wheel(b)
+            else -> Unit
         }
-        if (!planks) {
-            var y = hy
-            while (y < hy + hh) {
-                for (x in listOf(hx - 3, hx + hw - 1)) {
-                    b.vol(x, y, 4, 5, ell(2.0, 2.5, 2.0, 2.5), sph(1.5, 2.0, 2.0, 2.5, .3), R.wood, rgb(0x1e100a))
-                    b.p(x + 2, y + 2, rgb(0x55331e))
-                }
-                y += 5
-            }
-        }
-        // roof with a carved bargeboard
-        val ax = hx + hw / 2
-        val ay = 26
-        val roof = roof()
-        for (y in ay until hy + 2) {
-            val half = ((y - ay) * 1.05).roundToInt() + 2
-            for (x in ax - half until ax + half) {
-                var l = if (x < ax) .62 else .36
-                l += (if ((y - ay) % 4 == 0) -.14 else 0.0) + (if ((x + (y - ay) / 4 * 2) % 6 == 0) -.08 else 0.0)
-                b.p(x, y, if (winter && hash(x, y) > .1 && (y - ay) % 4 != 0) rp(R.snow, l + .2, x, y) else rp(roof, l, x, y))
-            }
-            b.p(ax - half - 1, y, R.INK); b.p(ax + half, y, R.INK)
-        }
-        if (winter) for (x in ax - 50 until ax + 50) { val y = hy + 2; if (hash(x, 1) > .3) b.p(x, y, R.snow[5]) }
+        walls(b)
+        if (f.side) sideRoof(b) else frontRoof(b)
         val (fr, acc) = frame()
-        for (y in ay + 4 until hy + 2) {
-            val half = ((y - ay) * 1.05).roundToInt() + 2
-            b.p(ax - half + 1, y, fr); b.p(ax + half - 2, y, fr.dim(.15f))
-            if (y % 3 == 0) { b.p(ax - half + 2, y + 1, fr); b.p(ax + half - 3, y + 1, fr.dim(.15f)) }
+        val gw = if (f.narrow || f.trim == Trim.TALL) 16 else 20
+        val n = f.windows
+        val span = if (f.right == Annex.SHOPFRONT) f.w - 52 else f.w
+        val gap = (span - n * gw) / (n + 1)
+        for (i in 0 until n) {
+            val x = f.x + gap + i * (gw + gap)
+            if (f.right == Annex.COLUMNS && n == 2) window(b, if (i == 0) f.x + 12 else f.x + f.w - 12 - gw, f.top + 22, gw, fr, acc)
+            else window(b, x, f.top + 22, gw, fr, acc)
         }
-        for (y in ay + 10 until hy) {
-            val half = ((y - ay - 10) * 1.05).roundToInt()
-            for (x in ax - half until ax + half) b.p(x, y, if (planks) rgb(0x8a7a62) else rp(R.wood, .5 + (if (x < ax) .12 else 0.0) + (if ((x - ax + 50) % 4 == 0) -.15 else 0.0), x, y))
+        when (f.right) {
+            Annex.PORCH -> porch(b, fr)
+            Annex.SHOPFRONT -> shopfront(b)
+            Annex.COLUMNS -> portico(b)
+            else -> Unit
         }
-        b.ball(ax, 62, 4, R.wood, rgb(0x1e100a))
-        b.disc(ax, 62, 3, if (lit) rgb(0xf6d77a) else rgb(0x8aa0b0))
-        b.r(ax, 59, 1, 7, rgb(0x3a2214)); b.r(ax - 3, 62, 7, 1, rgb(0x3a2214))
-        if (!planks) b.spr(listOf("..kk....", ".kWWk...", "kWkWWk..", "...kWWk.", "....kWWk", "....kWWk"), ax - 4, ay - 6, mapOf('k' to R.INK, 'W' to fr))
-        if (house.id != "meteo") {
-            b.vol(ax + 20, 34, 8, 26, { _, _ -> true }, { u, v -> .6 - u * .05 + if (v % 3 == 0) -.15 else 0.0 }, R.brick, rgb(0x1a0806))
-            b.r(ax + 19, 33, 10, 2, rgb(0x2a0e0a))
-            if (winter) b.r(ax + 19, 32, 10, 1, R.snow[5])
-        }
-        window(b, hx + 12, hy + 20, fr, acc)
-        window(b, hx + 60, hy + 20, fr, acc)
-        for (x in hx - 3 until hx + hw + 1 step 6) b.vol(x, hy + hh, 6, 5, { _, _ -> true }, { u, v -> .6 - u * .06 - v * .05 }, R.stone, rgb(0x1a1614))
+        if (f.plinth) for (y in 142 until 152) for (x in f.x until f.x + f.w) b.p(x, y, rp(R.brick, .5 + (if ((y - 142) % 3 == 0) -.25 else 0.0) + (if ((x + (y - 142) / 3 * 3) % 6 == 0) -.2 else 0.0), x, y))
+        else for (x in f.x - 3 until f.x + f.w + 1 step 6) b.vol(x, 150, 6, 5, { _, _ -> true }, { u, v -> .6 - u * .06 - v * .05 }, R.stone, rgb(0x1a1614))
+        val cx = f.x + f.w / 2
         when (house.id) {
-            "halt" -> { b.r(hx + 30, hy + 4, 34, 9, rgb(0xfbf3dc)); b.r(hx + 32, hy + 7, 30, 1, rgb(0x26375e)); b.r(hx + 32, hy + 9, 22, 1, rgb(0x26375e)) }
-            "shop" -> { b.r(hx + 28, hy + 4, 38, 9, rgb(0x2a4a2a)); b.r(hx + 30, hy + 7, 34, 1, rgb(0xf2ece0)); b.r(hx + 30, hy + 9, 26, 1, rgb(0xf2ece0)) }
-            "club" -> { b.r(hx + 30, hy + 4, 34, 9, rgb(0x842a24)); b.r(hx + 32, hy + 7, 30, 1, rgb(0xf8d070)); b.r(hx + 32, hy + 9, 18, 1, rgb(0xf8d070)) }
+            "halt" -> { b.r(cx - 17, f.top + 4, 34, 9, rgb(0xfbf3dc)); b.r(cx - 15, f.top + 7, 30, 1, rgb(0x26375e)); b.r(cx - 15, f.top + 9, 22, 1, rgb(0x26375e)) }
+            "shop" -> { b.r(f.x + 8, f.top + 6, 40, 10, rgb(0x2a4a2a)); b.r(f.x + 10, f.top + 9, 36, 1, rgb(0xf2ece0)); b.r(f.x + 10, f.top + 12, 26, 1, rgb(0xf2ece0)) }
+            "club" -> { b.r(cx - 17, f.top + 4, 34, 9, rgb(0x842a24)); b.r(cx - 15, f.top + 7, 30, 1, rgb(0xf8d070)); b.r(cx - 15, f.top + 9, 18, 1, rgb(0xf8d070)) }
         }
     }
 
-    private fun window(b: Buf, x: Int, y: Int, fr: Int, acc: Int) {
-        if (lit) b.glow(x + 10, y + 14, 34, rgb(0xffc860), .32f, 5)
-        b.r(x - 3, y - 8, 26, 8, fr)
-        for (i in 0 until 26 step 3) { b.p(x - 3 + i, y - 9, fr); b.p(x - 2 + i, y - 10, fr) }
-        b.r(x + 6, y - 12, 8, 4, fr); b.r(x, y - 6, 20, 2, acc); b.p(x + 10, y - 11, acc)
-        b.r(x - 3, y, 3, 28, fr); b.r(x + 20, y, 3, 28, fr)
-        for (j in 2 until 28 step 4) { b.p(x - 2, y + j, acc); b.p(x + 21, y + j, acc) }
-        b.r(x - 5, y + 28, 30, 3, fr); b.r(x - 3, y + 31, 26, 2, fr.dim(.18f))
-        if (winter) b.r(x - 5, y + 27, 30, 1, R.snow[5])
-        if (lit) b.vgrad(x, y, 20, 28, intArrayOf(rgb(0xfff0b0), rgb(0xf8d070), rgb(0xeab040), rgb(0xd08c24)))
-        else {
-            b.vgrad(x, y, 20, 28, Air.skyRamp(e).let { it.copyOfRange(0, minOf(4, it.size)) })
-            for (j in 0 until 28) b.mul(x + 9 - (j % 3), y + j, rgb(0x404860), .3f)
-        }
-        for (j in 0 until 20) {
-            val w1 = (6 - j / 4).coerceAtLeast(0)
-            for (i in 0 until w1) {
-                val c = if ((i + j) % 2 == 0) rgb(0xfbf6ea) else rgb(0xe8dcc4)
-                b.p(x + i, y + j, c); b.p(x + 19 - i, y + j, c)
+    /** Log rows with the corner ends sticking out, or boards. */
+    private fun walls(b: Buf) {
+        val f = face
+        val mid = f.x + f.w / 2
+        for (y in f.top until 150) for (x in f.x until f.x + f.w) {
+            if (f.wall == Wall.PLANKS) {
+                val paint = if (f.paint2 != null && x >= mid) f.paint2 else f.paint
+                val seam = if (f.side) (y - f.top) % 5 == 0 else (x - f.x) % 6 == 0
+                b.p(x, y, if (seam) paint.dim(.45f) else paint.dim(((x - f.x) / f.w.toFloat()) * .2f + (fbm(x * .2, y * .3) * .1).toFloat() + if (f.side && (y - f.top) % 5 == 1) -.06f else 0f))
+            } else {
+                val k = (y - f.top) % 5
+                val l = when (k) { 0 -> .78; 1 -> .66; 2 -> .55; 3 -> .44; else -> .22 }
+                b.p(x, y, rp(logs(), l + (fbm(x * .15, y * .6) - .5) * .18 - (x - f.x) / f.w.toDouble() * .12 + logTone(), x, y))
+                if (f.wall == Wall.OLD && hash(x, y) > .985) b.p(x, y, rgb(0x2a2420))
             }
         }
-        b.r(x + 9, y, 2, 28, rgb(0x55331e)); b.r(x, y + 12, 20, 2, rgb(0x55331e))
+        if (f.paint2 != null) b.r(mid, f.top, 1, 150 - f.top, rgb(0xf2ece0))
+        if (f.wall != Wall.PLANKS) {
+            var y = f.top
+            while (y < 150) {
+                for (x in listOf(f.x - 3, f.x + f.w - 1)) {
+                    b.vol(x, y, 4, 5, ell(2.0, 2.5, 2.0, 2.5), sph(1.5, 2.0, 2.0, 2.5, .3), logs(), rgb(0x1e100a))
+                    b.p(x + 2, y + 2, logs()[2])
+                }
+                y += 5
+            }
+        } else {
+            b.r(f.x - 2, f.top, 3, 150 - f.top, f.paint.lit(.3f)); b.r(f.x + f.w - 1, f.top, 3, 150 - f.top, (f.paint2 ?: f.paint).lit(.3f))
+        }
+    }
+
+    private fun logs() = if (face.wall == Wall.OLD) R.woodG else R.wood
+    private fun logTone() = when (face.wall) { Wall.NEW -> .12; Wall.DARK -> -.16; Wall.OLD -> .05; else -> 0.0 }
+
+    /** A pixel of the roof: painted tin with standing seams, shingles, slate, or thatch. */
+    private fun roofPx(b: Buf, x: Int, y: Int, l0: Double, row: Int) {
+        val roof = roof()
+        var l = l0
+        when (house.roof) {
+            'T' -> l += (hash(x, y / 3) - .5) * .3 + if (y % 6 == 0) -.12 else 0.0
+            'S' -> l += kotlin.math.sin(x * 1.1) * .1 + if (row % 6 == 0) -.2 else 0.0
+            'W' -> l += (if (row % 4 == 0) -.18 else 0.0) + (if ((x + (row / 4) * 3) % 6 == 0) -.12 else 0.0) + (hash(x / 6, row / 4) - .5) * .1
+            else -> l += (if (x % 6 == 0) .16 else if (x % 6 == 1) -.1 else 0.0)
+        }
+        b.p(x, y, if (winter && hash(x, y) > .1 && row % 4 != 0) rp(R.snow, l + .2, x, y) else rp(roof, l, x, y))
+    }
+
+    /** Where the gable's apex is (front) or the ridge (side). */
+    private val apex: Int get() = face.let { f -> if (f.side) f.top + 2 - ((22 * f.pitch).toInt() + 6) else f.top + 2 - ((f.w / 2 + 7) / f.pitch).toInt() }
+    private val chimneyX: Int get() = face.x + face.w / 2 + if (face.side) face.w / 4 else face.w / 5
+    private val chimneyY: Int get() = if (face.side) apex - 6 else apex + ((chimneyX - face.x - face.w / 2) / face.pitch).toInt() - 2
+
+    /** The gable end to the street: the roof's two edges, the boarded gable and what looks out of it. */
+    private fun frontRoof(b: Buf) {
+        val f = face
+        val ax = f.x + f.w / 2
+        val eave = f.top + 2
+        val e = f.w / 2 + 9
+        val ay = apex
+        for (y in ay until eave) {
+            val half = ((y - ay) * f.pitch).roundToInt() + 2
+            for (x in ax - half until ax + half) roofPx(b, x, y, if (x < ax) .62 else .36, y - ay)
+            b.p(ax - half - 1, y, R.INK); b.p(ax + half, y, R.INK)
+        }
+        if (winter) for (x in ax - e until ax + e) if (hash(x, 1) > .3) b.p(x, eave, R.snow[5])
+        val (fr, acc) = frame()
+        val band = if (f.hip) 18 else 10
+        val gt = ay + band
+        for (y in gt until f.top) {
+            val half = ((y - gt) * f.pitch).roundToInt()
+            for (x in ax - half until ax + half) b.p(x, y, gableBoard(x, y, ax))
+        }
+        if (f.hip) for (y in ay + 6 until gt) { val half = ((y - ay) * f.pitch).roundToInt() + 2; b.p(ax - half + 3, y, R.INK.lit(.1f)); b.p(ax + half - 4, y, R.INK.lit(.1f)) }
+        if (f.carving > 0) for (y in ay + 4 until eave) {
+            val half = ((y - ay) * f.pitch).roundToInt() + 2
+            b.p(ax - half + 1, y, fr); b.p(ax + half - 2, y, fr.dim(.15f))
+            if (y % 3 == 0) { b.p(ax - half + 2, y + 1, fr); b.p(ax + half - 3, y + 1, fr.dim(.15f)) }
+        }
+        if (f.carving > 0 && f.wall != Wall.PLANKS) b.spr(listOf("..kk....", ".kWWk...", "kWkWWk..", "...kWWk.", "....kWWk", "....kWWk"), ax - 4, ay - 6, mapOf('k' to R.INK, 'W' to fr))
+        if (f.carving > 1) {
+            valance(b, ax - e + 4, ax + e - 4, eave, fr)
+            for (x in listOf(ax - 2, ax - e + 6, ax + e - 10)) towel(b, x, if (x == ax - 2) gt - 2 else eave - 2, fr, acc)
+        }
+        val gy = (gt + f.top) / 2 + 2
+        gableThing(b, ax, gy, fr, acc)
+        if (f.flag) { b.line(ax, ay - 22, ax, ay, rgb(0x2a2a30)); b.vol(ax + 1, ay - 22, 12, 7, { u, v -> u < 12 - (if (v == 3) 2 else 0) }, { u, v -> .6 - (if ((u + v) % 4 == 0) .15 else 0.0) }, R.red) }
+        if (f.chimney) chimney(b, chimneyX, chimneyY)
+    }
+
+    /** The long side to the street: the whole roof slope, and maybe a little lookout gable on it. */
+    private fun sideRoof(b: Buf) {
+        val f = face
+        val ax = f.x + f.w / 2
+        val eave = f.top + 2
+        val rh = (22 * f.pitch).toInt() + 6
+        val ridge = apex
+        val e = f.w / 2 + 8
+        for (y in ridge until eave) {
+            val t = (eave - y).toDouble() / rh
+            val half = (e - t * (if (f.hip) 26 else 5)).roundToInt()
+            for (x in ax - half until ax + half) roofPx(b, x, y, if (!f.hip) .62 - t * .1 else if (x < ax - e + 26) .5 else if (x >= ax + e - 26) .3 else .62 - t * .1, y - ridge)
+            b.p(ax - half - 1, y, R.INK); b.p(ax + half, y, R.INK)
+        }
+        b.r(ax - e + (if (f.hip) 26 else 5), ridge - 1, 2 * e - 2 * (if (f.hip) 26 else 5), 1, R.INK)
+        if (winter) for (x in ax - e until ax + e) if (hash(x, 1) > .3) b.p(x, eave, R.snow[5])
+        val (fr, acc) = frame()
+        if (f.carving > 0) valance(b, ax - e + 2, ax + e - 2, eave, fr)
+        if (f.gable == Gable.LOOKOUT) {
+            // a lookout gable in the middle of the roof
+            val dw = 22
+            val dt = eave - 18
+            for (y in dt until eave) for (x in ax - dw / 2 until ax + dw / 2) b.p(x, y, gableBoard(x, y, ax))
+            val ay = dt - 12
+            for (y in ay until dt + 1) {
+                val half = ((y - ay) * 1.1).roundToInt() + 1
+                for (x in ax - half until ax + half) roofPx(b, x, y, if (x < ax) .62 else .36, y - ay)
+                b.p(ax - half - 1, y, R.INK); b.p(ax + half, y, R.INK)
+            }
+            for (y in ay + 5 until dt) { val half = ((y - ay - 5) * 1.1).roundToInt(); for (x in ax - half until ax + half) b.p(x, y, gableBoard(x, y, ax)) }
+            if (f.carving > 0) for (y in ay + 3 until dt + 1) { val half = ((y - ay) * 1.1).roundToInt() + 1; b.p(ax - half + 1, y, fr); b.p(ax + half - 2, y, fr.dim(.15f)) }
+            lookout(b, ax, dt + 2, fr, acc)
+        }
+        if (f.chimney) chimney(b, chimneyX, chimneyY)
+    }
+
+    private fun gableBoard(x: Int, y: Int, ax: Int): Int {
+        val f = face
+        return if (f.wall == Wall.PLANKS) (if (f.paint2 != null && x >= ax) f.paint2 else f.paint).dim(.15f + if ((x - ax + 60) % 5 == 0) .3f else 0f)
+        else rp(logs(), .5 + logTone() + (if (x < ax) .12 else 0.0) + (if ((x - ax + 60) % 4 == 0) -.15 else 0.0), x, y)
+    }
+
+    private fun gableThing(b: Buf, ax: Int, gy: Int, fr: Int, acc: Int) {
+        when (face.gable) {
+            Gable.ROUND -> {
+                b.ball(ax, gy, 4, R.wood, rgb(0x1e100a))
+                b.disc(ax, gy, 3, if (lit) rgb(0xf6d77a) else rgb(0x8aa0b0))
+                b.r(ax, gy - 3, 1, 7, rgb(0x3a2214)); b.r(ax - 3, gy, 7, 1, rgb(0x3a2214))
+            }
+            Gable.LOOKOUT -> lookout(b, ax, gy - 6, fr, acc)
+            Gable.STUDIO -> {
+                // a painter's north light: a tall glazed panel up into the gable
+                val y0 = gy - 12
+                b.r(ax - 13, y0 - 1, 26, 28, fr)
+                if (lit) b.vgrad(ax - 12, y0, 24, 26, intArrayOf(rgb(0xfff0b0), rgb(0xf8d070), rgb(0xeab040)))
+                else b.vgrad(ax - 12, y0, 24, 26, Air.skyRamp(e).let { it.copyOfRange(0, minOf(4, it.size)) })
+                for (i in 0..3) b.r(ax - 12 + i * 6, y0, 1, 26, fr)
+                for (j in 0..3) b.r(ax - 12, y0 + j * 7, 24, 1, fr)
+                for (j in 0 until 26) b.mul(ax - 4 - j / 3, y0 + j, rgb(0x404860), .25f)
+            }
+            Gable.ANTLERS -> {
+                b.r(ax - 4, gy - 1, 9, 5, rgb(0x55331e)); b.r(ax - 3, gy, 7, 3, rgb(0x7c4e30))
+                val bone = rgb(0xe8dcc0)
+                for (s in listOf(-1, 1)) {
+                    b.line(ax + s * 2, gy, ax + s * 9, gy - 8, bone); b.line(ax + s * 9, gy - 8, ax + s * 10, gy - 14, bone)
+                    b.line(ax + s * 5, gy - 4, ax + s * 4, gy - 9, bone); b.line(ax + s * 8, gy - 7, ax + s * 13, gy - 9, bone)
+                }
+            }
+            Gable.LOFT -> {
+                b.r(ax - 8, gy - 8, 16, 16, rgb(0x1e100a))
+                for (x in ax - 7 until ax + 7) for (y in gy - 7 until gy + 8) b.p(x, y, rp(R.woodG, .45 + (if ((x - ax + 7) % 4 == 0) -.15 else 0.0) + (if (x < ax) .08 else 0.0), x, y))
+                b.r(ax, gy - 7, 1, 15, rgb(0x1e100a)); b.line(ax - 7, gy - 7, ax - 1, gy + 7, rgb(0x3a2a20)); b.line(ax + 6, gy - 7, ax + 1, gy + 7, rgb(0x3a2a20))
+                b.r(ax - 2, gy - 14, 4, 4, rgb(0x3a2214)); b.line(ax + 1, gy - 11, ax + 1, gy - 2, rgb(0x8e857a))
+            }
+            Gable.VENT -> { b.r(ax - 4, gy - 3, 8, 7, rgb(0x1e100a)); for (j in 0 until 3) b.r(ax - 3, gy - 2 + j * 2, 6, 1, R.woodG[3]) }
+            Gable.NONE -> Unit
+        }
+    }
+
+    /** A little window in the attic with a rail under it. */
+    private fun lookout(b: Buf, ax: Int, y: Int, fr: Int, acc: Int) {
+        b.r(ax - 7, y - 1, 14, 15, fr)
+        if (lit) b.vgrad(ax - 5, y + 1, 10, 11, intArrayOf(rgb(0xfff0b0), rgb(0xf8d070), rgb(0xeab040)))
+        else b.vgrad(ax - 5, y + 1, 10, 11, Air.skyRamp(e).let { it.copyOfRange(0, minOf(4, it.size)) })
+        b.r(ax, y + 1, 1, 11, fr); b.r(ax - 5, y + 5, 10, 1, fr)
+        for (k in 0 until 3) b.p(ax - 2 + k * 2, y - 2, acc)
+        b.r(ax - 9, y + 13, 18, 2, rgb(0x55331e))
+        for (x in ax - 9 until ax + 9 step 3) b.r(x, y + 15, 1, 3, rgb(0x55331e))
+        b.r(ax - 9, y + 18, 18, 1, rgb(0x3a2214))
+        if (lit) b.glow(ax, y + 6, 14, rgb(0xffc860), .25f, 4)
+    }
+
+    /** Carved valance under the eaves: a row of little hanging scallops. */
+    private fun valance(b: Buf, x0: Int, x1: Int, y: Int, fr: Int) {
+        for (x in x0 until x1) {
+            b.p(x, y, fr); b.p(x, y + 1, fr.dim(.25f))
+            val k = (x - x0) % 6
+            if (k in 1..4) b.p(x, y + 2, fr.dim(.1f))
+            if (k in 2..3) b.p(x, y + 3, fr.dim(.15f))
+            if (k == 0) b.p(x, y + 2, R.INK)
+        }
+    }
+
+    /** A carved board hanging from the roof, the "towel" of northern houses. */
+    private fun towel(b: Buf, x: Int, y: Int, fr: Int, acc: Int) {
+        for (j in 0 until 16) for (i in 0 until 5) {
+            val cut = (j % 4 == 3 && (i == 0 || i == 4)) || (j > 12 && (i == 0 || i == 4)) || (j == 15 && i != 2)
+            if (!cut) b.p(x + i, y + j, if (i == 2 && j % 4 == 1) acc else if (i == 4) fr.dim(.25f) else fr)
+        }
+    }
+
+    private fun chimney(b: Buf, x: Int, y: Int) {
+        b.vol(x - 4, y, 8, 18, { _, _ -> true }, { u, v -> .6 - u * .05 + if (v % 3 == 0) -.15 else 0.0 }, R.brick, rgb(0x1a0806))
+        b.r(x - 5, y - 1, 10, 2, rgb(0x2a0e0a))
+        if (winter) b.r(x - 5, y - 2, 10, 1, R.snow[5])
+    }
+
+    /** A glazed veranda on the left: little panes, a sloping roof. */
+    private fun veranda(b: Buf) {
+        val f = face
+        val x0 = f.x - 28
+        val top = f.top + 16
+        val (fr, _) = frame()
+        for (y in top until 150) for (x in x0 until f.x) b.p(x, y, rp(R.wood, .55 + (if ((x - x0) % 5 == 0) -.15 else 0.0), x, y))
+        for (r in 0 until 3) for (c in 0 until 4) {
+            val x = x0 + 3 + c * 6
+            val y = top + 6 + r * 7
+            if (lit) b.vgrad(x, y, 5, 6, intArrayOf(rgb(0xfff0b0), rgb(0xf8d070), rgb(0xeab040)))
+            else b.vgrad(x, y, 5, 6, Air.skyRamp(e).let { it.copyOfRange(0, minOf(4, it.size)) })
+            b.mul(x + 1, y, rgb(0x404860), .2f)
+        }
+        for (c in 0..4) b.r(x0 + 2 + c * 6, top + 5, 1, 22, fr)
+        for (r in 0..3) b.r(x0 + 2, top + 5 + r * 7, 25, 1, fr)
+        for (y in top - 8 until top + 2) {
+            val k = (y - (top - 8)) * 3
+            for (x in maxOf(x0 - 3, f.x - k) until f.x + 1) roofPx(b, x, y, .55, y - top)
+        }
+        b.line(x0 - 3, top + 1, f.x, top - 8, R.INK)
+        if (lit) b.glow(x0 + 14, top + 16, 26, rgb(0xffc860), .25f, 4)
+    }
+
+    /** A lean-to shed of grey boards on the right. */
+    private fun shed(b: Buf) {
+        val f = face
+        val x0 = f.x + f.w - 2
+        val top = f.top + 22
+        for (y in top until 150) for (x in x0 until minOf(170, x0 + 26)) b.p(x, y, rp(R.woodG, .5 + (if ((x - x0) % 5 == 0) -.2 else 0.0) + (fbm(x * .3, y * .2) - .5) * .2, x, y))
+        for (y in top - 6 until top + 1) for (x in x0 until minOf(170, x0 + 28)) if (y - (top - 6) >= (x - x0) / 5) roofPx(b, x, y, .45, y)
+        b.r(x0 + 8, top + 10, 10, 18, rgb(0x2a2420)); b.r(x0 + 9, top + 11, 8, 17, rgb(0x3e3530)); b.p(x0 + 15, top + 19, R.brass[3])
+    }
+
+    /** The mill's water wheel, turning in its race on the right. */
+    private fun wheel(b: Buf) {
+        val cx = face.x + face.w + 14
+        val cy = 116
+        val r = 24
+        for (a in 0 until 360 step 2) {
+            val an = Math.toRadians(a.toDouble())
+            for (k in 0..2) b.p(cx + (kotlin.math.cos(an) * (r - k)).roundToInt(), cy + (kotlin.math.sin(an) * (r - k)).roundToInt(), R.wood[if (k == 1) 4 else 2])
+        }
+        for (k in 0 until 8) {
+            val an = k * Math.PI / 4
+            b.line(cx, cy, cx + (kotlin.math.cos(an) * r).roundToInt(), cy + (kotlin.math.sin(an) * r).roundToInt(), R.wood[3])
+        }
+        for (k in 0 until 16) {
+            val an = k * Math.PI / 8
+            val x = cx + (kotlin.math.cos(an) * (r + 2)).roundToInt()
+            val y = cy + (kotlin.math.sin(an) * (r + 2)).roundToInt()
+            b.r(x - 1, y - 1, 3, 3, R.wood[1])
+        }
+        b.ball(cx, cy, 3, R.iron, R.INK)
+        // the race bringing water over the top
+        for (y in 82 until 88) for (x in cx - 4 until 170) b.p(x, y, if (y < 84) R.wood[2] else rp(R.water, .7, x, y))
+        if (!winter) for (j in 0 until 14) b.p(cx - 3 + (j % 3), 88 + j, R.water[5 - j % 3])
+    }
+
+    private fun porch(b: Buf, fr: Int) {
+        val f = face
+        val x0 = f.x + f.w - 4
+        val top = f.top + 12
+        // the door under a little gabled canopy
+        b.r(x0 - 14, top + 10, 14, 140 - top, rgb(0x3a2214))
+        for (x in x0 - 13 until x0 - 1) for (y in top + 11 until 150) b.p(x, y, rp(R.wood, .45 + (if ((x - x0) % 4 == 0) -.15 else 0.0), x, y))
+        b.p(x0 - 4, top + 34, R.brass[4])
+        for (s in listOf(x0 - 17, x0 + 3)) b.vol(s, top + 6, 3, 150 - top - 6, { _, _ -> true }, { u, _ -> .6 - u * .12 }, R.wood, R.INK)
+        for (y in top - 6 until top + 6) {
+            val half = (y - (top - 6)) + 2
+            for (x in x0 - 7 - half until x0 - 7 + half) roofPx(b, x, y, if (x < x0 - 7) .62 else .36, y - top)
+            b.p(x0 - 8 - half, y, R.INK); b.p(x0 - 7 + half, y, R.INK)
+        }
+        for (x in x0 - 18 until x0 + 5) b.p(x, top + 6, fr)
+        for (k in 0 until 3) b.r(x0 - 18 + k, 140 + k * 3, 24 - 2 * k, 3, rp(R.wood, .6 - k * .1, x0, 140))
+    }
+
+    /** The shop's display window with its goods, and an awning. */
+    private fun shopfront(b: Buf) {
+        val f = face
+        val x0 = f.x + f.w - 50
+        val y0 = f.top + 20
+        b.r(x0 - 2, y0 - 2, 46, 34, rgb(0xe8e2d4))
+        if (lit) b.vgrad(x0, y0, 42, 30, intArrayOf(rgb(0xfff0b0), rgb(0xf8d070), rgb(0xeab040)))
+        else b.vgrad(x0, y0, 42, 30, Air.skyRamp(e).let { it.copyOfRange(0, minOf(4, it.size)) })
+        b.r(x0, y0 + 18, 42, 2, rgb(0x8e5a34))
+        for (k in 0 until 6) { Props.jar(b, x0 + 2 + k * 7, y0 + 18, listOf(R.jam, R.honey, R.apple)[k % 3], w = 6, h = 8) }
+        for (k in 0 until 5) b.ball(x0 + 6 + k * 8, y0 + 27, 2, if (k % 2 == 0) R.apple else R.honey)
+        b.r(x0 + 20, y0, 2, 30, rgb(0xe8e2d4))
+        for (i in 0 until 46) for (j in 0 until 6) b.p(x0 - 2 + i, y0 - 9 + j, if ((i / 5) % 2 == 0) rgb(0xc04a3a) else rgb(0xf2ece0))
+        for (i in 0 until 46 step 5) b.r(x0 - 2 + i, y0 - 3, 3, 1, rgb(0xc04a3a))
+        if (lit) b.glow(x0 + 21, y0 + 14, 34, rgb(0xffc860), .3f, 5)
+    }
+
+    /** The club's columned porch with a pediment, in the middle of the front. */
+    private fun portico(b: Buf) {
+        val f = face
+        val cx = f.x + f.w / 2
+        val y0 = f.top + 16
+        for (y in y0 - 10 until y0 + 1) { val half = (y - (y0 - 10)) * 2 + 2; for (x in cx - half until cx + half) b.p(x, y, rp(R.cream, .7 - (if (x > cx) .15 else 0.0), x, y)); b.p(cx - half - 1, y, R.INK); b.p(cx + half, y, R.INK) }
+        b.r(cx - 23, y0, 46, 3, R.cream[2])
+        for (k in 0 until 4) b.vol(cx - 21 + k * 12, y0 + 3, 6, 150 - y0 - 3, { _, _ -> true }, { u, _ -> .9 - u * .12 }, R.cream, rgb(0x6a5a42))
+        b.r(cx - 6, y0 + 14, 12, 150 - y0 - 14, rgb(0x55331e)); b.r(cx, y0 + 14, 1, 150 - y0 - 14, rgb(0x3a2214))
+        b.ball(cx - 2, y0 + 30, 1, R.brass); b.ball(cx + 2, y0 + 30, 1, R.brass)
+    }
+
+    private fun window(b: Buf, x: Int, y: Int, gw: Int, fr: Int, acc: Int) {
+        val f = face
+        val gh = if (f.trim == Trim.TALL) 32 else 28
+        val y = if (f.trim == Trim.TALL) y - 4 else y
+        if (lit) b.glow(x + gw / 2, y + 14, 34, rgb(0xffc860), .32f, 5)
+        f.shutters?.let { sh ->
+            for (s in listOf(x - 4 - gw / 2, x + gw + 4)) {
+                for (yy in y - 1 until y + gh + 1) for (xx in s until s + gw / 2) b.p(xx, yy, sh.dim(if ((xx - s) % 3 == 0) .25f else ((xx - s) / gw.toFloat()) * .2f))
+                b.r(s, y - 1, gw / 2, 1, sh.lit(.25f)); b.r(s, y + gh / 2, gw / 2, 1, sh.dim(.35f))
+                b.disc(s + gw / 4, y + gh / 4, 1, fr); b.disc(s + gw / 4, y + gh * 3 / 4, 1, fr)
+            }
+        }
+        when (f.trim) {
+            Trim.CARVED -> {
+                b.r(x - 3, y - 8, gw + 6, 8, fr)
+                for (i in 0 until gw + 6 step 3) { b.p(x - 3 + i, y - 9, fr); b.p(x - 2 + i, y - 10, fr) }
+                b.r(x + gw / 2 - 4, y - 12, 8, 4, fr); b.r(x, y - 6, gw, 2, acc); b.p(x + gw / 2, y - 11, acc)
+                b.r(x - 3, y, 3, gh, fr); b.r(x + gw, y, 3, gh, fr)
+                for (j in 2 until gh step 4) { b.p(x - 2, y + j, acc); b.p(x + gw + 1, y + j, acc) }
+            }
+            Trim.ARCHED -> {
+                for (i in -3 until gw + 3) { val d = (i - gw / 2.0) / (gw / 2.0 + 3); val h = (kotlin.math.sqrt(maxOf(0.0, 1 - d * d)) * 7).roundToInt(); for (j in 0..h) b.p(x + i, y - j, fr) }
+                for (i in 0 until gw) { val d = (i + .5 - gw / 2.0) / (gw / 2.0); val h = (kotlin.math.sqrt(maxOf(0.0, 1 - d * d)) * 4).roundToInt(); for (j in 1..h) b.p(x + i, y - j, if (lit) rgb(0xf8d070) else Air.skyRamp(e).first()) }
+                b.r(x - 3, y, 3, gh, fr); b.r(x + gw, y, 3, gh, fr)
+            }
+            Trim.PLAIN, Trim.TALL -> {
+                b.r(x - 2, y - 2, gw + 4, 2, fr); b.r(x - 2, y, 2, gh, fr); b.r(x + gw, y, 2, gh, fr)
+                if (f.trim == Trim.TALL) { b.r(x - 4, y - 5, gw + 8, 3, fr.dim(.1f)); b.r(x - 4, y - 5, gw + 8, 1, fr.lit(.2f)) }
+            }
+        }
+        b.r(x - 5, y + gh, gw + 10, 3, fr); b.r(x - 3, y + gh + 3, gw + 6, 2, fr.dim(.18f))
+        if (winter) b.r(x - 5, y + gh - 1, gw + 10, 1, R.snow[5])
+        if (lit) b.vgrad(x, y, gw, gh, intArrayOf(rgb(0xfff0b0), rgb(0xf8d070), rgb(0xeab040), rgb(0xd08c24)))
+        else {
+            b.vgrad(x, y, gw, gh, Air.skyRamp(e).let { it.copyOfRange(0, minOf(4, it.size)) })
+            for (j in 0 until gh) b.mul(x + gw / 2 - 1 - (j % 3), y + j, rgb(0x404860), .3f)
+        }
+        // curtains, unless it's a town-style tall window
+        if (f.trim != Trim.TALL) for (j in 0 until 20) {
+            val w1 = (gw * 3 / 10 - j / 4).coerceAtLeast(0)
+            for (i in 0 until w1) {
+                val c = if ((i + j) % 2 == 0) rgb(0xfbf6ea) else rgb(0xe8dcc4)
+                b.p(x + i, y + j, c); b.p(x + gw - 1 - i, y + j, c)
+            }
+        }
+        b.r(x + gw / 2 - 1, y, 2, gh, rgb(0x55331e)); b.r(x, y + gh * 3 / 7, gw, 2, rgb(0x55331e))
+        if (f.trim == Trim.TALL) b.r(x, y + gh * 3 / 4, gw, 1, rgb(0x55331e))
         // pot plants on the sill inside
-        b.vol(x + 2, y + 22, 6, 6, { u, v -> v > 2 || abs(u - 3) < 2 }, { _, _ -> .5 }, R.brick)
-        for (k in 0 until 8) b.p(x + 2 + (hash(k, x) * 6).toInt(), y + 17 + (hash(x, k) * 5).toInt(), if (k % 3 == 0) rgb(0xc01e2a) else rgb(0x2a4a2a))
-        b.vol(x + 13, y + 23, 5, 5, { _, _ -> true }, { _, _ -> .5 }, R.brick)
-        for (k in 0 until 6) b.p(x + 13 + (hash(k, y) * 5).toInt(), y + 19 + (hash(y, k) * 4).toInt(), if (k % 2 == 0) rgb(0x3a5a32) else rgb(0xe8d8f0))
-        if (e.has(Look.NEWYEAR)) for (k in 0 until 5) b.p(x + 2 + k * 4, y + 2 + (k % 2), intArrayOf(rgb(0xff5050), rgb(0xffe060), rgb(0x60a0ff))[k % 3])
+        b.vol(x + 2, y + gh - 6, 6, 6, { u, v -> v > 2 || abs(u - 3) < 2 }, { _, _ -> .5 }, R.brick)
+        for (k in 0 until 8) b.p(x + 2 + (hash(k, x) * 6).toInt(), y + gh - 11 + (hash(x, k) * 5).toInt(), if (k % 3 == 0) rgb(0xc01e2a) else rgb(0x2a4a2a))
+        if (gw >= 18) {
+            b.vol(x + gw - 7, y + gh - 5, 5, 5, { _, _ -> true }, { _, _ -> .5 }, R.brick)
+            for (k in 0 until 6) b.p(x + gw - 7 + (hash(k, y) * 5).toInt(), y + gh - 9 + (hash(y, k) * 4).toInt(), if (k % 2 == 0) rgb(0x3a5a32) else rgb(0xe8d8f0))
+        }
+        if (e.has(Look.NEWYEAR)) for (k in 0 until gw / 4) b.p(x + 2 + k * 4, y + 2 + (k % 2), intArrayOf(rgb(0xff5050), rgb(0xffe060), rgb(0x60a0ff))[k % 3])
     }
 
     private fun townHouse(b: Buf) {
@@ -244,14 +553,15 @@ class GateScene(private val e: Env, private val house: House, private val who: R
         val ps = house.props
         // the tree on the left: a rowan, or a birch
         if ("rowan" in ps || (!town && house.id.hashCode() % 2 == 0)) rowan(b) else if (!town) Props.birch(b, 18, 66, 70, e.leaves, alt = true)
-        if ("well" in ps) {
-            b.vol(4, 140, 18, 14, { _, _ -> true }, { u, v -> .6 - u * .02 - (if (v % 4 == 0) .2 else 0.0) }, R.woodG, R.INK)
-            b.line(12, 100, 12, 140, rgb(0x3a2214)); b.line(-4, 96, 40, 120, rgb(0x55331e)); b.line(40, 120, 40, 132, rgb(0x8e857a)); b.r(38, 132, 5, 5, rgb(0x706860))
-        }
+        if ("well" in ps) well(b)
         if ("hives" in ps) for (k in 0 until 3) {
+            // on little legs in the grass in front of the fence
             val x = 4 + k * 18
-            b.vol(x, 144, 14, 14, { _, _ -> true }, { u, v -> .7 - u * .03 - if (v % 4 == 0) .15 else 0.0 }, R.honey, rgb(0x3a1a04))
-            b.r(x - 2, 141, 18, 3, if (winter) R.snow[5] else rgb(0x8e3a24))
+            for (l in listOf(x + 2, x + 10)) b.r(l, 162, 2, 8, rgb(0x3a2214))
+            b.vol(x, 148, 14, 14, { _, _ -> true }, { u, v -> .7 - u * .03 - if (v % 4 == 0) .15 else 0.0 }, R.honey, rgb(0x3a1a04))
+            b.r(x - 2, 145, 18, 3, if (winter) R.snow[5] else rgb(0x8e3a24))
+            b.r(x + 5, 158, 4, 1, rgb(0x2a1206))
+            for (i in -8..8) b.mul(x + 7 + i, 170, rgb(0x303040), .3f)
         }
         if ("antenna" in ps) { b.line(140, 0, 140, 60, rgb(0x55504c)); for (k in 0 until 4) b.line(130 + k, 6 + k * 8, 150 - k, 6 + k * 8, rgb(0x55504c)) }
         if ("telescope" in ps) { b.line(14, 160, 20, 140, rgb(0x2a2a30)); b.line(26, 160, 20, 140, rgb(0x2a2a30)); b.vol(8, 128, 24, 6, { u, v -> abs(v - 3 + (u - 12) * .3) < 2.5 }, { u, _ -> .7 - u * .02 }, R.brass, R.INK) }
@@ -272,7 +582,25 @@ class GateScene(private val e: Env, private val house: House, private val who: R
         if ("garden" in ps && !winter) for (k in 0 until 6) { val x = 112 + k * 8; b.disc(x, 170, 3, rgb(0x5c7e50)); b.disc(x, 169, 2, rgb(0x8ab478)) }
         if ("tractor" in ps) { b.vol(120, 150, 34, 14, { _, _ -> true }, { u, _ -> .6 - u * .01 }, R.blue, R.INK); b.ball(126, 166, 5, R.iron, R.INK); b.ball(148, 164, 7, R.iron, R.INK); b.r(140, 138, 10, 12, rgb(0x2c3c64)); b.r(141, 139, 8, 6, rgb(0x8aa0b0)) }
         if ("columns" in ps || "town" in ps) Unit
-        if (e.has(Look.NEWYEAR) && !town) for (x in hx until hx + hw step 6) b.p(x, hy + 2 + (x / 6) % 2, intArrayOf(rgb(0xff5050), rgb(0xffe060), rgb(0x60a0ff))[(x / 6) % 3])
+        if (e.has(Look.NEWYEAR) && !town) for (x in face.x until face.x + face.w step 6) b.p(x, face.top + 2 + (x / 6) % 2, intArrayOf(rgb(0xff5050), rgb(0xffe060), rgb(0x60a0ff))[(x / 6) % 3])
+    }
+
+    /** A sweep well: a log frame standing in the grass, the post and the long beam with the bucket on a rope. */
+    private fun well(b: Buf) {
+        val ground = 174
+        for (i in -12..14) b.mul(12 + i, ground, rgb(0x303040), .35f)
+        // the post and the beam, behind the frame
+        b.vol(28, 104, 4, ground - 104, { _, _ -> true }, { u, _ -> .6 - u * .1 }, R.woodG, R.INK)
+        b.line(8, 96, 54, 116, rgb(0x55331e)); b.line(8, 97, 54, 117, rgb(0x3a2214))
+        b.vol(50, 113, 7, 6, { _, _ -> true }, { u, v -> .55 - u * .05 - v * .04 }, R.stone, R.INK)
+        b.line(9, 98, 9, 146, rgb(0x8e857a))
+        b.vol(6, 146, 7, 6, { u, v -> u >= v / 3 && u < 7 - v / 3 }, { u, _ -> .6 - u * .06 }, R.iron, R.INK)
+        // the log frame
+        val top = ground - 18
+        for (r in 0 until 6) for (x in 0 until 24) b.p(x, top + r * 3, R.INK)
+        for (r in 0 until 6) b.vol(0, top + r * 3, 24, 3, { _, _ -> true }, { u, v -> .7 - v * .18 - u * .012 }, R.wood)
+        for (r in 0 until 6) for (x in listOf(-2, 23)) b.vol(x, top + r * 3, 3, 3, ell(1.5, 1.5, 1.5, 1.5), sph(1.0, 1.0, 1.5, 1.5, .3), R.wood, rgb(0x1e100a))
+        b.r(1, top - 1, 22, 1, if (winter) R.snow[5] else R.wood[1])
     }
 
     private fun goat(b: Buf, x: Int, feet: Int) {
@@ -316,7 +644,7 @@ class GateScene(private val e: Env, private val house: House, private val who: R
     override fun anim(b: Buf, t: Int) {
         if (e.phase.dark && !e.sky.grey) Air.stars(b, 0, 0, 170, 60, t, 14) { x, y -> !(x in 22..38 && y in 16..32) }
         Air.clouds(b, 0, 0, 170, 70, t, e, if (e.sky.grey) 5 else 2)
-        if (!town && house.id != "meteo") Props.smoke(b, hx + hw / 2 + 24, 32, t, 9, 34, if (e.phase.dark) rgb(0x6a6a80) else rgb(0xb8a8b8), .5f, if (e.temp < -10) .05 else .5)
+        if (!town && face.chimney) Props.smoke(b, chimneyX, chimneyY - 2, t, 9, 34, if (e.phase.dark) rgb(0x6a6a80) else rgb(0xb8a8b8), .5f, if (e.temp < -10) .05 else .5)
         if ("cat" in house.props) {
             val y = Art.still || (t / 14) % 6 != 0
             b.spr(listOf(".k...k...", "kgk.kgk..", "kgggggk..", "kgygyggk.", "kgggpggk.", ".kgwwgk..", ".kggggk..", "kgggwggk.", "kgggwgggk", "kggggggk."),

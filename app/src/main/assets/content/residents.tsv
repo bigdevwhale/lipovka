@@ -1,31 +1,31 @@
 id	house	district	sprite	look	birthday	name_ru	name_en	about_ru	about_en
-anna	vetrovy	0	woman_young	brown,red,green	05-14	Анна Ветрова	Anna Vetrova	Работает на ферме, шьёт, ждёт моряка Степана.	Works at the dairy farm, sews, waits for Stepan the sailor.
-fedor	mill	0	man_old	grey,brown,blue	02-03	Фёдор Ильич	Fyodor Ilyich	Мельник. Держит старую водяную мельницу на ходу.	The miller. Keeps the old watermill turning.
-agafya	sorokina	0	woman_old	scarf_blue,brown,grey	11-26	Агафья Петровна	Agafya Petrovna	Вдова, вяжет для всей деревни.	A widow who knits for the whole village.
-teacher	lebedev	0	man_old	white,green,grey	03-30	Николай Семёнович	Nikolai Semyonovich	Сорок лет учил физике и астрономии.	Taught physics and astronomy for forty years.
-varya	kuznetsovy	0	girl	fair,yellow,blue	06-01	Варя	Varya	Первоклассница, пишет Деду Морозу.	A first grader who writes to Ded Moroz.
-olga	kuznetsovy	0	woman	fair,white,blue	08-21	Ольга Кузнецова	Olga Kuznetsova	Фельдшер. Мама Вари.	The village feldsher. Varya's mother.
-sergey	kuznetsovy	0	man	brown,blue,grey	01-17	Сергей Кузнецов	Sergey Kuznetsov	Тракторист, чинит всё на свете.	A tractor driver who can fix anything.
-mikhalych	apiary	0	man_old	grey,yellow,brown	08-14	Михалыч	Mikhalych	Пчеловод. Его мёд знают по всей стране.	The beekeeper. His honey is known across the country.
-zina	shop	0	woman	red,violet,brown	09-09	Зинаида Павловна	Zinaida Pavlovna	Держит магазин и знает все новости.	Runs the shop and knows all the news.
-kolya	ryabininy	0	teen	black,green,blue	04-12	Коля Рябинин	Kolya Ryabinin	Радиолюбитель. Ловит голоса со всего света.	A radio amateur who catches voices from all over the world.
-nina	ryabininy	0	woman_old	scarf_red,green,brown	12-08	Баба Нина	Granny Nina	Бабушка Коли, печёт пироги.	Kolya's grandmother, bakes pies.
-lidia	club	0	woman	black,blue,grey	01-25	Лидия Аркадьевна	Lidia Arkadyevna	Заведует клубом и библиотекой.	Runs the club and the library.
-marina	sokolovy	0	woman_young	red,yellow,blue	10-03	Марина Соколова	Marina Sokolova	Иллюстратор, переехала из Москвы.	An illustrator who moved from Moscow.
-dima	sokolovy	0	man_young	brown,grey,blue	07-19	Дима Соколов	Dima Sokolov	Программист, учится колоть дрова.	A programmer learning to chop wood.
-erofey	farmstead	1	man_old	white,brown,grey	07-07	Ерофей Кузьмич	Yerofei Kuzmich	Был радистом на полярных станциях.	Was a radio operator at polar stations.
-andrei	forester	1	man	brown,green,green	05-05	Андрей Громов	Andrei Gromov	Лесник.	The forester.
-tanya	forester	1	woman	fair,red,brown	02-28	Таня Громова	Tanya Gromova	Выхаживает лесных зверей.	Nurses wild animals back to health.
-grisha	workshop	1	man	fair,brown,blue	11-11	Гриша Резников	Grisha Reznikov	Резчик по дереву.	A woodcarver.
-vera	lastochkiny	1	woman_old	scarf_red,blue,grey	03-08	Вера Ласточкина	Vera Lastochkina	Козы и сыр. Спорит с сестрой.	Goats and cheese. Argues with her sister.
-nadya	lastochkiny	1	woman_old	scarf_green,red,grey	03-08	Надя Ласточкина	Nadya Lastochkina	Козы и сыр. Спорит с сестрой.	Goats and cheese. Argues with her sister.
-tamara	halt	2	woman	grey,blue,blue	10-30	Тамара Ивановна	Tamara Ivanovna	Телеграфистка разъезда.	The telegraph operator at the halt.
-lyosha	halt	2	man_young	fair,blue,grey	06-22	Лёша Мухин	Lyosha Mukhin	Учится на телеграфиста.	Learning to be a telegraph operator.
-viktor	stationhouse	2	man	grey,black,blue	12-22	Виктор Павлович	Viktor Pavlovich	Машинист «Кукушки».	Drives the local train, the Cuckoo.
-matvei	boatshed	3	man_old	white,blue,brown	09-01	Матвей Савельич	Matvei Savelyich	Рыбак и лодочный мастер.	A fisherman and boatbuilder.
-irina	painter	3	woman_young	red,cream,blue	04-20	Ирина Светлова	Irina Svetlova	Художница, приехала за светом.	A painter who came for the light.
-gleb	meteo	4	man	brown,green,grey	01-11	Глеб Андреевич	Gleb Andreyevich	Метеоролог на кордоне.	The meteorologist at the cordon.
-darya	belkiny	4	woman	brown,green,brown	07-30	Дарья Белкина	Darya Belkina	Мама пятерых детей.	Mother of five.
-timofei	belkiny	4	man	black,red,brown	10-14	Тимофей Белкин	Timofei Belkin	Плотник, отец пятерых детей.	A carpenter, father of five.
-pavel	newspaper	5	man	grey,brown,grey	02-17	Павел Сергеевич	Pavel Sergeyevich	Редактор «Сельской нови».	Editor of the Village News.
-sofia	museum	5	woman_old	grey,violet,grey	12-01	Софья Марковна	Sofia Markovna	Хранитель краеведческого музея.	Curator of the local history museum.
+anna	vetrovy	0	woman_young	brown,red,green,braid,apron	05-14	Анна Ветрова	Anna Vetrova	Работает на ферме, шьёт, ждёт моряка Степана.	Works at the dairy farm, sews, waits for Stepan the sailor.
+fedor	mill	0	man_old	grey,brown,blue,beard,kepka,apron	02-03	Фёдор Ильич	Fyodor Ilyich	Мельник. Держит старую водяную мельницу на ходу.	The miller. Keeps the old watermill turning.
+agafya	sorokina	0	woman_old	scarf_blue,brown,grey,shawl,glasses	11-26	Агафья Петровна	Agafya Petrovna	Вдова, вяжет для всей деревни.	A widow who knits for the whole village.
+teacher	lebedev	0	man_old	white,green,grey,bald,glasses,mustache,tie	03-30	Николай Семёнович	Nikolai Semyonovich	Сорок лет учил физике и астрономии.	Taught physics and astronomy for forty years.
+varya	kuznetsovy	0	girl	fair,yellow,blue,satchel	06-01	Варя	Varya	Первоклассница, пишет Деду Морозу.	A first grader who writes to Ded Moroz.
+olga	kuznetsovy	0	woman	fair,white,blue,bun	08-21	Ольга Кузнецова	Olga Kuznetsova	Фельдшер. Мама Вари.	The village feldsher. Varya's mother.
+sergey	kuznetsovy	0	man	brown,blue,grey,kepka,mustache,overalls	01-17	Сергей Кузнецов	Sergey Kuznetsov	Тракторист, чинит всё на свете.	A tractor driver who can fix anything.
+mikhalych	apiary	0	man_old	grey,yellow,brown,beard,straw	08-14	Михалыч	Mikhalych	Пчеловод. Его мёд знают по всей стране.	The beekeeper. His honey is known across the country.
+zina	shop	0	woman	red,violet,brown,curls,apron,earrings,beads	09-09	Зинаида Павловна	Zinaida Pavlovna	Держит магазин и знает все новости.	Runs the shop and knows all the news.
+kolya	ryabininy	0	teen	black,green,blue,headphones	04-12	Коля Рябинин	Kolya Ryabinin	Радиолюбитель. Ловит голоса со всего света.	A radio amateur who catches voices from all over the world.
+nina	ryabininy	0	woman_old	scarf_red,green,brown,apron,shawl	12-08	Баба Нина	Granny Nina	Бабушка Коли, печёт пироги.	Kolya's grandmother, bakes pies.
+lidia	club	0	woman	black,blue,grey,bun,glasses,beads	01-25	Лидия Аркадьевна	Lidia Arkadyevna	Заведует клубом и библиотекой.	Runs the club and the library.
+marina	sokolovy	0	woman_young	red,yellow,blue,bob,earrings	10-03	Марина Соколова	Marina Sokolova	Иллюстратор, переехала из Москвы.	An illustrator who moved from Moscow.
+dima	sokolovy	0	man_young	brown,grey,blue,glasses,stubble,sweater	07-19	Дима Соколов	Dima Sokolov	Программист, учится колоть дрова.	A programmer learning to chop wood.
+erofey	farmstead	1	man_old	white,brown,grey,beard,pipe,sweater	07-07	Ерофей Кузьмич	Yerofei Kuzmich	Был радистом на полярных станциях.	Was a radio operator at polar stations.
+andrei	forester	1	man	brown,green,green,stubble,vest	05-05	Андрей Громов	Andrei Gromov	Лесник.	The forester.
+tanya	forester	1	woman	fair,red,brown,ponytail,vest	02-28	Таня Громова	Tanya Gromova	Выхаживает лесных зверей.	Nurses wild animals back to health.
+grisha	workshop	1	man	fair,brown,blue,beard,apron	11-11	Гриша Резников	Grisha Reznikov	Резчик по дереву.	A woodcarver.
+vera	lastochkiny	1	woman_old	scarf_red,blue,grey,glasses,shawl	03-08	Вера Ласточкина	Vera Lastochkina	Козы и сыр. Спорит с сестрой.	Goats and cheese. Argues with her sister.
+nadya	lastochkiny	1	woman_old	scarf_green,red,grey,apron	03-08	Надя Ласточкина	Nadya Lastochkina	Козы и сыр. Спорит с сестрой.	Goats and cheese. Argues with her sister.
+tamara	halt	2	woman	grey,blue,blue,bun,glasses,uniform	10-30	Тамара Ивановна	Tamara Ivanovna	Телеграфистка разъезда.	The telegraph operator at the halt.
+lyosha	halt	2	man_young	fair,blue,grey,cap_rail,uniform	06-22	Лёша Мухин	Lyosha Mukhin	Учится на телеграфиста.	Learning to be a telegraph operator.
+viktor	stationhouse	2	man	grey,black,blue,cap_rail,mustache,uniform	12-22	Виктор Павлович	Viktor Pavlovich	Машинист «Кукушки».	Drives the local train, the Cuckoo.
+matvei	boatshed	3	man_old	white,blue,brown,beard,cap_sea,sweater	09-01	Матвей Савельич	Matvei Savelyich	Рыбак и лодочный мастер.	A fisherman and boatbuilder.
+irina	painter	3	woman_young	red,cream,blue,beret,long	04-20	Ирина Светлова	Irina Svetlova	Художница, приехала за светом.	A painter who came for the light.
+gleb	meteo	4	man	brown,green,grey,glasses,beard,sweater	01-11	Глеб Андреевич	Gleb Andreyevich	Метеоролог на кордоне.	The meteorologist at the cordon.
+darya	belkiny	4	woman	brown,green,brown,bun,apron	07-30	Дарья Белкина	Darya Belkina	Мама пятерых детей.	Mother of five.
+timofei	belkiny	4	man	black,red,brown,mustache,kepka,vest	10-14	Тимофей Белкин	Timofei Belkin	Плотник, отец пятерых детей.	A carpenter, father of five.
+pavel	newspaper	5	man	grey,brown,grey,glasses,tie	02-17	Павел Сергеевич	Pavel Sergeyevich	Редактор «Сельской нови».	Editor of the Village News.
+sofia	museum	5	woman_old	grey,violet,grey,bun,glasses,beads,shawl	12-01	Софья Марковна	Sofia Markovna	Хранитель краеведческого музея.	Curator of the local history museum.
