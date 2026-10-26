@@ -6,6 +6,24 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.3] - 2026-10-26
+
+### Added
+- Every house at the gate is its own: logs new, old or dark, or painted boards; the gable or the eaves to the street; lookouts, verandas, porches and sheds; tin, shingle, slate or thatch roofs; carved or plain window frames and shutters; the mill's water wheel, the club's columns, the shop's window.
+- Residents have faces and their own things: glasses, beards, braids, buns, caps, a beret, aprons, shawls, beads, headphones; in winter, hats, fur collars and felt boots.
+
+### Fixed
+- Steps keep counting while the screen is locked with the app open, with a quiet notification meanwhile.
+- The bedroom window is round, with no square corners past the frame.
+- The well and the hives stand on the ground instead of hanging in the air.
+
+<!-- tg
+У каждого дома теперь своё лицо: брёвна, крашеные доски, светёлки, веранды, ставни, колесо у мельницы.
+Жители стали подробнее: очки, бороды, косы, платки, кепки, зимой шапки и валенки.
+Шаги считаются, пока экран заблокирован с открытым приложением.
+Исправлены окно в спальне и висящий в воздухе колодец.
+-->
+
 ## [1.0.2] - 2026-10-25
 
 ### Added
