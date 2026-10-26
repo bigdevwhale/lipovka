@@ -2,6 +2,9 @@
 <resources>
     <string name="app_name">Почта в Липовке</string>
     <string name="channel_post">Почта</string>
+    <string name="channel_walk">На маршруте</string>
+    <string name="walk_title">Почтальон на маршруте</string>
+    <string name="walk_text">Шаги считаются, пока экран заблокирован.</string>
     <string name="n_morning_title">Утренняя почта</string>
     <string name="n_telegram">В сумке телеграмма. Адресат: %1$s.</string>
     <string name="n_desk">На столе письмо для вас.</string>

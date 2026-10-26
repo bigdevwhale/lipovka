@@ -2,6 +2,9 @@
 <resources>
     <string name="app_name">Lipovka Post</string>
     <string name="channel_post">The post</string>
+    <string name="channel_walk">On the round</string>
+    <string name="walk_title">The postman is on the round</string>
+    <string name="walk_text">Steps are counted while the screen is locked.</string>
     <string name="n_morning_title">The morning post</string>
     <string name="n_telegram">There\'s a telegram in the bag for %1$s.</string>
     <string name="n_desk">There\'s a letter for you on the desk.</string>

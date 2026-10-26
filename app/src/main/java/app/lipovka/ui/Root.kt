@@ -57,6 +57,7 @@ import app.lipovka.ui.theme.T
 import app.lipovka.ui.village.ResidentSheet
 import app.lipovka.ui.village.VillageScreen
 import app.lipovka.work.PostWidget
+import app.lipovka.work.WalkService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
@@ -99,13 +100,15 @@ fun LipovkaRoot(settings: Settings) {
     // While the app is open: read the counter as it ticks, sort the post, fetch the weather.
     LifecycleResumeEffect(Unit) {
         now = LocalDateTime.now()
+        WalkService.stop(ctx)
         val job = c.scope.launch {
             launch { runCatching { c.refreshWeather() } }
             // The counter's own first value comes as soon as it's subscribed, so no separate read to wait on.
             c.post.tick()
             if (c.sensor.allowed) c.sensor.live().conflate().collect { v -> c.post.reading(v); delay(1000) }
         }
-        onPauseOrDispose { job.cancel(); c.write { PostWidget.updateAll(app) } }
+        // Locked with the app open: a quiet foreground service keeps counting until it's open again.
+        onPauseOrDispose { job.cancel(); WalkService.startIfLocked(ctx); c.write { PostWidget.updateAll(app) } }
     }
     if (!settings.onboarded) {
         Onboarding()

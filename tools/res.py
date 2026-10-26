@@ -10,6 +10,9 @@ RES = ROOT / "app/src/main/res"
 S = [
     ("app_name", "Lipovka Post", "Почта в Липовке"),
     ("channel_post", "The post", "Почта"),
+    ("channel_walk", "On the round", "На маршруте"),
+    ("walk_title", "The postman is on the round", "Почтальон на маршруте"),
+    ("walk_text", "Steps are counted while the screen is locked.", "Шаги считаются, пока экран заблокирован."),
     ("n_morning_title", "The morning post", "Утренняя почта"),
     ("n_telegram", "There's a telegram in the bag for %1$s.", "В сумке телеграмма. Адресат: %1$s."),
     ("n_desk", "There's a letter for you on the desk.", "На столе письмо для вас."),
