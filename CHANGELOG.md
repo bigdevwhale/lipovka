@@ -6,10 +6,15 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
-## [Unreleased]
+## [1.0.4] - 2026-10-28
 
 ### Fixed
 - Steps keep counting while the app is minimized, not only while the screen is locked, with the same quiet notification meanwhile.
+
+<!-- tg
+Шаги теперь считаются и когда приложение свёрнуто, а не только при заблокированном экране.
+Пока оно в фоне, в шторке висит тихое уведомление «Почтальон на маршруте».
+-->
 
 ## [1.0.3] - 2026-10-26
 
