@@ -6,6 +6,11 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [Unreleased]
+
+### Fixed
+- Steps keep counting while the app is minimized, not only while the screen is locked, with the same quiet notification meanwhile.
+
 ## [1.0.3] - 2026-10-26
 
 ### Added

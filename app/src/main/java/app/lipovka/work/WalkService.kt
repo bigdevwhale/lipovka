@@ -21,9 +21,10 @@ import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 
 /**
- * Keeps counting while the screen is locked with the app open. Android hands step counts only to an
- * app the user can see or one running a foreground service, so the app becomes one for that time,
- * with a quiet notification, and stops as soon as it is open again.
+ * Keeps counting while the app is out of sight: locked screen, home button or another app. Android
+ * hands step counts only to an app the user can see or one running a foreground service, so the app
+ * becomes one for that time, with a quiet notification, and stops as soon as it is open again.
+ * Swiping the app away from recents stops it too; the steps are then caught up on the next open.
  */
 class WalkService : Service() {
     private var job: Job? = null
@@ -75,10 +76,9 @@ class WalkService : Service() {
         private const val CHANNEL = "walk"
         private const val ID = 10
 
-        /** Called as the app goes out of sight; only a locked screen counts, not leaving the app. */
-        fun startIfLocked(context: Context) {
-            val power = context.getSystemService(Context.POWER_SERVICE) as android.os.PowerManager
-            if (power.isInteractive || !context.container.sensor.allowed) return
+        /** Called as the app goes out of sight, while it still may start a foreground service. */
+        fun start(context: Context) {
+            if (!context.container.sensor.allowed) return
             runCatching { context.startForegroundService(Intent(context, WalkService::class.java)) }
                 .onFailure { Log.w(TAG, "start", it) }
         }

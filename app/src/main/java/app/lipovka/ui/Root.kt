@@ -107,8 +107,8 @@ fun LipovkaRoot(settings: Settings) {
             c.post.tick()
             if (c.sensor.allowed) c.sensor.live().conflate().collect { v -> c.post.reading(v); delay(1000) }
         }
-        // Locked with the app open: a quiet foreground service keeps counting until it's open again.
-        onPauseOrDispose { job.cancel(); WalkService.startIfLocked(ctx); c.write { PostWidget.updateAll(app) } }
+        // Out of sight: a quiet foreground service keeps counting until it's open again.
+        onPauseOrDispose { job.cancel(); WalkService.start(ctx); c.write { PostWidget.updateAll(app) } }
     }
     if (!settings.onboarded) {
         Onboarding()

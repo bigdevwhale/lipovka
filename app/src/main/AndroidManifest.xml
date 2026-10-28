@@ -4,7 +4,7 @@
     <!-- The phone's own step counter. -->
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <uses-feature android:name="android.hardware.sensor.stepcounter" android:required="false" />
-    <!-- Counting on while the screen is locked with the app open. -->
+    <!-- Counting on while the app is out of sight. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />
     <!-- Only for the weather (Open-Meteo), and only if a town is chosen. -->
@@ -47,7 +47,8 @@
         <service
             android:name=".work.WalkService"
             android:exported="false"
-            android:foregroundServiceType="health" />
+            android:foregroundServiceType="health"
+            android:stopWithTask="true" />
 
         <!-- Persists the in-app language choice on Android 12 and older. -->
         <service
