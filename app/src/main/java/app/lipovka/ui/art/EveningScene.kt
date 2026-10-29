@@ -15,6 +15,10 @@ class EveningScene(private val e: Env, private val lit: Boolean = true) : Scene(
     private val wh = 78
     private fun inWin(x: Int, y: Int) = x >= x0 && y >= y0 && x < x0 + ww && y < y0 + wh && !(x in x0 + ww / 2 - 1..x0 + ww / 2 + 1) && y !in y0 + 36..y0 + 38
 
+    /** Where the sky shows through the window, and where the view outside does, past the frame and the curtains. */
+    private var skyShows = Mask(0, 0)
+    private var outShows = Mask(0, 0)
+
     override fun base(b: Buf) {
         for (y in 0 until 100) for (x in 0 until 170) {
             val k = x % 11
@@ -23,25 +27,31 @@ class EveningScene(private val e: Env, private val lit: Boolean = true) : Scene(
         b.r(x0 - 4, y0 - 4, ww + 8, wh + 8, rgb(0x3a2214))
         b.r(x0 - 3, y0 - 3, ww + 6, 1, rgb(0x714528))
         b.vgrad(x0, y0, ww, wh, Air.skyRamp(e))
-        if (e.phase.dark && !e.sky.grey) Air.moon(b, x0 + 50, y0 + 18, 5, e.date, rgb(0x151d34))
-        for (x in x0 until x0 + ww) {
-            val h = (10 + fbm(x * .08, 4.0) * 12).roundToInt()
-            for (y in y0 + wh - h until y0 + wh) b.p(x, y, when { e.snow && y < y0 + wh - h + 2 -> R.snow[2]; e.phase.dark -> rgb(0x070a12); e.snow -> R.snow[1]; else -> rp(R.green, .3 + (y - (y0 + wh - h)) / 40.0, x, y) })
-        }
-        for ((x, y) in listOf(x0 + 10 to y0 + wh - 12, x0 + 24 to y0 + wh - 9, x0 + 46 to y0 + wh - 13, x0 + 58 to y0 + wh - 8)) {
-            b.r(x, y, 3, 2, if (e.phase.lamps) rgb(0xf6c04a) else rgb(0x5c7480))
-            if (e.phase.lamps) b.glow(x + 1, y + 1, 5, rgb(0xf8b040), .3f, 3)
+        skyShows = Mask(w, h).apply { open(x0, y0, ww, wh) }
+        outShows = Mask(w, h).apply { open(x0, y0, ww, wh) }
+        b.cover(skyShows) {
+            if (e.phase.dark && !e.sky.grey) Air.moon(b, x0 + 50, y0 + 18, 5, e.date, rgb(0x151d34))
+            for (x in x0 until x0 + ww) {
+                val h = (10 + fbm(x * .08, 4.0) * 12).roundToInt()
+                for (y in y0 + wh - h until y0 + wh) b.p(x, y, when { e.snow && y < y0 + wh - h + 2 -> R.snow[2]; e.phase.dark -> rgb(0x070a12); e.snow -> R.snow[1]; else -> rp(R.green, .3 + (y - (y0 + wh - h)) / 40.0, x, y) })
+            }
+            for ((x, y) in listOf(x0 + 10 to y0 + wh - 12, x0 + 24 to y0 + wh - 9, x0 + 46 to y0 + wh - 13, x0 + 58 to y0 + wh - 8)) {
+                b.r(x, y, 3, 2, if (e.phase.lamps) rgb(0xf6c04a) else rgb(0x5c7480))
+                if (e.phase.lamps) b.glow(x + 1, y + 1, 5, rgb(0xf8b040), .3f, 3)
+            }
         }
         if (!e.phase.dark) Air.grade(b, e, x0, y0, ww, wh)
         Air.frost(b, e, x0, y0, ww, wh)
-        b.r(x0 + ww / 2 - 1, y0, 3, wh, rgb(0x2a170e))
-        b.r(x0, y0 + 36, ww, 3, rgb(0x2a170e))
-        for (y in y0 - 6 until y0 + wh + 6) for (i in 0 until 9) {
-            val f = sin(i * 1.3 + y * .06)
-            b.p(x0 - 6 + i, y, rp(R.red, .35 + f * .15, x0 + i, y))
-            b.p(x0 + ww + 5 - i, y, rp(R.red, .3 + f * .15, x0 + i, y))
+        b.cover(skyShows, outShows) {
+            b.r(x0 + ww / 2 - 1, y0, 3, wh, rgb(0x2a170e))
+            b.r(x0, y0 + 36, ww, 3, rgb(0x2a170e))
+            for (y in y0 - 6 until y0 + wh + 6) for (i in 0 until 9) {
+                val f = sin(i * 1.3 + y * .06)
+                b.p(x0 - 6 + i, y, rp(R.red, .35 + f * .15, x0 + i, y))
+                b.p(x0 + ww + 5 - i, y, rp(R.red, .3 + f * .15, x0 + i, y))
+            }
+            b.vgrad(x0 - 8, y0 + wh + 4, ww + 16, 5, intArrayOf(rgb(0xc88e58), rgb(0x8e5a34), rgb(0x3a2214)))
         }
-        b.vgrad(x0 - 8, y0 + wh + 4, ww + 16, 5, intArrayOf(rgb(0xc88e58), rgb(0x8e5a34), rgb(0x3a2214)))
         // the checked tablecloth
         for (y in 98 until 148) for (x in 0 until 170) {
             val cx = x / 6
@@ -84,11 +94,11 @@ class EveningScene(private val e: Env, private val lit: Boolean = true) : Scene(
         Props.steam(b, 64, 96, t, 5, 16, .55f)
         Props.cup(b, 64, 106)
         Props.steam(b, 70, 104, t + 5, 4, 12, .5f)
-        if (e.phase.dark && !e.sky.grey) Air.stars(b, x0, y0, ww, 40, t, 12) { x, y -> inWin(x, y) && !(x in x0 + 44..x0 + 56 && y in y0 + 12..y0 + 24) }
-        Air.clouds(b, x0, y0, ww, 40, t, e, 2) { x, y -> inWin(x, y) }
-        Air.precip(b, e, t, x0, y0, ww, wh, .8, still = Art.still) { x, y -> inWin(x, y) }
-        Air.glassDrops(b, e, t, x0, y0, ww, wh) { x, y -> inWin(x, y) }
-        Air.fog(b, e, t, x0, y0 + 30, ww, wh - 30, .4f) { x, y -> inWin(x, y) }
+        if (e.phase.dark && !e.sky.grey) Air.stars(b, x0, y0, ww, 40, t, 12) { x, y -> skyShows(x, y) && !(x in x0 + 44..x0 + 56 && y in y0 + 12..y0 + 24) }
+        Air.clouds(b, x0, y0, ww, 40, t, e, 2) { x, y -> skyShows(x, y) }
+        Air.precip(b, e, t, x0, y0, ww, wh, .8, still = Art.still) { x, y -> outShows(x, y) }
+        Air.glassDrops(b, e, t, x0, y0, ww, wh) { x, y -> outShows(x, y) }
+        Air.fog(b, e, t, x0, y0 + 30, ww, wh - 30, .4f) { x, y -> outShows(x, y) }
         Props.cat(b, 112, 62, (sin(t * .18) + 1) / 2)
         if (!lit) for (y in 0 until h) for (x in 0 until w) if (!inWin(x, y)) b.mul(x, y, rgb(0x1c2440), .78f)
     }

@@ -264,5 +264,29 @@ fun quad(ax: Double, ay: Double, cx: Double, cy: Double, ex: Double, ey: Double,
     return Pair(u * u * ax + 2 * u * t * cx + t * t * ex, u * u * ay + 2 * u * t * cy + t * t * ey)
 }
 
+/**
+ * Which pixels of a scene still show what lies behind it, like the sky past a roof or through a window:
+ * [open] an area once it is painted, then paint whatever may stand in front of it inside [Buf.cover].
+ * Clouds, stars and rain then go only where the mask is still open.
+ */
+class Mask(val w: Int, val h: Int) {
+    private val m = BooleanArray(w * h)
+
+    fun open(x0: Int, y0: Int, ww: Int, hh: Int) {
+        for (y in max(0, y0) until min(h, y0 + hh)) for (x in max(0, x0) until min(w, x0 + ww)) m[y * w + x] = true
+    }
+
+    operator fun invoke(x: Int, y: Int) = x in 0 until w && y in 0 until h && m[y * w + x]
+
+    internal fun shut(i: Int) { m[i] = false }
+}
+
+/** Paints with [draw], then shuts the [masks] wherever it changed a pixel. */
+fun Buf.cover(vararg masks: Mask, draw: () -> Unit) {
+    val before = d.copyOf()
+    draw()
+    for (i in d.indices) if (d[i] != before[i]) for (m in masks) m.shut(i)
+}
+
 fun cosD(a: Double) = cos(a)
 fun sinD(a: Double) = sin(a)

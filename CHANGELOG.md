@@ -6,6 +6,16 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.6] - 2026-10-29
+
+### Fixed
+- Clouds and stars stay in the sky: they pass behind the roofs at the gate, and behind the window frames and curtains at the post office, in the room and at the evening table, instead of drifting over them.
+
+<!-- tg
+Облака и звёзды больше не залезают на крыши и в дома: у калитки они проходят за крышей.
+В окнах почты, комнаты и вечерней сцены облака плывут за рамой и занавесками.
+-->
+
 ## [1.0.5] - 2026-10-29
 
 ### Fixed

@@ -22,6 +22,10 @@ class RoomScene(private val e: Env, private val gifts: List<Gift>, private val d
     private val wx = 128
     private val wy = 58
     private val wr = 24
+
+    /** Where the sky shows through the window, and where the view outside does, past the frame and the herbs. */
+    private var skyShows = Mask(0, 0)
+    private var outShows = Mask(0, 0)
     private val night = e.phase.lamps
     private fun inWin(x: Int, y: Int) = hypot((x - wx).toDouble(), (y - wy).toDouble()) <= wr - .5
 
@@ -40,7 +44,7 @@ class RoomScene(private val e: Env, private val gifts: List<Gift>, private val d
             for (j in 0 until 4) b.p(x, yy + j, rp(R.wood, .55 - j * .12, x, yy))
         }
         window(b)
-        herbs(b)
+        b.cover(skyShows, outShows) { herbs(b) }
         // floor and the braided rug
         for (y in 196 until 236) for (x in 0 until 170) {
             val k = (y - 196) % 6
@@ -74,29 +78,35 @@ class RoomScene(private val e: Env, private val gifts: List<Gift>, private val d
             if (d > wr) b.p(wx + i, wy + j, rp(R.wood, .6 - (i + j) / 60.0, wx + i, wy + j))
         }
         b.vgrad(wx - wr, wy - wr, 2 * wr, 2 * wr, Air.skyRamp(e).let { if (e.phase.dark) it else it })
+        skyShows = Mask(w, h).apply { open(wx - wr, wy - wr, 2 * wr, 2 * wr) }
+        outShows = Mask(w, h).apply { open(wx - wr, wy - wr, 2 * wr, 2 * wr) }
         // the sky is drawn as a square: put the frame and the wall back outside the glass
-        frame(b, wall)
-        if (e.phase.dark && !e.sky.grey) Air.moon(b, wx + 10, wy - 10, 4, e.date, rgb(0x151d34))
-        if (!e.phase.dark && !e.sky.grey) b.disc(wx - 10, wy - 12, 3, rgb(0xfffbe8))
-        for (i in -wr..wr) {
-            val hgt = (5 + fbm(i * .15, 5.0) * 6).roundToInt()
-            for (j in 0 until hgt) {
-                val y = wy + wr - j - 2
-                if (inWin(wx + i, y)) b.p(wx + i, y, if (e.snow && j > hgt - 2) R.snow[3] else if (e.phase.dark) rgb(0x0a0e18) else rgb(0x3a5a3a))
+        b.cover(skyShows, outShows) { frame(b, wall) }
+        b.cover(skyShows) {
+            if (e.phase.dark && !e.sky.grey) Air.moon(b, wx + 10, wy - 10, 4, e.date, rgb(0x151d34))
+            if (!e.phase.dark && !e.sky.grey) b.disc(wx - 10, wy - 12, 3, rgb(0xfffbe8))
+            for (i in -wr..wr) {
+                val hgt = (5 + fbm(i * .15, 5.0) * 6).roundToInt()
+                for (j in 0 until hgt) {
+                    val y = wy + wr - j - 2
+                    if (inWin(wx + i, y)) b.p(wx + i, y, if (e.snow && j > hgt - 2) R.snow[3] else if (e.phase.dark) rgb(0x0a0e18) else rgb(0x3a5a3a))
+                }
             }
-        }
-        for ((i, j) in listOf(-14 to 16, -6 to 14, 6 to 17, 14 to 15)) {
-            b.p(wx + i, wy + j, if (night) rgb(0xf6d77a) else rgb(0x8aa0b0))
-            b.p(wx + i + 1, wy + j, if (night) rgb(0xf6d77a) else rgb(0x8aa0b0))
+            for ((i, j) in listOf(-14 to 16, -6 to 14, 6 to 17, 14 to 15)) {
+                b.p(wx + i, wy + j, if (night) rgb(0xf6d77a) else rgb(0x8aa0b0))
+                b.p(wx + i + 1, wy + j, if (night) rgb(0xf6d77a) else rgb(0x8aa0b0))
+            }
         }
         Air.grade(b, e, wx - wr, wy - wr, 2 * wr, 2 * wr) { x, y -> inWin(x, y) }
         Air.frost(b, e, wx - wr, wy - wr, 2 * wr, 2 * wr)
-        frame(b, wall)
-        b.r(wx - wr, wy - 1, 2 * wr, 2, rgb(0x3a2214))
-        b.r(wx - 1, wy - wr, 2, 2 * wr, rgb(0x3a2214))
-        for (a in 0 until 64) {
-            val an = a / 64.0 * 2 * PI
-            b.p((wx + cos(an) * (wr + 4)).roundToInt(), (wy + sin(an) * (wr + 4)).roundToInt(), rgb(0x140a06))
+        b.cover(skyShows, outShows) {
+            frame(b, wall)
+            b.r(wx - wr, wy - 1, 2 * wr, 2, rgb(0x3a2214))
+            b.r(wx - 1, wy - wr, 2, 2 * wr, rgb(0x3a2214))
+            for (a in 0 until 64) {
+                val an = a / 64.0 * 2 * PI
+                b.p((wx + cos(an) * (wr + 4)).roundToInt(), (wy + sin(an) * (wr + 4)).roundToInt(), rgb(0x140a06))
+            }
         }
         if (!night && !e.sky.grey) for (y in wy until 236) for (x in 60 until 170) {
             val t = y - wy
@@ -214,10 +224,10 @@ class RoomScene(private val e: Env, private val gifts: List<Gift>, private val d
     }
 
     override fun anim(b: Buf, t: Int) {
-        if (e.phase.dark && !e.sky.grey) Air.stars(b, wx - wr, wy - wr, 2 * wr, wr, t, 10) { x, y -> inWin(x, y) && !(x in wx + 5..wx + 15 && y in wy - 15..wy - 5) }
-        Air.clouds(b, wx - wr, wy - wr, 2 * wr, wr, t, e, 2) { x, y -> inWin(x, y) }
-        Air.precip(b, e, t, wx - wr, wy - wr, 2 * wr, 2 * wr, .6, still = Art.still) { x, y -> inWin(x, y) }
-        Air.glassDrops(b, e, t, wx - wr, wy - wr, 2 * wr, 2 * wr) { x, y -> inWin(x, y) }
+        if (e.phase.dark && !e.sky.grey) Air.stars(b, wx - wr, wy - wr, 2 * wr, wr, t, 10) { x, y -> skyShows(x, y) && !(x in wx + 5..wx + 15 && y in wy - 15..wy - 5) }
+        Air.clouds(b, wx - wr, wy - wr, 2 * wr, wr, t, e, 2) { x, y -> skyShows(x, y) }
+        Air.precip(b, e, t, wx - wr, wy - wr, 2 * wr, 2 * wr, .6, still = Art.still) { x, y -> outShows(x, y) }
+        Air.glassDrops(b, e, t, wx - wr, wy - wr, 2 * wr, 2 * wr) { x, y -> outShows(x, y) }
         Props.steam(b, 74, 148, t, 4, 14, .55f)
         if (night) b.glow(13, 150, 30, rgb(0xfff0b0), (.05 + .04 * sin(t * .5)).toFloat(), 3)
         Props.cat(b, 104, 146, (sin(t * .18) + 1) / 2)

@@ -27,6 +27,10 @@ class PostOffice(
     private val wy = 20
     private val ww = 56
     private val wh = 72
+
+    /** Where the sky shows through the window, and where the view outside does, past the frame and the curtains. */
+    private var skyShows = Mask(0, 0)
+    private var outShows = Mask(0, 0)
     private val dark = e.phase.dark
     private val dim = when (e.phase) {
         Phase.NIGHT -> .72f
@@ -51,18 +55,20 @@ class PostOffice(
     override fun base(b: Buf) {
         wall(b)
         view(b)
-        curtains(b)
-        sill(b)
-        clock(b)
-        calendar(b)
-        pigeonholes(b)
-        hooks(b)
-        desk(b)
+        b.cover(skyShows, outShows) {
+            curtains(b)
+            sill(b)
+            clock(b)
+            calendar(b)
+            pigeonholes(b)
+            hooks(b)
+            desk(b)
+        }
         if (sunny) for (y in wy until 214) for (x in wx until 170) if (inBeam(x, y)) {
             val edge = !inBeam(x + 2, y) || !inBeam(x - 2, y)
             if (!edge || bay(x, y) > 7) b.scr(x, y, rgb(0xfff0c0), if (y in 138..151) .32f else .16f)
         }
-        props(b)
+        b.cover(skyShows, outShows) { props(b) }
         // The room darkens with the hour; the lamp takes over.
         if (dim > 0f) {
             for (y in 0 until 214) for (x in 0 until 170) if (!inWindow(x, y)) b.mul(x, y, rgb(0x3a3050), dim)
@@ -109,43 +115,49 @@ class PostOffice(
             b.disc(sunX, sy, 4, rgb(0xfffbe8))
         }
         if (dark && !e.sky.grey) Air.moon(b, wx + 40, wy + 14, 4, e.date, rgb(0x151d34))
-        // far hills
-        for (x in wx until wx + ww) {
-            val h1 = wy + 44 + (fbm(x * .15, 1.0) * 6).roundToInt()
-            for (y in h1 until wy + 56) b.p(x, y, rp(if (e.snow) intArrayOf(rgb(0xa8b4c8), rgb(0xbac4d4), rgb(0xd0d8e2)) else intArrayOf(rgb(0x6a8a94), rgb(0x7c9aa0), rgb(0x90aaa8)), (y - h1) / 12.0, x, y))
-        }
-        val ground = when {
-            e.snow -> R.snow
-            e.season == Season.SUMMER -> R.grassSummer
-            e.season == Season.SPRING -> R.grassSpring
-            else -> R.grass
-        }
-        for (x in wx until wx + ww) {
-            val h2 = wy + 54 + (sin(x * .12) * 2).roundToInt()
-            for (y in h2 until wy + wh) b.p(x, y, rp(ground, .75 - (y - h2) / 24.0, x, y))
-        }
-        for ((x, y, c) in listOf(Triple(wx + 8, wy + 52, rgb(0xa83e28)), Triple(wx + 20, wy + 54, rgb(0x7c4e30)), Triple(wx + 34, wy + 51, rgb(0xa83e28)))) {
-            for (j in 0 until 4) b.r(x - j, y + j, 2 + j * 2, 1, if (e.snow && j < 2) R.snow[4] else c)
-            b.r(x - 3, y + 4, 8, 3, rgb(0xc4a272))
-            b.p(x - 1, y + 5, if (e.phase.lamps) rgb(0xffd060) else rgb(0x6a8090))
-        }
-        Props.birch(b, wx + 44, wy + 36, 26, e.leaves)
-        Props.birch(b, wx + 3, wy + 42, 20, e.leaves, alt = true)
-        var x = wx
-        while (x < wx + ww) { b.r(x, wy + 62, 1, 5, rgb(0x8a6a44)); x += 3 }
-        b.r(wx, wy + 63, ww, 1, rgb(0x8a6a44))
-        if (e.has(Look.CRANES) && !dark) for (i in 0 until 7) {
-            val cx = wx + 14 + i * 3
-            val cy = wy + 12 + kotlin.math.abs(i - 3) * 2
-            b.p(cx, cy, rgb(0x2a2a30)); b.p(cx - 1, cy - 1, rgb(0x2a2a30)); b.p(cx + 1, cy - 1, rgb(0x2a2a30))
+        skyShows = Mask(w, h).apply { open(wx, wy, ww, wh) }
+        outShows = Mask(w, h).apply { open(wx, wy, ww, wh) }
+        b.cover(skyShows) {
+            // far hills
+            for (x in wx until wx + ww) {
+                val h1 = wy + 44 + (fbm(x * .15, 1.0) * 6).roundToInt()
+                for (y in h1 until wy + 56) b.p(x, y, rp(if (e.snow) intArrayOf(rgb(0xa8b4c8), rgb(0xbac4d4), rgb(0xd0d8e2)) else intArrayOf(rgb(0x6a8a94), rgb(0x7c9aa0), rgb(0x90aaa8)), (y - h1) / 12.0, x, y))
+            }
+            val ground = when {
+                e.snow -> R.snow
+                e.season == Season.SUMMER -> R.grassSummer
+                e.season == Season.SPRING -> R.grassSpring
+                else -> R.grass
+            }
+            for (x in wx until wx + ww) {
+                val h2 = wy + 54 + (sin(x * .12) * 2).roundToInt()
+                for (y in h2 until wy + wh) b.p(x, y, rp(ground, .75 - (y - h2) / 24.0, x, y))
+            }
+            for ((x, y, c) in listOf(Triple(wx + 8, wy + 52, rgb(0xa83e28)), Triple(wx + 20, wy + 54, rgb(0x7c4e30)), Triple(wx + 34, wy + 51, rgb(0xa83e28)))) {
+                for (j in 0 until 4) b.r(x - j, y + j, 2 + j * 2, 1, if (e.snow && j < 2) R.snow[4] else c)
+                b.r(x - 3, y + 4, 8, 3, rgb(0xc4a272))
+                b.p(x - 1, y + 5, if (e.phase.lamps) rgb(0xffd060) else rgb(0x6a8090))
+            }
+            Props.birch(b, wx + 44, wy + 36, 26, e.leaves)
+            Props.birch(b, wx + 3, wy + 42, 20, e.leaves, alt = true)
+            var x = wx
+            while (x < wx + ww) { b.r(x, wy + 62, 1, 5, rgb(0x8a6a44)); x += 3 }
+            b.r(wx, wy + 63, ww, 1, rgb(0x8a6a44))
+            if (e.has(Look.CRANES) && !dark) for (i in 0 until 7) {
+                val cx = wx + 14 + i * 3
+                val cy = wy + 12 + kotlin.math.abs(i - 3) * 2
+                b.p(cx, cy, rgb(0x2a2a30)); b.p(cx - 1, cy - 1, rgb(0x2a2a30)); b.p(cx + 1, cy - 1, rgb(0x2a2a30))
+            }
         }
         Air.grade(b, e, wx, wy, ww, wh)
         if (e.phase.lamps) for ((xx, yy) in listOf(wx + 7 to wy + 57, wx + 33 to wy + 56)) b.glow(xx, yy, 4, rgb(0xffc860), .5f, 3)
         Air.frost(b, e, wx, wy, ww, wh)
         for (i in 0 until 10) b.line((wx + 8 + i).toDouble(), (wy + wh - 4).toDouble(), (wx + 20 + i).toDouble(), (wy + 8).toDouble(), rgb(0xffffff), .06f)
-        b.r(wx + ww / 2 - 1, wy, 2, wh, rgb(0x55331e))
-        b.r(wx, wy + 30, ww, 2, rgb(0x55331e))
-        b.r(wx + ww / 2 - 1, wy, 1, wh, rgb(0x8e5a34))
+        b.cover(skyShows, outShows) {
+            b.r(wx + ww / 2 - 1, wy, 2, wh, rgb(0x55331e))
+            b.r(wx, wy + 30, ww, 2, rgb(0x55331e))
+            b.r(wx + ww / 2 - 1, wy, 1, wh, rgb(0x8e5a34))
+        }
     }
 
     private fun curtains(b: Buf) {
@@ -369,11 +381,11 @@ class PostOffice(
         Props.steam(b, 38, 108, t, 6, 20, .8f)
         Props.steam(b, 50, 130, t + 4, 4, 12, .55f)
         // weather in the window
-        Air.clouds(b, wx, wy, ww, 30, t, e, if (e.sky == Sky.CLEAR) 1 else 3) { x, y -> inWindow(x, y) }
-        Air.precip(b, e, t, wx, wy, ww, wh, .8, still = wait) { x, y -> inWindow(x, y) && !(x in wx + ww / 2 - 1..wx + ww / 2) && y !in wy + 30..wy + 31 }
-        Air.glassDrops(b, e, t, wx, wy, ww, wh)
-        Air.fog(b, e, t, wx, wy + 20, ww, wh - 20, .45f) { x, y -> inWindow(x, y) }
-        if (e.phase.dark && !e.sky.grey) Air.stars(b, wx, wy, ww, 28, t, 10) { x, y -> inWindow(x, y) && !(x in wx + 36..wx + 44 && y in wy + 10..wy + 18) }
+        Air.clouds(b, wx, wy, ww, 30, t, e, if (e.sky == Sky.CLEAR) 1 else 3) { x, y -> skyShows(x, y) }
+        Air.precip(b, e, t, wx, wy, ww, wh, .8, still = wait) { x, y -> outShows(x, y) }
+        Air.glassDrops(b, e, t, wx, wy, ww, wh) { x, y -> outShows(x, y) }
+        Air.fog(b, e, t, wx, wy + 20, ww, wh - 20, .45f) { x, y -> outShows(x, y) }
+        if (e.phase.dark && !e.sky.grey) Air.stars(b, wx, wy, ww, 28, t, 10) { x, y -> skyShows(x, y) && !(x in wx + 36..wx + 44 && y in wy + 10..wy + 18) }
         // dust in the sunbeam
         if (sunny) for (i in 0 until 34) {
             val x = (wx + 10 + (rnd(i) * 120 + t * .18 * (.5 + rnd(i + 9))) % 120).roundToInt()

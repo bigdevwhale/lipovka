@@ -24,6 +24,9 @@ class GateScene(private val e: Env, private val house: House, private val who: R
     private val hw = 94
     private val hh = 72
 
+    /** Where the sky still shows past the house, the trees and the props. */
+    private var skyShows = Mask(0, 0)
+
     private fun roof() = when (house.roof) {
         'R' -> R.roofR
         'B' -> R.roofB
@@ -42,11 +45,14 @@ class GateScene(private val e: Env, private val house: House, private val who: R
 
     override fun base(b: Buf) {
         sky(b)
-        hills(b)
-        if (town) townHouse(b) else izba(b)
-        ground(b)
-        if (!town) fence(b) else street(b)
-        props(b)
+        skyShows = Mask(w, h).apply { open(0, 0, w, h) }
+        b.cover(skyShows) {
+            hills(b)
+            if (town) townHouse(b) else izba(b)
+            ground(b)
+            if (!town) fence(b) else street(b)
+            props(b)
+        }
         Air.grade(b, e)
         if (lit) lights(b)
         b.vignette(if (e.phase.dark) rgb(0x14182a) else rgb(0x2a1a3a), .55f)
@@ -662,8 +668,8 @@ class GateScene(private val e: Env, private val house: House, private val who: R
     }
 
     override fun anim(b: Buf, t: Int) {
-        if (e.phase.dark && !e.sky.grey) Air.stars(b, 0, 0, 170, 60, t, 14) { x, y -> !(x in 22..38 && y in 16..32) }
-        Air.clouds(b, 0, 0, 170, 70, t, e, if (e.sky.grey) 5 else 2)
+        if (e.phase.dark && !e.sky.grey) Air.stars(b, 0, 0, 170, 60, t, 14) { x, y -> skyShows(x, y) && !(x in 22..38 && y in 16..32) }
+        Air.clouds(b, 0, 0, 170, 70, t, e, if (e.sky.grey) 5 else 2) { x, y -> skyShows(x, y) }
         if (!town && face.chimney) Props.smoke(b, chimneyX, chimneyY - 2, t, 9, 34, if (e.phase.dark) rgb(0x6a6a80) else rgb(0xb8a8b8), .5f, if (e.temp < -10) .05 else .5)
         if ("cat" in house.props) {
             val y = Art.still || (t / 14) % 6 != 0
