@@ -564,25 +564,44 @@ class GateScene(private val e: Env, private val house: House, private val who: R
             for (i in -8..8) b.mul(x + 7 + i, 170, rgb(0x303040), .3f)
         }
         if ("antenna" in ps) { b.line(140, 0, 140, 60, rgb(0x55504c)); for (k in 0 until 4) b.line(130 + k, 6 + k * 8, 150 - k, 6 + k * 8, rgb(0x55504c)) }
-        if ("telescope" in ps) { b.line(14, 160, 20, 140, rgb(0x2a2a30)); b.line(26, 160, 20, 140, rgb(0x2a2a30)); b.vol(8, 128, 24, 6, { u, v -> abs(v - 3 + (u - 12) * .3) < 2.5 }, { u, _ -> .7 - u * .02 }, R.brass, R.INK) }
-        if ("goat" in ps && !winter) goat(b, 22, 166)
-        if ("boat" in ps) b.vol(2, 156, 40, 10, { u, v -> u > v * 1.2 && u < 40 - v * 1.2 }, { u, v -> .6 - v * .06 - u * .004 }, R.red, R.INK)
-        if ("nets" in ps) for (x in 104 until 160 step 3) for (y in 120 until 136 step 3) b.p(x, y, rgb(0x6a6a5a))
-        if ("easel" in ps) { b.line(12, 170, 22, 128, rgb(0x7c4e30)); b.line(36, 170, 22, 128, rgb(0x7c4e30)); b.r(10, 130, 24, 18, rgb(0xfbf3dc)); b.vgrad(12, 132, 20, 8, R.dusk.copyOfRange(3, 8)); b.r(12, 140, 20, 6, rgb(0x4e7886)) }
-        if ("owl" in ps) b.vol(150, 116, 9, 12, ell(4.5, 6.0, 4.5, 6.0), sph(3.0, 4.0, 5.0, 6.0, .3), intArrayOf(rgb(0x4a3020), rgb(0x6e4a28), rgb(0x8e643a), rgb(0xb88a52)), R.INK)
-        if ("owl" in ps) { b.p(152, 120, rgb(0xf8d070)); b.p(156, 120, rgb(0xf8d070)) }
-        if ("woodpile" in ps) for (j in 0 until 4) for (i in 0 until 6 - j % 2) { val x = 114 + i * 6 + (j % 2) * 3; val y = 158 - j * 6; b.disc(x, y, 3, rgb(0xc88e58)); b.disc(x, y, 1, rgb(0x8e5a34)) }
-        if ("station" in ps) { b.line(30, 70, 30, 166, rgb(0x2a2a30)); b.r(26, 66, 9, 5, rgb(0xd83a2a)); b.r(26, 66, 9, 1, rgb(0xfbf3dc)) }
-        if ("lantern" in ps || "meteo" in ps) { b.line(150, 110, 150, 166, rgb(0x2a2a30)); b.r(146, 104, 9, 7, rgb(0x2a2a30)); b.r(147, 105, 7, 5, if (lit) rgb(0xffd060) else rgb(0x8a8a90)) }
-        if ("meteo" in ps) { b.r(8, 128, 22, 18, rgb(0xf2ece0)); for (y in 130 until 146 step 3) b.r(9, y, 20, 1, rgb(0xc8c0b0)); b.line(12, 146, 12, 166, rgb(0xf2ece0)); b.line(26, 146, 26, 166, rgb(0xf2ece0)) }
-        if ("cheese" in ps) for (k in 0 until 3) b.vol(118 + k * 12, 156, 10, 6, ell(5.0, 3.0, 5.0, 3.0), sph(4.0, 2.0, 5.0, 3.0, .3), R.honey, rgb(0x5a3006))
-        if ("carvings" in ps) for (k in 0 until 3) { val x = 116 + k * 14; b.r(x, 120, 10, 14, rgb(0xc88e58)); b.r(x + 2, 122, 6, 10, rgb(0x8e5a34)); b.p(x + 4, 124, rgb(0xf8d070)) }
-        if ("swing" in ps) { b.line(130, 100, 130, 166, rgb(0x55331e)); b.line(160, 100, 160, 166, rgb(0x55331e)); b.line(128, 100, 162, 100, rgb(0x55331e)); b.line(140, 100, 140, 150, rgb(0x8e857a)); b.line(150, 100, 150, 150, rgb(0x8e857a)); b.r(138, 150, 14, 2, rgb(0x8e5a34)) }
+        if ("telescope" in ps) { shadow(b, 10, 30, 172); b.line(14, 172, 20, 152, rgb(0x2a2a30)); b.line(26, 172, 20, 152, rgb(0x2a2a30)); b.vol(8, 140, 24, 6, { u, v -> abs(v - 3 + (u - 12) * .3) < 2.5 }, { u, _ -> .7 - u * .02 }, R.brass, R.INK) }
+        if ("goat" in ps && !winter) goat(b, 22, 174)
+        if ("boat" in ps) shadow(b, 0, 44, 174)
+        if ("boat" in ps) b.vol(2, 164, 40, 10, { u, v -> u > v * 1.2 && u < 40 - v * 1.2 }, { u, v -> .6 - v * .06 - u * .004 }, R.red, R.INK)
+        // hung over the fence to dry
+        if ("nets" in ps) for (x in 104 until 160 step 3) for (y in 138 until 156 step 3) b.p(x, y, rgb(0x6a6a5a))
+        if ("easel" in ps) { shadow(b, 10, 38, 170); b.line(12, 170, 22, 128, rgb(0x7c4e30)); b.line(36, 170, 22, 128, rgb(0x7c4e30)); b.r(10, 130, 24, 18, rgb(0xfbf3dc)); b.vgrad(12, 132, 20, 8, R.dusk.copyOfRange(3, 8)); b.r(12, 140, 20, 6, rgb(0x4e7886)) }
+        // sitting on top of a fence post
+        if ("owl" in ps) b.vol(150, 124, 9, 12, ell(4.5, 6.0, 4.5, 6.0), sph(3.0, 4.0, 5.0, 6.0, .3), intArrayOf(rgb(0x4a3020), rgb(0x6e4a28), rgb(0x8e643a), rgb(0xb88a52)), R.INK)
+        if ("owl" in ps) { b.p(152, 128, rgb(0xf8d070)); b.p(156, 128, rgb(0xf8d070)) }
+        if ("woodpile" in ps) shadow(b, 110, 150, 174)
+        if ("woodpile" in ps) for (j in 0 until 4) for (i in 0 until 6 - j % 2) { val x = 114 + i * 6 + (j % 2) * 3; val y = 170 - j * 6; b.disc(x, y, 3, rgb(0xc88e58)); b.disc(x, y, 1, rgb(0x8e5a34)) }
+        if ("station" in ps) { shadow(b, 26, 36, 172); b.line(30, 70, 30, 172, rgb(0x2a2a30)); b.r(26, 66, 9, 5, rgb(0xd83a2a)); b.r(26, 66, 9, 1, rgb(0xfbf3dc)) }
+        if ("lantern" in ps || "meteo" in ps) { shadow(b, 145, 156, 172); b.line(150, 110, 150, 172, rgb(0x2a2a30)); b.r(146, 104, 9, 7, rgb(0x2a2a30)); b.r(147, 105, 7, 5, if (lit) rgb(0xffd060) else rgb(0x8a8a90)) }
+        if ("meteo" in ps) { shadow(b, 6, 32, 172); b.r(8, 134, 22, 18, rgb(0xf2ece0)); for (y in 136 until 152 step 3) b.r(9, y, 20, 1, rgb(0xc8c0b0)); b.line(12, 152, 12, 172, rgb(0xf2ece0)); b.line(26, 152, 26, 172, rgb(0xf2ece0)) }
+        if ("cheese" in ps) bench(b)
+        if ("cheese" in ps) for (k in 0 until 3) b.vol(118 + k * 12, 158, 10, 6, ell(5.0, 3.0, 5.0, 3.0), sph(4.0, 2.0, 5.0, 3.0, .3), R.honey, rgb(0x5a3006))
+        // hung on the fence rail
+        if ("carvings" in ps) for (k in 0 until 3) { val x = 116 + k * 14; b.r(x, 140, 10, 14, rgb(0xc88e58)); b.r(x + 2, 142, 6, 10, rgb(0x8e5a34)); b.p(x + 4, 144, rgb(0xf8d070)) }
+        if ("swing" in ps) { shadow(b, 126, 164, 172); b.line(130, 100, 130, 172, rgb(0x55331e)); b.line(160, 100, 160, 172, rgb(0x55331e)); b.line(128, 100, 162, 100, rgb(0x55331e)); b.line(140, 100, 140, 150, rgb(0x8e857a)); b.line(150, 100, 150, 150, rgb(0x8e857a)); b.r(138, 150, 14, 2, rgb(0x8e5a34)) }
+        if ("books" in ps) bench(b)
         if ("books" in ps) for (k in 0 until 4) b.r(118 + k * 4, 156, 3, 8, intArrayOf(rgb(0x842a24), rgb(0x304474), rgb(0x426442), rgb(0xc8952e))[k])
         if ("garden" in ps && !winter) for (k in 0 until 6) { val x = 112 + k * 8; b.disc(x, 170, 3, rgb(0x5c7e50)); b.disc(x, 169, 2, rgb(0x8ab478)) }
-        if ("tractor" in ps) { b.vol(120, 150, 34, 14, { _, _ -> true }, { u, _ -> .6 - u * .01 }, R.blue, R.INK); b.ball(126, 166, 5, R.iron, R.INK); b.ball(148, 164, 7, R.iron, R.INK); b.r(140, 138, 10, 12, rgb(0x2c3c64)); b.r(141, 139, 8, 6, rgb(0x8aa0b0)) }
+        if ("tractor" in ps) { shadow(b, 118, 158, 174); b.vol(120, 150, 34, 14, { _, _ -> true }, { u, _ -> .6 - u * .01 }, R.blue, R.INK); b.ball(126, 166, 5, R.iron, R.INK); b.ball(148, 164, 7, R.iron, R.INK); b.r(140, 138, 10, 12, rgb(0x2c3c64)); b.r(141, 139, 8, 6, rgb(0x8aa0b0)) }
         if ("columns" in ps || "town" in ps) Unit
         if (e.has(Look.NEWYEAR) && !town) for (x in face.x until face.x + face.w step 6) b.p(x, face.top + 2 + (x / 6) % 2, intArrayOf(rgb(0xff5050), rgb(0xffe060), rgb(0x60a0ff))[(x / 6) % 3])
+    }
+
+    /** A shadow on the grass under something standing there. */
+    private fun shadow(b: Buf, x0: Int, x1: Int, y: Int) {
+        for (x in x0..x1) b.mul(x, y, rgb(0x303040), .35f)
+    }
+
+    /** A bench in front of the fence, for things set out on it. */
+    private fun bench(b: Buf) {
+        shadow(b, 112, 158, 174)
+        for (l in listOf(116, 152)) b.r(l, 166, 2, 8, rgb(0x3a2214))
+        b.vol(112, 164, 46, 3, { _, _ -> true }, { u, v -> .65 - v * .2 - u * .004 }, R.wood, R.INK)
     }
 
     /** A sweep well: a log frame standing in the grass, the post and the long beam with the bucket on a rope. */
@@ -604,6 +623,7 @@ class GateScene(private val e: Env, private val house: House, private val who: R
     }
 
     private fun goat(b: Buf, x: Int, feet: Int) {
+        shadow(b, x, x + 16, feet)
         b.vol(x, feet - 12, 16, 9, ell(8.0, 4.5, 8.0, 4.5), sph(6.0, 3.0, 8.0, 5.0, .4), R.cream, R.INK)
         b.vol(x + 12, feet - 18, 7, 7, ell(3.5, 3.5, 3.5, 3.5), sph(2.5, 2.5, 3.5, 3.5, .4), R.cream, R.INK)
         b.p(x + 14, feet - 21, rgb(0x6e6862)); b.p(x + 16, feet - 21, rgb(0x6e6862)); b.p(x + 16, feet - 16, R.INK); b.p(x + 15, feet - 12, rgb(0xe8e2d4))
