@@ -6,10 +6,15 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
-## [Unreleased]
+## [1.0.5] - 2026-10-29
 
 ### Fixed
 - Everything at the gate stands on the ground: the goats, the boat, the woodpile, the tractor, the telescope, the weather box, the swing, the posts and the easel, each with its shadow. The cheese and the books lie on a bench, the carvings and the nets hang on the fence, the owl sits on a fence post.
+
+<!-- tg
+У калитки больше ничего не висит в воздухе: козы, лодка, поленница, трактор, телескоп и качели стоят на земле.
+Сыр и книги лежат на скамейке, резьба и сети висят на заборе, сова сидит на столбике.
+-->
 
 ## [1.0.4] - 2026-10-28
 
