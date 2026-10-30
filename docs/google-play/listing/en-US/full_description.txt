@@ -1,0 +1,41 @@
+You are the new postman of Lipovka, a small village by the river Lipka. Every morning letters arrive at the post office, and your real steps carry the bag from house to house. You never read other people's letters: at the gate the resident opens the envelope, tells you the news, gives you a jar of jam and sometimes a reply to carry. Story by story, the lives of the village unfold over years. Free, no ads, no account.
+
+📮 THE MORNING POST
+• The kettle is on, the cat Surguch is asleep on the letters, the wall clock shows the real time
+• The bag is sorted for about a usual day's walk, the median of your recent days, so a light walker and a long walker both get a full, finishable round
+• What doesn't fit waits on the shelf for a lighter day; telegrams go first
+
+👣 YOUR STEPS ARE THE BAG
+• The phone's own step counter, no GPS, no Google Fit: it counts even with the app minimized
+• On the hand-drawn map the little postman walks the road to the next house
+• Nothing is lost: steps carry over, a far letter is simply a longer walk
+• A home screen widget and two gentle notifications: the morning post and an evening "almost there"
+
+✉️ AT THE GATE
+• The resident reads the letter and tells you about it
+• Gifts go up to your room above the post office, stamps into the album, replies into tomorrow's bag
+
+📖 THE STORIES
+• 30 residents, 55 story arcs, 669 letters, written to last two to three years and more
+• A sailor's fiancée and her wedding, a widow looking for her lost sister, a girl writing to Ded Moroz every December and growing up, a boy catching radio voices from Antarctica, a live queen bee arriving by post
+• The postman gets letters too: a mystery each season, a pen-pal postwoman in the Urals, a bundle of letters from 1958 in the attic
+• After that, forever: the weekly newspaper, pensions, magazines, birthday and New Year cards, 267 everyday letters and 35 yearly village events, from the autumn fair to the cranes leaving
+
+🌉 THE VILLAGE GROWS WITH YOU
+• At 50 km walked the bridge is repaired and Zarechye opens across the river; then the railway halt, a lake hamlet, a weather station deep in the forest and the district town
+• A stray dog, Bublik, starts walking with you after the first week
+
+🌦 THE REAL SKY
+• Pick your town (optional) and Lipovka has your weather: rain on the window, snow on the roofs, fog over the river
+• Real sunrise and sunset, the moon in its real phase
+• Without a town the village keeps its own seasonal weather
+
+🪔 THE EVENING
+• The kerosene lamp, tea with jam, the day's news and one line in the postman's diary
+
+ALSO
+• Every picture is pixel art: the post office, the countryside, every house at its gate, in every season, weather and hour
+• English and Russian
+• Free and open source (MIT)
+
+Privacy: no account, no ads, no analytics. Steps, letters and the diary stay on your phone. The only network request is the weather, and only if you choose a town.
