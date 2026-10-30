@@ -6,6 +6,16 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.7] - 2026-10-30
+
+### Fixed
+- The text stays dark ink on paper on phones with a forced dark mode, instead of turning white a moment after the screen opens.
+
+<!-- tg
+Текст больше не белеет через секунду после открытия экрана на телефонах с принудительной тёмной темой.
+Липовка всегда в своих цветах: чернила на бумаге.
+-->
+
 ## [1.0.6] - 2026-10-29
 
 ### Fixed
