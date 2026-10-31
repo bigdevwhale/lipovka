@@ -9,6 +9,7 @@
 *Вас назначили почтальоном в Липовку, маленькую деревню на реке Липке. Каждое утро на почту приходят письма, а ваши настоящие шаги несут сумку от дома к дому. Чужих писем почтальон не читает: у калитки житель сам вскрывает конверт, рассказывает новость, выносит банку варенья, а иногда даёт ответ, чтобы вы его отнесли. Письмо за письмом жизнь деревни разворачивается годами. Бесплатно, без рекламы и аккаунта.*
 
 [![Android CI](https://github.com/bigdevwhale/lipovka/actions/workflows/android.yml/badge.svg)](https://github.com/bigdevwhale/lipovka/actions/workflows/android.yml)
+[![Google Play](https://img.shields.io/badge/Google_Play-скачать-34A853?logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=app.lipovka)
 [![Release](https://img.shields.io/github/v/release/bigdevwhale/lipovka?color=3D5E43&label=скачать&logo=android)](https://github.com/bigdevwhale/lipovka/releases/latest)
 ![Android 9+](https://img.shields.io/badge/Android-9%2B-3C9D50?logo=android&logoColor=white)
 [![License: MIT](https://img.shields.io/badge/license-MIT-4C7A35)](LICENSE)
@@ -31,6 +32,12 @@
 6. **Деревня растёт вместе с вами.** На 50-м километре чинят мост, и открывается Заречье. Потом разъезд с телеграфом, рыбацкие Озёрки, метеостанция в лесу и районный Городок. Через неделю прогулок за вами начинает ходить бездомный пёс Бублик.
 7. **Настоящее небо.** Выберите свой город (по желанию), и в Липовке будет ваша погода из Open-Meteo: дождь на стекле, снег на крышах, туман над рекой, настоящие рассвет и закат, луна в своей фазе. Без города у деревни своя погода по сезону.
 8. **Вечер.** Керосиновая лампа, чай с вареньем, новости дня, одна строчка в дневник почтальона.
+
+## Скачать
+
+**[Скачать в Google Play](https://play.google.com/store/apps/details?id=app.lipovka)**.
+
+Или возьми **Lipovka.apk** в [последнем релизе](https://github.com/bigdevwhale/lipovka/releases/latest) и открой на телефоне (разреши установку из браузера или файлового менеджера, когда Android спросит).
 
 ## Приватность
 

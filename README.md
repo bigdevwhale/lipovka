@@ -9,6 +9,7 @@
 *You are the new postman of Lipovka, a small village by the river Lipka. Every morning letters arrive at the post office, and your real steps carry the bag from house to house. You never read other people's letters: at the gate the resident opens the envelope, tells you the news, gives you a jar of jam and sometimes a reply to carry. Story by story, the lives of the village unfold over years. Free, no ads, no account.*
 
 [![Android CI](https://github.com/bigdevwhale/lipovka/actions/workflows/android.yml/badge.svg)](https://github.com/bigdevwhale/lipovka/actions/workflows/android.yml)
+[![Google Play](https://img.shields.io/badge/Google_Play-get_it-34A853?logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=app.lipovka)
 [![Release](https://img.shields.io/github/v/release/bigdevwhale/lipovka?color=3D5E43&label=download&logo=android)](https://github.com/bigdevwhale/lipovka/releases/latest)
 ![Android 9+](https://img.shields.io/badge/Android-9%2B-3C9D50?logo=android&logoColor=white)
 ![Languages](https://img.shields.io/badge/lang-EN%20%7C%20RU-6C77B6)
@@ -32,6 +33,12 @@
 6. **The village grows with you.** At 50 km walked the bridge is repaired and Zarechye opens across the river; then the railway halt, a lake hamlet, a weather station deep in the forest and the district town. A stray dog, Bublik, starts walking with you after the first week.
 7. **The real sky.** Pick your town (optional) and Lipovka has your weather from Open-Meteo: rain on the window, snow on the roofs, fog over the river, real sunrise and sunset, the moon in its real phase. Without a town the village keeps its own seasonal weather.
 8. **The evening.** The kerosene lamp, tea with jam, the day's news, one line in the postman's diary.
+
+## Download
+
+**[Get it on Google Play](https://play.google.com/store/apps/details?id=app.lipovka)**.
+
+Or get **Lipovka.apk** from the [latest release](https://github.com/bigdevwhale/lipovka/releases/latest) and open it on your phone (allow installing from your browser or file manager when asked).
 
 ## Privacy
 
