@@ -149,8 +149,8 @@ cozy-играми); тогда в разделе 1 выберите Game, анк
 **Advertising ID** — *No* (рекламы и SDK аналитики нет, разрешения `AD_ID` в сборке нет).
 
 **Foreground service permissions** (появится после загрузки AAB: targetSdk 36 и `FOREGROUND_SERVICE_HEALTH`)
-- Тип: **Health**. Задача: **Fitness tracking** (*Workout or fitness tracking, e.g. step counting*);
-  если такого пункта нет — **Other** с тем же описанием:
+- *What tasks require your app to use the FOREGROUND_SERVICE_HEALTH permission?* → отметить только
+  **Step counter** (Health data sync и Exercise tracker — нет). Описание, если просят:
   > Lipovka Post is a pedometer: the user's real steps, read from the phone's step counter sensor, carry
   > letters around a village. Android only delivers step counts to an app the user can see, so when the
   > user leaves the app a health foreground service with a visible, silent ongoing notification
