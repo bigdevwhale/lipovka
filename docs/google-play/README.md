@@ -75,7 +75,7 @@ python tools/play.py   # post, gate, village, letter, room, evening, album, diar
 | Поле | Значение |
 |---|---|
 | App category | Application → **Health & Fitness** |
-| Tags (до 5) | Activity tracker, Health & fitness, Casual, Simulation, Lifestyle (берите ближайшие из списка Play) |
+| Tags (до 5) | Activity tracker, Health & fitness, Workout, Entertainment, Lifestyle |
 | Email address | *ваш публичный email* — обязательно, его увидят все |
 | Website | `https://bigdevwhale.github.io/stillcraft/apps/lipovka/` |
 | Phone | пусто |
@@ -85,6 +85,11 @@ python tools/play.py   # post, gate, village, letter, room, evening, album, diar
 её найдут по «шагомер», «pedometer», «ходьба». Альтернатива — Game → **Casual** (рядом с идл- и
 cozy-играми); тогда в разделе 1 выберите Game, анкета IARC будет игровой, ответы те же.
 Категорию можно сменить позже в Store settings.
+
+**Теги** — из списка Play для приложений (игровых там нет). Activity tracker и Health & fitness — это
+шагомер; Workout — туда же Play относит шагомеры для ходьбы; Entertainment и Lifestyle — истории и
+уютная деревня. Weight loss, Running и Weather не подходят: про похудение и бег приложение не говорит,
+а погода в нём — декорация, не прогноз.
 
 **Имя разработчика** (Settings → Developer account) — **Stillcraft**, одинаковое для всех приложений:
 тогда Play сам покажет под карточкой «Другие приложения этого разработчика».
