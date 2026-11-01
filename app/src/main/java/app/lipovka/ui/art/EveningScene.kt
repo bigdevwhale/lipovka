@@ -13,11 +13,11 @@ class EveningScene(private val e: Env, private val lit: Boolean = true) : Scene(
     private val y0 = 8
     private val ww = 70
     private val wh = 78
-    private fun inWin(x: Int, y: Int) = x >= x0 && y >= y0 && x < x0 + ww && y < y0 + wh && !(x in x0 + ww / 2 - 1..x0 + ww / 2 + 1) && y !in y0 + 36..y0 + 38
 
     /** Where the sky shows through the window, and where the view outside does, past the frame and the curtains. */
     private var skyShows = Mask(0, 0)
     private var outShows = Mask(0, 0)
+    private val beforeCat = IntArray(w * h)
 
     override fun base(b: Buf) {
         for (y in 0 until 100) for (x in 0 until 170) {
@@ -99,7 +99,12 @@ class EveningScene(private val e: Env, private val lit: Boolean = true) : Scene(
         Air.precip(b, e, t, x0, y0, ww, wh, .8, still = Art.still) { x, y -> outShows(x, y) }
         Air.glassDrops(b, e, t, x0, y0, ww, wh) { x, y -> outShows(x, y) }
         Air.fog(b, e, t, x0, y0 + 30, ww, wh - 30, .4f) { x, y -> outShows(x, y) }
+        // the cat sits in the window's frame, so the dark must find it by what it painted, not by where the window is
+        if (!lit) System.arraycopy(b.d, 0, beforeCat, 0, beforeCat.size)
         Props.cat(b, 112, 62, (sin(t * .18) + 1) / 2)
-        if (!lit) for (y in 0 until h) for (x in 0 until w) if (!inWin(x, y)) b.mul(x, y, rgb(0x1c2440), .78f)
+        if (!lit) for (y in 0 until h) for (x in 0 until w) {
+            val i = y * w + x
+            if (!outShows(x, y) || b.d[i] != beforeCat[i]) b.mul(x, y, rgb(0x1c2440), .78f)
+        }
     }
 }

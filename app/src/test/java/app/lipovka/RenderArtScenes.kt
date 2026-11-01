@@ -60,6 +60,7 @@ class RenderArtScenes {
             save("gate-$name", frame(GateScene(e, World.house("vetrovy")!!, content.resident("anna"), true)))
             save("room-$name", frame(RoomScene(e, gifts, true)))
             save("evening-$name", frame(EveningScene(e)))
+            save("evening-out-$name", frame(EveningScene(e, lit = false)))
             save("map-$name", frame(MapScene(e, k % 6, MapRound(postman = World.house("lebedev")!!.at, pending = setOf("mill", "apiary"), walking = true), true)), 2)
         }
         val e = envs.first().second
