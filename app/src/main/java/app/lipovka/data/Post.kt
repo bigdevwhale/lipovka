@@ -1,5 +1,6 @@
 package app.lipovka.data
 
+import android.os.SystemClock
 import androidx.room.withTransaction
 import app.lipovka.domain.Game
 import app.lipovka.domain.GameState
@@ -89,10 +90,14 @@ class Post(private val db: PostDb, val game: Game, private val zone: () -> ZoneI
      * A reading of the step counter: the steps since the last one are spread over the days they were
      * walked on and carried round the village. Returns the letters delivered.
      */
-    suspend fun reading(value: Long, at: Long = System.currentTimeMillis()): List<Mail> = change { s ->
+    suspend fun reading(
+        value: Long,
+        at: Long = System.currentTimeMillis(),
+        bootAt: Long = System.currentTimeMillis() - SystemClock.elapsedRealtime(),
+    ): List<Mail> = change { s ->
         val out = mutableListOf<Mail>()
         if (s.lastValue >= 0) {
-            val d = Steps.delta(s.lastValue, value)
+            val d = Steps.delta(s.lastValue, s.lastAt, value, at, bootAt)
             for ((day, n) in Steps.spread(d, if (s.lastAt > 0) s.lastAt else at, at, zone()).toSortedMap()) {
                 out += game.walk(s, n, day, at)
             }

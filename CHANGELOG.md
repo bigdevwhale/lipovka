@@ -6,6 +6,16 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.8] - 2026-11-01
+
+### Fixed
+- The step count no longer jumps by tens of thousands. A step counter reading lower than the last one, without the phone having restarted, used to be taken for a restart, and the whole count since the phone was turned on landed as new steps, sometimes delivering the whole day's post at once. Such readings now bring no steps, and no reading can bring more steps than can be walked in the time since the last one.
+
+<!-- tg
+Шаги больше не скачут на десятки тысяч сразу, и письма не разносятся сами, пока вы не ходили.
+Приложение теперь не засчитывает больше шагов, чем можно пройти за прошедшее время.
+-->
+
 ## [1.0.7] - 2026-11-01
 
 ### Fixed
