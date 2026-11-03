@@ -37,6 +37,21 @@ object Steps {
         return min(d, most)
     }
 
+    /**
+     * Day totals from a health app (Health Connect) against the steps the village already has for those
+     * days: what is new on each day. A total only grows, as watches and apps hand their steps over late;
+     * a total below the known one brings nothing, so steps once carried are never taken back.
+     */
+    fun catchUp(known: Map<Long, Int>, totals: Map<Long, Long>): Map<Long, Int> {
+        val out = mutableMapOf<Long, Int>()
+        for ((day, total) in totals) {
+            val have = known[day] ?: 0
+            val n = min(total, MAX_PER_DAY.toLong()) - have
+            if (n > 0) out[day] = n.toInt()
+        }
+        return out
+    }
+
     fun spread(steps: Long, from: Long, to: Long, zone: ZoneId = ZoneId.systemDefault()): Map<Long, Int> {
         if (steps <= 0) return emptyMap()
         val a = Instant.ofEpochMilli(min(from, to)).atZone(zone)

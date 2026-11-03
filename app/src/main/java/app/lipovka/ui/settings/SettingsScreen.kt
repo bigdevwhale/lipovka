@@ -1,5 +1,6 @@
 package app.lipovka.ui.settings
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,6 +23,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,6 +52,7 @@ import app.lipovka.ui.components.TopBar
 import app.lipovka.ui.components.pixelBox
 import app.lipovka.ui.theme.C
 import app.lipovka.ui.theme.T
+import app.lipovka.work.HealthSteps
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -88,6 +91,54 @@ fun PlacePicker(ru: Boolean, onPicked: (Place) -> Unit) {
     }
 }
 
+/** Where the steps come from: the phone's own counter, or Health Connect. */
+@Composable
+private fun StepSource(health: Boolean) {
+    val ctx = LocalContext.current
+    val c = ctx.container
+    // null while asking Health Connect whether reading is still allowed.
+    var allowed by remember { mutableStateOf<Boolean?>(null) }
+    LaunchedEffect(health) { allowed = c.health.allowed() }
+    // Why tapping Health Connect didn't switch to it.
+    var note by remember { mutableStateOf<Int?>(null) }
+    fun useHealth() = c.write {
+        settings.update { it.copy(healthFrom = java.time.LocalDate.now().toEpochDay()) }
+        sync()
+    }
+    val ask = rememberLauncherForActivityResult(HealthSteps.requestContract()) { got ->
+        allowed = HealthSteps.READ in got
+        if (allowed == true) { note = null; useHealth() } else note = R.string.health_denied
+    }
+    fun pickHealth() {
+        when {
+            c.health.available -> ask.launch(c.health.permissions())
+            c.health.installable -> { note = R.string.health_install; runCatching { ctx.startActivity(c.health.storeIntent()) } }
+            else -> note = R.string.health_none
+        }
+    }
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        PixelButton(stringResource(R.string.source_phone), {
+            note = null
+            c.write { settings.update { it.copy(healthFrom = -1) }; sync() }
+        }, Modifier.weight(1f), kind = if (!health) Kind.PRIMARY else Kind.GHOST)
+        PixelButton(stringResource(R.string.source_health), { pickHealth() }, Modifier.weight(1f), kind = if (health) Kind.PRIMARY else Kind.GHOST)
+    }
+    val status = when {
+        !health -> note ?: if (c.sensor.allowed && c.sensor.present) R.string.steps_ok else R.string.steps_off
+        allowed == null -> null
+        allowed == true -> R.string.health_ok
+        c.health.available -> R.string.health_denied
+        c.health.installable -> R.string.health_install
+        else -> R.string.health_none
+    }
+    status?.let { Text(stringResource(it), style = T.Body) }
+    if (health && allowed == false) {
+        if (c.health.available) PixelButton(stringResource(R.string.health_allow), { pickHealth() }, Modifier.fillMaxWidth())
+        else if (c.health.installable) PixelButton(stringResource(R.string.health_get), { pickHealth() }, Modifier.fillMaxWidth())
+    }
+    Text(stringResource(R.string.source_hint), style = T.Small)
+}
+
 @Composable
 fun SettingsScreen(home: Home, onBack: () -> Unit) {
     val ctx = LocalContext.current
@@ -107,6 +158,9 @@ fun SettingsScreen(home: Home, onBack: () -> Unit) {
             Text(stringResource(R.string.weather_hint), style = T.Small)
             PlacePicker(home.ru) { picked -> c.write { settings.update { it.copy(place = picked, weather = null) }; refreshWeather(force = true) } }
             if (p != null) PixelButton(stringResource(R.string.weather_none), { c.write { settings.update { it.copy(place = null, weather = null) } } }, Modifier.fillMaxWidth(), kind = Kind.GHOST)
+
+            Eyebrow(stringResource(R.string.steps_source))
+            StepSource(set.healthFrom >= 0)
 
             Eyebrow(stringResource(R.string.notifications))
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -129,7 +183,6 @@ fun SettingsScreen(home: Home, onBack: () -> Unit) {
             CommunityLinks()
 
             Eyebrow(stringResource(R.string.about))
-            Text(stringResource(if (c.sensor.allowed && c.sensor.present) R.string.steps_ok else R.string.steps_off), style = T.Body)
             Text(stringResource(R.string.credits), style = T.Small)
             Spacer(Modifier.height(16.dp))
         }

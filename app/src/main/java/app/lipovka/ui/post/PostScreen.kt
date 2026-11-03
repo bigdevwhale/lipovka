@@ -127,6 +127,8 @@ private fun Permissions(home: Home) {
     val ctx = LocalContext.current
     val c = ctx.container
     if (app.lipovka.ui.art.Art.still) return
+    // With Health Connect the phone's own counter isn't used; its state shows in settings.
+    if (home.settings.healthFrom >= 0) return
     var allowed by remember { mutableStateOf(c.sensor.allowed) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { ok -> allowed = ok; if (ok) c.write { sync() } }
     if (!c.sensor.present) {

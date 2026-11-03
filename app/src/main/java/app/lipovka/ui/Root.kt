@@ -98,17 +98,24 @@ fun LipovkaRoot(settings: Settings) {
         while (true) { delay(20_000); now = LocalDateTime.now() }
     }
     // While the app is open: read the counter as it ticks, sort the post, fetch the weather.
-    LifecycleResumeEffect(Unit) {
+    val health = settings.healthFrom >= 0
+    LifecycleResumeEffect(health) {
         now = LocalDateTime.now()
         WalkService.stop(ctx)
         val job = c.scope.launch {
             launch { runCatching { c.refreshWeather() } }
-            // The counter's own first value comes as soon as it's subscribed, so no separate read to wait on.
             c.post.tick()
-            if (c.sensor.allowed) c.sensor.live().conflate().collect { v -> c.post.reading(v); delay(1000) }
+            if (health) {
+                // Health Connect keeps the steps itself; asking now and then is enough.
+                while (true) { c.sync(); delay(60_000) }
+            } else if (c.sensor.allowed) {
+                // The counter's own first value comes as soon as it's subscribed, so no separate read to wait on.
+                c.sensor.live().conflate().collect { v -> c.post.reading(v); delay(1000) }
+            }
         }
         // Out of sight: a quiet foreground service keeps counting until it's open again.
-        onPauseOrDispose { job.cancel(); WalkService.start(ctx); c.write { PostWidget.updateAll(app) } }
+        // Not needed with Health Connect: the health app counts on its own.
+        onPauseOrDispose { job.cancel(); if (!health) WalkService.start(ctx); c.write { PostWidget.updateAll(app) } }
     }
     if (!settings.onboarded) {
         Onboarding()

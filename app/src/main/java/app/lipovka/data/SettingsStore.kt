@@ -27,6 +27,8 @@ data class Settings(
     /** The mail day the morning notification was last shown, and the evening one. */
     val notifiedMorning: Long = -1,
     val notifiedEvening: Long = -1,
+    /** The epoch day steps began to come from Health Connect; -1 while the phone's own counter counts them. */
+    val healthFrom: Long = -1,
 )
 
 class SettingsStore(context: Context) {
@@ -45,6 +47,7 @@ class SettingsStore(context: Context) {
             notify = this[NOTIFY] ?: true,
             notifiedMorning = this[N_MORNING] ?: -1,
             notifiedEvening = this[N_EVENING] ?: -1,
+            healthFrom = this[HEALTH_FROM] ?: -1,
         )
     }
 
@@ -69,6 +72,7 @@ class SettingsStore(context: Context) {
             it[NOTIFY] = s.notify
             it[N_MORNING] = s.notifiedMorning
             it[N_EVENING] = s.notifiedEvening
+            it[HEALTH_FROM] = s.healthFrom
         }
     }
 
@@ -85,5 +89,6 @@ class SettingsStore(context: Context) {
         val NOTIFY = booleanPreferencesKey("notify")
         val N_MORNING = longPreferencesKey("n_morning")
         val N_EVENING = longPreferencesKey("n_evening")
+        val HEALTH_FROM = longPreferencesKey("health_from")
     }
 }

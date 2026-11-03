@@ -89,6 +89,15 @@ class GameTest {
     }
 
     /** Three years with an average walker, starting in each season: mail every day, stories for years. */
+    @Test fun healthTotals() {
+        val known = mapOf(10L to 5_000, 11L to 300)
+        // Only what is new: today grew, yesterday's watch handed its steps over late, a lower total brings nothing.
+        assertEquals(mapOf(11L to 1_700, 9L to 4_000), Steps.catchUp(known, mapOf(9L to 4_000L, 10L to 4_800L, 11L to 2_000L)))
+        assertEquals(emptyMap<Long, Int>(), Steps.catchUp(known, mapOf(10L to 5_000L)))
+        // A glitched total is held to a day's most.
+        assertEquals(mapOf(12L to Steps.MAX_PER_DAY), Steps.catchUp(known, mapOf(12L to 1_000_000L)))
+    }
+
     @Test fun yearsOfPost() {
         for (month in listOf(1, 4, 7, 10)) {
             val start = LocalDate.of(2026, month, 3)

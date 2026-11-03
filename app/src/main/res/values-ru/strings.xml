@@ -97,6 +97,16 @@
     <string name="credits">Шрифт m6x11: Daniel Linssen, кириллица: Natto Games. Погода: Open-Meteo.com и MET Norway (CC BY 4.0). Без рекламы и аккаунтов, всё остаётся в телефоне.</string>
     <string name="steps_ok">Шагомер: работает</string>
     <string name="steps_off">Шагомер: нет разрешения</string>
+    <string name="steps_source">Шаги</string>
+    <string name="source_phone">Телефон</string>
+    <string name="source_health">Health Connect</string>
+    <string name="source_hint">Телефон считает шаги сам. Или их можно брать из Health Connect: туда свои шаги складывают Samsung Health, Mi Fitness, Zepp Life, Google Fit, часы и браслеты, и в Липовке будет столько же. Huawei Health с Health Connect не делится, но его шаги может переносить приложение Health Sync.</string>
+    <string name="health_ok">Шаги берутся из Health Connect.</string>
+    <string name="health_denied">Health Connect не разрешил читать шаги.</string>
+    <string name="health_install">Сначала нужно установить или обновить Health Connect.</string>
+    <string name="health_none">На этом телефоне нет Health Connect.</string>
+    <string name="health_allow">Разрешить в Health Connect</string>
+    <string name="health_get">Установить Health Connect</string>
     <string name="next">Дальше</string>
     <string name="skip">Пропустить</string>
     <string name="ob_title">Почта в Липовке</string>
@@ -115,6 +125,16 @@
     <string name="at_post">на почте</string>
     <string name="unknown_sender">сосед</string>
     <string name="visit_none">У калиток никто не ждёт.</string>
+    <string name="community">Сообщество</string>
+    <string name="community_text">Приложение делается вместе с теми, кто им пользуется. Всё идёт через бота StillCraft в Telegram.</string>
+    <string name="community_bug">Сообщить о баге</string>
+    <string name="community_bug_sub">что сломалось и как повторить</string>
+    <string name="community_idea">Предложить идею</string>
+    <string name="community_idea_sub">функция, дом, письмо</string>
+    <string name="community_follow">Подписаться на обновления</string>
+    <string name="community_follow_sub">бот напишет, когда выйдет версия</string>
+    <string name="community_chat">Чат StillCraft</string>
+    <string name="community_chat_sub">все приложения и люди</string>
     <plurals name="n_bag">
         <item quantity="one">В сумке %d письмо.</item>
         <item quantity="few">В сумке %d письма.</item>
@@ -145,16 +165,4 @@
         <item quantity="many">%d дней назад</item>
         <item quantity="other">%d дня назад</item>
     </plurals>
-
-    <!-- Community: the StillCraft bot on Telegram -->
-    <string name="community">Сообщество</string>
-    <string name="community_text">Приложение делается вместе с теми, кто им пользуется. Всё идёт через бота StillCraft в Telegram.</string>
-    <string name="community_bug">Сообщить о баге</string>
-    <string name="community_bug_sub">что сломалось и как повторить</string>
-    <string name="community_idea">Предложить идею</string>
-    <string name="community_idea_sub">функция, дом, письмо</string>
-    <string name="community_follow">Подписаться на обновления</string>
-    <string name="community_follow_sub">бот напишет, когда выйдет версия</string>
-    <string name="community_chat">Чат StillCraft</string>
-    <string name="community_chat_sub">все приложения и люди</string>
 </resources>

@@ -97,6 +97,16 @@
     <string name="credits">Font m6x11 by Daniel Linssen, Cyrillic by Natto Games. Weather by Open-Meteo.com and MET Norway (CC BY 4.0). No ads, no accounts: everything stays on the phone.</string>
     <string name="steps_ok">Step counter: on</string>
     <string name="steps_off">Step counter: not allowed</string>
+    <string name="steps_source">Steps</string>
+    <string name="source_phone">Phone</string>
+    <string name="source_health">Health Connect</string>
+    <string name="source_hint">The phone counts steps by itself. Or take them from Health Connect: there Samsung Health, Mi Fitness, Zepp Life, Google Fit, watches and bands put the steps they count, and the village walks as far as they say. Huawei Health doesn\'t share with Health Connect; the Health Sync app can carry its steps over.</string>
+    <string name="health_ok">Steps come from Health Connect.</string>
+    <string name="health_denied">Health Connect hasn\'t allowed reading steps.</string>
+    <string name="health_install">Health Connect needs installing or updating first.</string>
+    <string name="health_none">Health Connect isn\'t available on this phone.</string>
+    <string name="health_allow">Allow in Health Connect</string>
+    <string name="health_get">Install Health Connect</string>
     <string name="next">Next</string>
     <string name="skip">Skip</string>
     <string name="ob_title">Lipovka Post</string>
@@ -115,6 +125,16 @@
     <string name="at_post">at the post office</string>
     <string name="unknown_sender">a neighbour</string>
     <string name="visit_none">Nobody is waiting at the gates.</string>
+    <string name="community">Community</string>
+    <string name="community_text">The app is made together with the people who use it. It all goes through the StillCraft bot on Telegram.</string>
+    <string name="community_bug">Report a bug</string>
+    <string name="community_bug_sub">what broke and how to repeat it</string>
+    <string name="community_idea">Suggest an idea</string>
+    <string name="community_idea_sub">a feature, a house, a letter</string>
+    <string name="community_follow">Follow updates</string>
+    <string name="community_follow_sub">the bot writes when a version is out</string>
+    <string name="community_chat">StillCraft chat</string>
+    <string name="community_chat_sub">all the apps and people</string>
     <plurals name="n_bag">
         <item quantity="one">%d letter in the bag.</item>
         <item quantity="other">%d letters in the bag.</item>
@@ -135,16 +155,4 @@
         <item quantity="one">%d day ago</item>
         <item quantity="other">%d days ago</item>
     </plurals>
-
-    <!-- Community: the StillCraft bot on Telegram -->
-    <string name="community">Community</string>
-    <string name="community_text">The app is made together with the people who use it. It all goes through the StillCraft bot on Telegram.</string>
-    <string name="community_bug">Report a bug</string>
-    <string name="community_bug_sub">what broke and how to repeat it</string>
-    <string name="community_idea">Suggest an idea</string>
-    <string name="community_idea_sub">a feature, a house, a letter</string>
-    <string name="community_follow">Follow updates</string>
-    <string name="community_follow_sub">the bot writes when a version is out</string>
-    <string name="community_chat">StillCraft chat</string>
-    <string name="community_chat_sub">all the apps and people</string>
 </resources>

@@ -108,6 +108,19 @@ class Post(private val db: PostDb, val game: Game, private val zone: () -> ZoneI
         out
     }
 
+    /**
+     * Day totals from Health Connect: whatever they hold beyond the village's own count for those days is
+     * carried round. The step counter's baseline is dropped, so going back to it later starts afresh.
+     */
+    suspend fun health(totals: Map<Long, Long>, at: Long = System.currentTimeMillis()): List<Mail> = change { s ->
+        val out = mutableListOf<Mail>()
+        for ((day, n) in Steps.catchUp(s.days, totals).toSortedMap()) out += game.walk(s, n, day, at)
+        s.lastValue = -1
+        s.lastAt = 0
+        game.morning(s, game.mailDay(now()), at)
+        out
+    }
+
     /** Steps added by hand (debug and demo builds). */
     suspend fun addSteps(n: Int) = change { s ->
         val day = now().toLocalDate().toEpochDay()
