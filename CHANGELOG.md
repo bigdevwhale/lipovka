@@ -6,7 +6,7 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
-## [Unreleased]
+## [1.0.9] - 2026-11-03
 
 ### Added
 - Steps can come from Health Connect instead of the phone's own counter (Settings → Steps). Samsung Health, Mi Fitness, Zepp Life, Google Fit, watches and bands put their steps there, so the village walks as far as they say, and a day's steps a watch hands over late still arrive. Huawei Health doesn't share with Health Connect; the Health Sync app can carry its steps over.
