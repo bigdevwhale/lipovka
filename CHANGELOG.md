@@ -6,6 +6,16 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.10] - 2026-11-03
+
+### Fixed
+- The app no longer closes when it is left for just a moment, such as for a permission dialog or the notification shade (for example, right after allowing Health Connect). The background step counting was being stopped before it had finished starting, and Android closed the app for that.
+
+<!-- tg
+Приложение больше не закрывается само, если ненадолго из него выйти: в окно разрешений или шторку уведомлений.
+Например, сразу после того, как дали доступ к Health Connect.
+-->
+
 ## [1.0.9] - 2026-11-03
 
 ### Added

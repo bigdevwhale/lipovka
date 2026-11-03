@@ -36,6 +36,12 @@ class WalkService : Service() {
             ServiceCompat.startForeground(this, ID, note(), ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH)
         }.onFailure { Log.w(TAG, "startForeground", it) }.isSuccess
         if (!ok) { stopSelf(); return START_NOT_STICKY }
+        // Asked to stop: startForeground above has already answered the start that may be waiting on it.
+        if (intent?.action == STOP) {
+            ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
+            stopSelf()
+            return START_NOT_STICKY
+        }
         val c = container
         if (job == null && c.sensor.allowed) {
             job = c.scope.launch {
@@ -75,16 +81,29 @@ class WalkService : Service() {
         private const val TAG = "WalkService"
         private const val CHANNEL = "walk"
         private const val ID = 10
+        private const val STOP = "stop"
+
+        /** Started and not yet asked to stop. */
+        @Volatile private var started = false
 
         /** Called as the app goes out of sight, while it still may start a foreground service. */
         fun start(context: Context) {
             if (!context.container.sensor.allowed) return
             runCatching { context.startForegroundService(Intent(context, WalkService::class.java)) }
+                .onSuccess { started = true }
                 .onFailure { Log.w(TAG, "start", it) }
         }
 
+        /**
+         * Called as the app comes back. A service started as a foreground one must reach startForeground
+         * even if the app is back a moment later (a permission dialog, the notification shade), or Android
+         * kills the app; stopping it outright could come first. So it is asked to stop, and does so in turn.
+         */
         fun stop(context: Context) {
-            context.stopService(Intent(context, WalkService::class.java))
+            if (!started) return
+            started = false
+            runCatching { context.startService(Intent(context, WalkService::class.java).setAction(STOP)) }
+                .onFailure { Log.w(TAG, "stop", it); context.stopService(Intent(context, WalkService::class.java)) }
         }
     }
 }
