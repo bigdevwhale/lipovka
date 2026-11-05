@@ -1,6 +1,7 @@
 package app.lipovka.ui.diary
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,11 +18,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.lipovka.R
 import app.lipovka.container
@@ -40,12 +45,17 @@ import java.time.Instant
 import java.time.ZoneId
 
 /** The postman's notebook: every day walked, its letters and its line; and the letters to the postman. */
+/** How many lines of a long entry show while it rests folded. */
+private const val FOLDED = 4
+
 @Composable
 fun DiaryScreen(home: Home, onLetter: (Long) -> Unit) {
     val ctx = LocalContext.current
     val c = ctx.container
     val diary by c.post.diary.collectAsState(initial = emptyList())
     val lines = diary.associate { it.day to it.text }
+    // Long entries rest folded to a few lines; a tap opens one, another tap folds it again.
+    var open by remember { mutableStateOf(emptySet<Long>()) }
     val zone = ZoneId.systemDefault()
     val byDay = home.s.mail.filter { (it.state == St.SEEN || it.state == St.DELIVERED) && it.deliveredAt > 0 }
         .groupBy { Instant.ofEpochMilli(it.deliveredAt).atZone(zone).toLocalDate().toEpochDay() }
@@ -85,7 +95,11 @@ fun DiaryScreen(home: Home, onLetter: (Long) -> Unit) {
                     Text(Words.date(ctx, d), style = T.Heading, modifier = Modifier.weight(1f))
                     Text(stringResource(R.string.day_line, pluralStringResource(R.plurals.steps_n, Words.q(steps), Words.num(steps)), pluralStringResource(R.plurals.letters_n, letters.size, letters.size)), style = T.Small)
                 }
-                lines[d]?.let { Text(it, style = T.Hand, modifier = Modifier.padding(top = 4.dp)) }
+                lines[d]?.let {
+                    val whole = d in open
+                    Text(it, style = T.Hand, maxLines = if (whole) Int.MAX_VALUE else FOLDED, overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(top = 4.dp).clickable { open = if (whole) open - d else open + d })
+                }
                 val names = letters.mapNotNull { home.resident(it.to)?.name?.invoke(home.ru) }.distinct()
                 if (names.isNotEmpty()) Text(names.joinToString(", "), style = T.Small, modifier = Modifier.padding(top = 2.dp))
             }

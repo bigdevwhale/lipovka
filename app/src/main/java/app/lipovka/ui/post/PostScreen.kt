@@ -11,32 +11,48 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import app.lipovka.BuildConfig
 import app.lipovka.R
 import app.lipovka.container
@@ -62,8 +78,10 @@ import app.lipovka.ui.components.Tag
 import app.lipovka.ui.components.pixelBox
 import app.lipovka.ui.theme.C
 import app.lipovka.ui.theme.T
+import app.lipovka.work.PostWidget
 import java.time.format.DateTimeFormatter
 import kotlin.math.max
+import kotlinx.coroutines.delay
 
 /** The post office: the scene, the bag and the round, the gates, and the evening with the diary. */
 @Composable
@@ -241,6 +259,12 @@ private fun NextDistrict(home: Home) {
 /** How long a day's line in the diary can be: a page, not a tweet. */
 private const val DIARY_MAX = 2000
 
+/** How many lines of a written entry show while it rests folded. */
+private const val DIARY_FOLDED = 3
+
+/** How long after the last keystroke the diary entry saves itself. */
+private const val DIARY_SAVE_MS = 1000L
+
 @Composable
 fun Evening(home: Home) {
     val ctx = LocalContext.current
@@ -249,11 +273,47 @@ fun Evening(home: Home) {
     val day = home.now.toLocalDate().toEpochDay()
     // The lamp is remembered: put out tonight, it stays out when you come back to the screen.
     val lit = home.settings.lampOut != day
-    fun light(on: Boolean) = c.write { settings.update { it.copy(lampOut = if (on) -1 else day) } }
+    fun light(on: Boolean) = c.write {
+        settings.update { it.copy(lampOut = if (on) -1 else day) }
+        // the evening widget shows the same lamp
+        runCatching { PostWidget.updateAll(app) }
+    }
     val scene = remember(home.env, lit) { EveningScene(home.env, lit) }
     val diary by c.post.diary.collectAsState(initial = emptyList())
-    var text by rememberSaveable(day) { mutableStateOf("") }
-    LaunchedEffect(diary, day) { if (text.isEmpty()) text = diary.firstOrNull { it.day == day }?.text.orEmpty() }
+    var field by rememberSaveable(day, stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
+    val text = field.text
+    // Set once the person has changed the text: until then the field may still be empty only because the
+    // saved entry hasn't loaded, and saving that would wipe it.
+    var dirty by rememberSaveable(day) { mutableStateOf(false) }
+    LaunchedEffect(diary, day) {
+        if (!dirty && text.isEmpty()) diary.firstOrNull { it.day == day }?.text?.let { field = TextFieldValue(it, TextRange(it.length)) }
+    }
+    // The entry saves itself: a moment after typing stops, on leaving the screen, and when the app goes to
+    // the background, so closing the app without putting out the lamp doesn't lose what was written.
+    val latest by rememberUpdatedState(text)
+    fun save() { if (dirty) { val t = latest; c.write { post.diary(day, t) } } }
+    LaunchedEffect(text) { if (dirty) { delay(DIARY_SAVE_MS); save() } }
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) { save() }
+    DisposableEffect(day) { onDispose { save() } }
+    // The field doesn't follow its own cursor once the keyboard is up, so a long entry, or one near the
+    // bottom of the screen, would be typed behind the keyboard: keep the cursor's line in sight.
+    val cursorView = remember { BringIntoViewRequester() }
+    var layout by remember { mutableStateOf<TextLayoutResult?>(null) }
+    var focused by remember { mutableStateOf(false) }
+    // A written entry rests folded to a few lines, after the lamp is put out and when coming back to the
+    // screen; a tap opens it for writing again.
+    var editing by remember(day) { mutableStateOf(false) }
+    val folded = !editing && text.isNotEmpty()
+    val focusField = remember { FocusRequester() }
+    LaunchedEffect(editing) { if (editing) runCatching { focusField.requestFocus() } }
+    val ime = WindowInsets.ime.getBottom(LocalDensity.current)
+    LaunchedEffect(focused, ime, field.selection, text, layout) {
+        val l = layout ?: return@LaunchedEffect
+        if (!focused || ime == 0) return@LaunchedEffect
+        val r = l.getCursorRect(field.selection.end.coerceIn(0, text.length))
+        // a little room below the line, so it doesn't sit flush on the keyboard
+        cursorView.bringIntoView(r.copy(bottom = r.bottom + r.height))
+    }
     val start = home.now.toLocalDate().atStartOfDay(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
     val today = home.s.mail.filter { (it.state == St.SEEN || it.state == St.DELIVERED) && it.deliveredAt >= start }
     val news = today.map { Words.mail(ctx, home.content, it, home.ru, home.year).brief }.filter { it.isNotBlank() }.distinct() +
@@ -272,15 +332,27 @@ fun Evening(home: Home) {
             }
             Spacer(Modifier.height(10.dp))
             Eyebrow(stringResource(R.string.diary_title))
-            BasicTextField(
-                value = text, onValueChange = { text = it.take(DIARY_MAX); if (!lit) light(true) },
+            if (folded) Text(text, style = T.Hand, maxLines = DIARY_FOLDED, overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp).clickable {
+                    field = field.copy(selection = TextRange(text.length))
+                    editing = true
+                })
+            else BasicTextField(
+                value = field,
+                onValueChange = { v ->
+                    val typed = v.text != text
+                    if (typed) dirty = true
+                    field = if (v.text.length <= DIARY_MAX) v else v.copy(text = v.text.take(DIARY_MAX), selection = TextRange(DIARY_MAX))
+                    if (typed && !lit) light(true)
+                },
                 textStyle = T.Hand, cursorBrush = SolidColor(C.blue),
-                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                onTextLayout = { layout = it },
+                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp).focusRequester(focusField).bringIntoViewRequester(cursorView).onFocusChanged { focused = it.isFocused },
                 decorationBox = { inner -> Box { if (text.isEmpty()) Text(stringResource(R.string.diary_hint), style = T.Hand.copy(color = C.faint)); inner() } },
             )
             // Putting the lamp out writes the line down and ends the evening; lighting it again lets you go on.
             PixelButton(stringResource(if (lit) R.string.lamp_off else R.string.lamp_on), {
-                if (lit) { focus.clearFocus(); c.write { post.diary(day, text) } }
+                if (lit) { focus.clearFocus(); editing = false; c.write { post.diary(day, text) } }
                 light(!lit)
             }, Modifier.fillMaxWidth(), kind = if (lit) BtnKind.LAMP else BtnKind.GHOST)
         }
