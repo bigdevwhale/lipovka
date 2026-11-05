@@ -6,6 +6,17 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.16] - 2026-11-06
+
+### Fixed
+- Steps from Health Connect reach the widget even after the app is swiped away from recents. On Xiaomi and some other phones that stops the app and its 15-minute step check; the widget now wakes the app every half hour to fetch the steps and start the check again.
+
+<!-- tg
+Исправлено: шаги из Health Connect доходят до виджета, даже если смахнуть приложение из недавних.
+На Xiaomi это останавливало фоновую проверку шагов; теперь виджет сам раз в полчаса подтягивает шаги и запускает её снова.
+Совет для Xiaomi: в настройках приложения включите «Автозапуск» и «Контроль активности: нет ограничений» — тогда виджет обновляется раз в 15 минут.
+-->
+
 ## [1.0.15] - 2026-11-06
 
 ### Added
