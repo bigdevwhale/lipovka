@@ -238,6 +238,9 @@ private fun NextDistrict(home: Home) {
     }
 }
 
+/** How long a day's line in the diary can be: a page, not a tweet. */
+private const val DIARY_MAX = 2000
+
 @Composable
 fun Evening(home: Home) {
     val ctx = LocalContext.current
@@ -270,7 +273,7 @@ fun Evening(home: Home) {
             Spacer(Modifier.height(10.dp))
             Eyebrow(stringResource(R.string.diary_title))
             BasicTextField(
-                value = text, onValueChange = { text = it.take(240); if (!lit) light(true) },
+                value = text, onValueChange = { text = it.take(DIARY_MAX); if (!lit) light(true) },
                 textStyle = T.Hand, cursorBrush = SolidColor(C.blue),
                 modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
                 decorationBox = { inner -> Box { if (text.isEmpty()) Text(stringResource(R.string.diary_hint), style = T.Hand.copy(color = C.faint)); inner() } },
