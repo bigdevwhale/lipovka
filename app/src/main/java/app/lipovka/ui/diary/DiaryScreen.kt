@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.lipovka.R
@@ -82,7 +83,7 @@ fun DiaryScreen(home: Home, onLetter: (Long) -> Unit) {
             Column(Modifier.fillMaxWidth().pixelBox(C.light).padding(horizontal = 12.dp, vertical = 8.dp)) {
                 Row {
                     Text(Words.date(ctx, d), style = T.Heading, modifier = Modifier.weight(1f))
-                    Text(stringResource(R.string.day_line, Words.num(steps), letters.size), style = T.Small)
+                    Text(stringResource(R.string.day_line, pluralStringResource(R.plurals.steps_n, Words.q(steps), Words.num(steps)), pluralStringResource(R.plurals.letters_n, letters.size, letters.size)), style = T.Small)
                 }
                 lines[d]?.let { Text(it, style = T.Hand, modifier = Modifier.padding(top = 4.dp)) }
                 val names = letters.mapNotNull { home.resident(it.to)?.name?.invoke(home.ru) }.distinct()

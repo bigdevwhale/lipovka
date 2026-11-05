@@ -60,6 +60,9 @@ object Words {
         },
     )
 
+    /** A count as a plural quantity: Android picks the word form by it. */
+    fun q(n: Number): Int = n.toLong().coerceIn(0, Int.MAX_VALUE.toLong()).toInt()
+
     /** "1 240" with a thin non-breaking space. */
     fun num(n: Number): String = String.format(Locale.US, "%,d", n.toLong()).replace(',', ' ')
 

@@ -88,7 +88,7 @@ fun PostScreen(home: Home, onVisits: () -> Unit, onLetter: (Long) -> Unit, onSet
             if (home.visits.isNotEmpty()) VisitsCard(home, onVisits)
             Round(home)
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                Stat(Words.num(home.stepsToday), stringResource(R.string.steps_today), Modifier.weight(1f))
+                Stat(Words.num(home.stepsToday), pluralStringResource(R.plurals.steps_today, Words.q(home.stepsToday)), Modifier.weight(1f))
                 Stat(Words.km(s.total), stringResource(R.string.s_km), Modifier.weight(1f))
                 Stat(delivered(home).toString(), stringResource(R.string.s_letters), Modifier.weight(1f))
             }
@@ -188,7 +188,7 @@ private fun Round(home: Home) {
         Spacer(Modifier.height(4.dp))
         Row {
             Text(stringResource(R.string.steps_walked, Words.num(walked)), style = T.Small, modifier = Modifier.weight(1f))
-            Text(stringResource(R.string.steps_left, Words.num(left)), style = T.Body)
+            Text(pluralStringResource(R.plurals.steps_left, Words.q(left), Words.num(left)), style = T.Body)
         }
     }
 }
@@ -216,7 +216,7 @@ private fun Bag(home: Home) {
                     }
                     Column(horizontalAlignment = Alignment.End) {
                         Text(Words.num(left), style = T.Heading)
-                        Text(stringResource(R.string.s_steps), style = T.Small)
+                        Text(pluralStringResource(R.plurals.s_steps, Words.q(left)), style = T.Small)
                     }
                 }
             }

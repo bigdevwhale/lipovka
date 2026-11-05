@@ -26,10 +26,7 @@ S = [
     ("bag_title", "Today's bag", "Сумка на сегодня"),
     ("bag_empty", "The bag is empty. Everything is delivered.", "Сумка пуста. Всё разнесено."),
     ("bag_more", "Take more", "Взять ещё"),
-    ("steps_today", "steps today", "шагов сегодня"),
     ("going_to", "on the way to %1$s", "иду: %1$s"),
-    ("steps_left", "%1$s steps to go", "ещё %1$s шагов"),
-    ("steps_n", "%1$s steps", "%1$s шагов"),
     ("steps_walked", "walked %1$s", "пройдено %1$s"),
     ("letter_for_you", "A letter for you", "Письмо вам"),
     ("visit_go", "Go to the gate", "К калитке"),
@@ -47,7 +44,6 @@ S = [
     ("diary_hint", "One line about today…", "Одна строчка о сегодняшнем дне…"),
     ("lamp_off", "Put out the lamp", "Погасить лампу"),
     ("lamp_on", "Light the lamp", "Зажечь лампу"),
-    ("s_steps", "steps", "шагов"),
     ("s_letters", "letters", "писем"),
     ("s_km", "km", "км"),
     ("k_letter", "letter", "письмо"),
@@ -84,7 +80,8 @@ S = [
     ("stamp_got", "received %1$s", "получена %1$s"),
     ("diary_tab", "The postman's diary", "Дневник почтальона"),
     ("served", "year %1$d of service", "%1$d-й год службы"),
-    ("day_line", "%1$s steps · %2$d letters", "%1$s шагов · %2$d писем"),
+    # The steps and the letters, each in its own plural form.
+    ("day_line", "%1$s · %2$s", "%1$s · %2$s"),
     ("no_days", "The diary begins with your first walk.", "Дневник начнётся с первой прогулки."),
     ("settings", "Settings", "Настройки"),
     ("weather", "Weather", "Погода"),
@@ -162,7 +159,17 @@ PL = [
     ("things", {"one": "%d thing", "other": "%d things"}, {"one": "%d вещь", "few": "%d вещи", "many": "%d вещей", "other": "%d вещи"}),
     ("letters_n", {"one": "%d letter", "other": "%d letters"}, {"one": "%d письмо", "few": "%d письма", "many": "%d писем", "other": "%d письма"}),
     ("days_ago", {"one": "%d day ago", "other": "%d days ago"}, {"one": "%d день назад", "few": "%d дня назад", "many": "%d дней назад", "other": "%d дня назад"}),
+    # Words that stand next to a number shown on its own: lint's ImpliedQuantity doesn't apply.
+    ("steps_today", {"one": "step today", "other": "steps today"},
+     {"one": "шаг сегодня", "few": "шага сегодня", "many": "шагов сегодня", "other": "шага сегодня"}),
+    ("s_steps", {"one": "step", "other": "steps"}, {"one": "шаг", "few": "шага", "many": "шагов", "other": "шага"}),
+    ("steps_left", {"one": "%1$s step to go", "other": "%1$s steps to go"},
+     {"one": "ещё %1$s шаг", "few": "ещё %1$s шага", "many": "ещё %1$s шагов", "other": "ещё %1$s шага"}),
+    ("steps_n", {"one": "%1$s step", "other": "%1$s steps"}, {"one": "%1$s шаг", "few": "%1$s шага", "many": "%1$s шагов", "other": "%1$s шага"}),
 ]
+
+# Plurals without the number in them.
+LABELS = {"steps_today", "s_steps"}
 
 
 def esc(s):
@@ -170,11 +177,12 @@ def esc(s):
 
 
 def write(path, idx):
-    out = ['<?xml version="1.0" encoding="utf-8"?>', "<resources>"]
+    out = ['<?xml version="1.0" encoding="utf-8"?>', '<resources xmlns:tools="http://schemas.android.com/tools">']
     for k, en, ru in S:
         out.append(f'    <string name="{k}">{esc((en, ru)[idx])}</string>')
     for k, en, ru in PL:
-        out.append(f'    <plurals name="{k}">')
+        ignore = ' tools:ignore="ImpliedQuantity"' if k in LABELS else ""
+        out.append(f'    <plurals name="{k}"{ignore}>')
         for q, v in (en, ru)[idx].items():
             out.append(f'        <item quantity="{q}">{esc(v)}</item>')
         out.append("    </plurals>")

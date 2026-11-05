@@ -54,8 +54,8 @@ class PostWidget : AppWidgetProvider() {
             val left = next?.let { (it.leg - s.leg).coerceAtLeast(0) } ?: 0
             val today = s.days[LocalDate.now().toEpochDay()] ?: 0
             val title = if (who != null) who else r.getString(R.string.bag_empty)
-            val big = if (who != null) r.getString(R.string.steps_n, Words.num(left)) else ""
-            val small = "${Words.num(today)} ${r.getString(R.string.steps_today)}"
+            val big = if (who != null) r.resources.getQuantityString(R.plurals.steps_n, Words.q(left), Words.num(left)) else ""
+            val small = "${Words.num(today)} ${r.resources.getQuantityString(R.plurals.steps_today, Words.q(today))}"
             val bmp = render(context, title, big, small, s.bag.size)
             val open = PendingIntent.getActivity(context, 0, Intent(context, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
             for (id in ids) {
