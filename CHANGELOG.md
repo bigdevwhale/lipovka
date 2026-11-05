@@ -6,6 +6,20 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.12] - 2026-11-05
+
+### Added
+- The kettle comes to the boil when tapped, at the post office, in the room and on the evening table: a thick jet of steam shoots from the spout and it whistles (a real kettle, by Work With Sounds / Konrad Gutkowski, CC BY 4.0).
+- The cat-faced clock at the post office strikes the hour when tapped, as many times as the hour on its face. The pendulum swings wide, the clock cat's eyes dart, and a note floats up for every strike.
+
+### Removed
+- The groundwork for reading steps straight from Huawei Health. It would need the app registered with Huawei; Huawei Health's steps still reach the village through the Health Sync app and Health Connect.
+
+<!-- tg
+Чайник и часы на почте теперь тоже отзываются на нажатие.
+Чайник закипает и свистит, а часы с кошачьей мордой бьют столько раз, сколько сейчас часов.
+-->
+
 ## [1.0.11] - 2026-11-05
 
 ### Added
