@@ -244,7 +244,9 @@ fun Evening(home: Home) {
     val c = ctx.container
     val focus = LocalFocusManager.current
     val day = home.now.toLocalDate().toEpochDay()
-    var lit by rememberSaveable(day) { mutableStateOf(true) }
+    // The lamp is remembered: put out tonight, it stays out when you come back to the screen.
+    val lit = home.settings.lampOut != day
+    fun light(on: Boolean) = c.write { settings.update { it.copy(lampOut = if (on) -1 else day) } }
     val scene = remember(home.env, lit) { EveningScene(home.env, lit) }
     val diary by c.post.diary.collectAsState(initial = emptyList())
     var text by rememberSaveable(day) { mutableStateOf("") }
@@ -268,7 +270,7 @@ fun Evening(home: Home) {
             Spacer(Modifier.height(10.dp))
             Eyebrow(stringResource(R.string.diary_title))
             BasicTextField(
-                value = text, onValueChange = { text = it.take(240); lit = true },
+                value = text, onValueChange = { text = it.take(240); if (!lit) light(true) },
                 textStyle = T.Hand, cursorBrush = SolidColor(C.blue),
                 modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
                 decorationBox = { inner -> Box { if (text.isEmpty()) Text(stringResource(R.string.diary_hint), style = T.Hand.copy(color = C.faint)); inner() } },
@@ -276,7 +278,7 @@ fun Evening(home: Home) {
             // Putting the lamp out writes the line down and ends the evening; lighting it again lets you go on.
             PixelButton(stringResource(if (lit) R.string.lamp_off else R.string.lamp_on), {
                 if (lit) { focus.clearFocus(); c.write { post.diary(day, text) } }
-                lit = !lit
+                light(!lit)
             }, Modifier.fillMaxWidth(), kind = if (lit) BtnKind.LAMP else BtnKind.GHOST)
         }
     }

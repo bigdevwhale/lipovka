@@ -29,6 +29,8 @@ data class Settings(
     val notifiedEvening: Long = -1,
     /** The epoch day steps began to come from Health Connect; -1 while the phone's own counter counts them. */
     val healthFrom: Long = -1,
+    /** The day the evening lamp was last put out; it stays out until lit again or the next day. */
+    val lampOut: Long = -1,
 )
 
 class SettingsStore(context: Context) {
@@ -48,6 +50,7 @@ class SettingsStore(context: Context) {
             notifiedMorning = this[N_MORNING] ?: -1,
             notifiedEvening = this[N_EVENING] ?: -1,
             healthFrom = this[HEALTH_FROM] ?: -1,
+            lampOut = this[LAMP_OUT] ?: -1,
         )
     }
 
@@ -73,6 +76,7 @@ class SettingsStore(context: Context) {
             it[N_MORNING] = s.notifiedMorning
             it[N_EVENING] = s.notifiedEvening
             it[HEALTH_FROM] = s.healthFrom
+            it[LAMP_OUT] = s.lampOut
         }
     }
 
@@ -90,5 +94,6 @@ class SettingsStore(context: Context) {
         val N_MORNING = longPreferencesKey("n_morning")
         val N_EVENING = longPreferencesKey("n_evening")
         val HEALTH_FROM = longPreferencesKey("health_from")
+        val LAMP_OUT = longPreferencesKey("lamp_out")
     }
 }
