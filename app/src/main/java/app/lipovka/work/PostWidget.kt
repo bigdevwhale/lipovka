@@ -27,6 +27,7 @@ import app.lipovka.ui.art.toBitmap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -39,7 +40,14 @@ class PostWidget : AppWidgetProvider() {
     override fun onUpdate(context: Context, manager: AppWidgetManager, ids: IntArray) {
         val pending = goAsync()
         CoroutineScope(Dispatchers.Default).launch {
-            try { updateAll(context) } finally { pending.finish() }
+            try {
+                // The widget's own periodic update wakes the app even after it was swiped away, which on MIUI
+                // and others force-stops it and drops the 15-minute work: so take the steps in here too, and
+                // put the work back.
+                runCatching { Alarms.schedule(context) }
+                runCatching { withTimeout(SYNC_MS) { context.container.sync() } }
+                updateAll(context)
+            } finally { pending.finish() }
         }
     }
 
@@ -105,6 +113,9 @@ class PostWidget : AppWidgetProvider() {
 
         /** The last picture drawn and what it showed: the scene is redrawn only when the weather, hour or house changes. */
         @Volatile private var cached: Pair<Any, Bitmap>? = null
+
+        /** How long the widget waits for the steps before drawing with what it has (a broadcast gets about 10 s). */
+        private const val SYNC_MS = 7_000L
 
         /** How much the picture is scaled up (whole pixels only, so it stays crisp). */
         private const val PIC_SCALE = 2
