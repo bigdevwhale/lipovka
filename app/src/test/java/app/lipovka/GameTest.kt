@@ -1,6 +1,7 @@
 package app.lipovka
 
 import app.lipovka.data.Content
+import app.lipovka.data.Mail
 import app.lipovka.data.St
 import app.lipovka.domain.Cal
 import app.lipovka.domain.Game
@@ -127,6 +128,44 @@ class GameTest {
         println("light walker: km=${"%.0f".format(r.s.km)}, delivered=${r.delivered}, empty=${r.emptyDays}")
         assertTrue(r.delivered > 365)
         assertTrue(r.emptyDays < 40)
+    }
+
+    /**
+     * "Take more" on the way: a letter for a house behind (or just nearer) must not be delivered at once with
+     * the steps already walked towards the next house, and that house must stay next.
+     */
+    @Test fun takeMoreKeepsTheLegBegun() {
+        val game = Game(content)
+        val date = LocalDate.of(2026, 11, 5)
+        val day = date.toEpochDay()
+        val s = GameState(start = day - 30, at = "lebedev")
+        s.mail += Mail(id = 1, src = "fill:0", kind = "LETTER", to = "fedor", day = day, state = St.BAG)
+        s.mail += Mail(id = 2, src = "fill:1", kind = "LETTER", to = "dima", day = day, state = St.SHELF, priority = 2)
+        val toMill = game.plan(s).first().leg
+        game.walk(s, toMill - 20, day, 0)
+        assertEquals("mill", s.heading)
+
+        game.takeMore(s, date)
+        assertEquals("the mill stays next", "mill", game.plan(s).first().house.id)
+        assertEquals(20, game.toNext(s))
+        assertTrue("nothing delivered by one more step", game.walk(s, 1, day, 0).isEmpty())
+        assertEquals(listOf("fedor"), game.walk(s, 19, day, 0).map { it.to })
+        assertEquals("mill", s.at)
+        assertTrue("Dima's letter still in the bag", s.bag.any { it.to == "dima" })
+    }
+
+    /** The same from a leg saved before the heading was remembered: no step yet since the update. */
+    @Test fun takeMoreKeepsALegSavedWithoutHeading() {
+        val game = Game(content)
+        val date = LocalDate.of(2026, 11, 5)
+        val day = date.toEpochDay()
+        val s = GameState(start = day - 30, at = "lebedev")
+        s.mail += Mail(id = 1, src = "fill:0", kind = "LETTER", to = "fedor", day = day, state = St.BAG)
+        s.mail += Mail(id = 2, src = "fill:1", kind = "LETTER", to = "dima", day = day, state = St.SHELF, priority = 2)
+        s.leg = game.plan(s).first().leg - 20
+        game.takeMore(s, date)
+        assertEquals("mill", game.plan(s).first().house.id)
+        assertEquals(listOf("fedor"), game.walk(s, 20, day, 0).map { it.to })
     }
 }
 

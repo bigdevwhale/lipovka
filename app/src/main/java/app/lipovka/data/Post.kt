@@ -29,6 +29,7 @@ class Post(private val db: PostDb, val game: Game, private val zone: () -> ZoneI
             start = m("start")?.toLongOrNull() ?: LocalDateTime.now(zone()).let { game.mailDay(it).toEpochDay() },
             at = m("at") ?: "post",
             leg = m("leg")?.toIntOrNull() ?: 0,
+            heading = m("heading") ?: "",
             morning = m("morning")?.toLongOrNull() ?: -1,
             total = m("total")?.toLongOrNull() ?: 0,
             lastValue = m("lastValue")?.toLongOrNull() ?: -1,
@@ -58,6 +59,7 @@ class Post(private val db: PostDb, val game: Game, private val zone: () -> ZoneI
         for (k in s.dirtyStamps) dao.putStamp(s.stamps.getValue(k))
         dao.putMeta(Meta("at", s.at))
         dao.putMeta(Meta("leg", s.leg.toString()))
+        dao.putMeta(Meta("heading", s.heading))
         dao.putMeta(Meta("morning", s.morning.toString()))
         dao.putMeta(Meta("total", s.total.toString()))
         dao.putMeta(Meta("lastValue", s.lastValue.toString()))

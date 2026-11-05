@@ -29,6 +29,11 @@ class GameState(
     var at: String = "post",
     /** Steps walked since that stop. */
     var leg: Int = 0,
+    /**
+     * The house those steps are being walked towards, or "" before the first step of a leg. Once a leg is
+     * begun it is walked to its end, even if more letters are taken on the way.
+     */
+    var heading: String = "",
     /** The last mail day the morning post was sorted. */
     var morning: Long = -1,
     var total: Long = 0,
@@ -97,17 +102,23 @@ class Game(val content: Content) {
 
     private fun legSteps(from: String, to: House) = World.steps(point(from), districtOf(from), to.at, to.district)
 
-    /** The round ahead: telegrams first, then always the nearest house next. */
+    /**
+     * The round ahead: the house the postman is already walking to, then telegrams, then always the nearest
+     * house next. Keeping the begun leg first matters when letters are added on the way ("take more"): the
+     * steps walked so far belong to that road, and must not count towards a different, nearer house.
+     */
     fun plan(s: GameState): List<Stop> {
         val byHouse = s.bag.groupBy { houseOf(it.to)?.id }.filterKeys { it != null }
         val left = byHouse.keys.filterNotNull().toMutableSet()
         val out = mutableListOf<Stop>()
         var from = s.at
         var cum = 0
+        val going = s.heading.takeIf { s.leg > 0 && it in left }
         while (left.isNotEmpty()) {
             val urgent = left.filter { h -> byHouse[h]!!.any { it.kind == Kind.TELEGRAM.name } }
             val pool = urgent.ifEmpty { left.toList() }
-            val next = pool.minBy { legSteps(from, World.house(it)!!) * 1000 + it.hashCode() % 997 }
+            val next = if (out.isEmpty() && going != null) going
+                else pool.minBy { legSteps(from, World.house(it)!!) * 1000 + it.hashCode() % 997 }
             val h = World.house(next)!!
             val leg = legSteps(from, h)
             cum += leg
@@ -139,16 +150,19 @@ class Game(val content: Content) {
         val delivered = mutableListOf<Mail>()
         if (s.bag.isEmpty()) {
             s.leg = 0
+            s.heading = ""
         } else {
             s.leg += steps
             while (true) {
                 val next = plan(s).firstOrNull() ?: break
+                s.heading = next.house.id
                 if (s.leg < next.leg) break
                 s.leg -= next.leg
                 s.at = next.house.id
+                s.heading = ""
                 for (m in next.mail) delivered += deliver(s, m, day, now)
             }
-            if (s.bag.isEmpty()) s.leg = 0
+            if (s.bag.isEmpty()) { s.leg = 0; s.heading = "" }
         }
         milestones(s, day)
         return delivered
@@ -256,7 +270,7 @@ class Game(val content: Content) {
         val today = date.toEpochDay()
         if (s.morning >= today) return false
         s.morning = today
-        if (s.bag.isEmpty()) { s.at = "post"; s.leg = 0 }
+        if (s.bag.isEmpty()) { s.at = "post"; s.leg = 0; s.heading = "" }
         milestones(s, today)
 
         // Old everyday letters that never fitted into a day are quietly dropped.
@@ -316,6 +330,9 @@ class Game(val content: Content) {
 
     /** Puts shelf mail into the bag by priority until the round is about a usual day's walk. */
     fun fillBag(s: GameState, date: LocalDate, extra: Int = 0) {
+        // Halfway to a house, it stays the next one, whatever goes into the bag now. (A leg saved before
+        // the heading was remembered gets it here, before the bag changes.)
+        if (s.leg > 0 && s.heading.isEmpty()) s.heading = plan(s).firstOrNull()?.house?.id ?: ""
         val today = date.toEpochDay()
         val budget = target(s, today) + extra
         val houses = s.bag.mapNotNull { houseOf(it.to)?.id }.toMutableSet()
@@ -339,7 +356,7 @@ class Game(val content: Content) {
             count++
             s.add(m.copy(state = St.BAG))
         }
-        if (s.bag.isEmpty() && s.leg == 0) s.at = "post"
+        if (s.bag.isEmpty() && s.leg == 0) { s.at = "post"; s.heading = "" }
     }
 
     private fun take(s: GameState, m: Mail) {
