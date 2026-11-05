@@ -45,7 +45,22 @@ class WalkService : Service() {
         val c = container
         if (job == null && c.sensor.allowed) {
             job = c.scope.launch {
-                c.sensor.live().conflate().collect { v -> c.post.reading(v); Notes.check(applicationContext); delay(5000) }
+                // The widget follows the walk: at once when a letter is delivered, and with the steps now and
+                // then, not on every reading.
+                var drawnAt = 0L
+                var drawnTotal = -1L
+                c.sensor.live().conflate().collect { v ->
+                    val delivered = c.post.reading(v)
+                    Notes.check(applicationContext)
+                    val total = c.post.state.value?.total ?: -1L
+                    val now = System.currentTimeMillis()
+                    if (delivered.isNotEmpty() || (total != drawnTotal && now - drawnAt >= WIDGET_EVERY_MS)) {
+                        runCatching { PostWidget.updateAll(applicationContext) }.onFailure { Log.w(TAG, "widget", it) }
+                        drawnAt = now
+                        drawnTotal = total
+                    }
+                    delay(5000)
+                }
             }
         }
         return START_NOT_STICKY
@@ -82,6 +97,8 @@ class WalkService : Service() {
         private const val CHANNEL = "walk"
         private const val ID = 10
         private const val STOP = "stop"
+        /** The widget is redrawn with new steps at most this often while walking. */
+        private const val WIDGET_EVERY_MS = 15_000L
 
         /** Started and not yet asked to stop. */
         @Volatile private var started = false
