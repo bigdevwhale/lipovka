@@ -107,6 +107,13 @@
     <string name="health_none">Health Connect isn\'t available on this phone.</string>
     <string name="health_allow">Allow in Health Connect</string>
     <string name="health_get">Install Health Connect</string>
+    <string name="source_huawei">Huawei Health</string>
+    <string name="source_hint_huawei">The phone counts steps by itself. Or take them from Health Connect: there Samsung Health, Mi Fitness, Zepp Life, Google Fit, watches and bands put the steps they count. Or straight from Huawei Health, with a Huawei watch or band. The village walks as far as they say.</string>
+    <string name="huawei_ok">Steps come from Huawei Health.</string>
+    <string name="huawei_denied">Huawei Health hasn\'t allowed reading steps.</string>
+    <string name="huawei_no_hms">Huawei Health needs HMS Core, and it isn\'t on this phone.</string>
+    <string name="huawei_no_app">Install Huawei Health and sign in to it first.</string>
+    <string name="huawei_allow">Allow in Huawei Health</string>
     <string name="next">Next</string>
     <string name="skip">Skip</string>
     <string name="ob_title">Lipovka Post</string>

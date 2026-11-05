@@ -16,6 +16,12 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // Huawei Health Kit (steps from Huawei Health) and the HMS Core libraries it stands on.
+        maven("https://developer.huawei.com/repo/") {
+            content {
+                includeGroupByRegex("com\\.huawei.*")
+            }
+        }
     }
 }
 

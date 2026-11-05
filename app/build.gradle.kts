@@ -12,6 +12,9 @@ plugins {
 // `-Pdemo` builds app.lipovka.demo with a few months of rounds already walked, for screenshots, next to the real install.
 val demo = project.hasProperty("demo")
 
+// Huawei Health Kit needs the app's id from AppGallery Connect; without it the Huawei Health choice stays hidden.
+val huaweiAppId = (System.getenv("HUAWEI_APP_ID") ?: project.findProperty("huaweiAppId") as String? ?: "").trim()
+
 val releaseKeystore = System.getenv("SIGNING_KEYSTORE_PATH")?.let(::file)?.takeIf { it.exists() }
 
 android {
@@ -26,6 +29,8 @@ android {
         versionName = System.getenv("VERSION_NAME") ?: "1.0.0"
         buildConfigField("boolean", "DEMO", demo.toString())
         // Screenshots want a still screen: rain, steam and the cat hold still.
+        buildConfigField("String", "HUAWEI_APP_ID", "\"$huaweiAppId\"")
+        manifestPlaceholders["huaweiAppId"] = huaweiAppId
         buildConfigField("boolean", "SHOTS", project.hasProperty("shots").toString())
         // `-Pshots` gives the demo its own package, so screenshots never touch a demo someone is trying out.
         if (demo) applicationIdSuffix = if (project.hasProperty("shots")) ".shots" else ".demo"
@@ -119,6 +124,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.health.connect)
+    implementation(libs.huawei.health)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     testImplementation(libs.junit)
