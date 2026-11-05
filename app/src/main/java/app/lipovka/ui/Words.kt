@@ -7,6 +7,7 @@ import app.lipovka.data.Kind
 import app.lipovka.data.Mail
 import app.lipovka.data.Tx
 import app.lipovka.domain.Sky
+import app.lipovka.domain.World
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -26,7 +27,7 @@ object Words {
         "stationhouse" to Tx("Дом машиниста", "The train driver's house"), "boatshed" to Tx("Лодочный сарай", "The boat shed"),
         "painter" to Tx("Домик художницы", "The painter's cottage"), "meteo" to Tx("Метеостанция", "The weather station"),
         "belkiny" to Tx("Дом Белкиных", "The Belkins' house"), "newspaper" to Tx("Редакция", "The newspaper office"),
-        "museum" to Tx("Музей", "The museum"), "post" to Tx("Почта", "The post office"),
+        "museum" to Tx("Музей", "The museum"), "post" to Tx("Почта", "The post office"), World.SCHOOL_ID to Tx("Школа", "The school"),
     )
     private val districts = listOf(
         Tx("Липовка", "Lipovka"), Tx("Заречье", "Zarechye"), Tx("Разъезд", "the Halt"),

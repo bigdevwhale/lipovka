@@ -149,6 +149,20 @@ S = [
     ("community_follow_sub", "the bot writes when a version is out", "бот напишет, когда выйдет версия"),
     ("community_chat", "StillCraft chat", "Чат StillCraft"),
     ("community_chat_sub", "all the apps and people", "все приложения и люди"),
+    # The village school: a place on the map with no one living in it
+    ("school_about", "A log schoolhouse with a stove and a bell that is seventy years old. There are few pupils, and they all know each other by name; the youngest sit by the window, the oldest by the stove.",
+     "Бревенчатая школа с печкой и колокольчиком, которому семьдесят лет. Учеников немного, и все знают друг друга по именам: младшие сидят у окна, старшие у печки."),
+    ("school_today", "Today", "Сегодня"),
+    ("school_lessons", "Lessons are on. Through the open window someone is answering at the blackboard.", "Идут уроки. Из открытой форточки слышно, как кто-то отвечает у доски."),
+    ("school_after", "Lessons are over. The classrooms are being swept, and the duty pupils water the geraniums.", "Уроки кончились. В классах подметают, дежурные поливают герань."),
+    ("school_night", "The school is dark until the morning bell.", "Школа спит до утреннего звонка."),
+    ("school_sunday", "Sunday: the school is quiet, only the stove is warm.", "Воскресенье: в школе тихо, тёплая только печка."),
+    ("school_holidays", "The summer holidays. The windows are dark until the first of September.", "Летние каникулы. Окна тёмные до первого сентября."),
+    ("school_winter_break", "The winter holidays. The bell is resting until after the New Year.", "Зимние каникулы. Колокольчик отдыхает до после Нового года."),
+    ("school_pupils", "Pupils", "Ученики"),
+    ("school_teacher", "Taught here", "Учил здесь"),
+    ("school_year", "The school year", "Школьный год"),
+    ("school_now", "now", "сейчас"),
 ]
 
 PL = [

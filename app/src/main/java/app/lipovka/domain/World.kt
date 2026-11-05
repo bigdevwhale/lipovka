@@ -34,6 +34,10 @@ object World {
 
     val POST = Pt(98.0, 586.0)
 
+    /** The village school: on the map and tappable, but no one lives there and no mail goes to it. */
+    const val SCHOOL_ID = "school"
+    val SCHOOL = Pt(122.0, 428.0)
+
     val houses: List<House> = listOf(
         House("shop", 0, Pt(60.0, 560.0), 'G', 'W', setOf("shop")),
         House("club", 0, Pt(140.0, 556.0), 'R', 'Y', setOf("club")),

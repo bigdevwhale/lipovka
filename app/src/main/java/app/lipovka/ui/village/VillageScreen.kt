@@ -104,8 +104,10 @@ fun VillageScreen(home: Home, onHouse: (String) -> Unit) {
                     detectTapGestures { o ->
                         val x = o.x / size.width * World.W
                         val y = o.y / size.width * World.W
-                        val hit = World.houses.filter { it.district <= home.open }.minByOrNull { hypot(it.at.x - x, it.at.y - 8 - y) }
-                        if (hit != null && hypot(hit.at.x - x, hit.at.y - 8 - y) < 22) onHouse(hit.id)
+                        // The houses open so far, and the school, which stands in the village from the start.
+                        val spots = World.houses.filter { it.district <= home.open }.map { it.id to it.at } + (World.SCHOOL_ID to World.SCHOOL)
+                        val hit = spots.minByOrNull { (_, at) -> hypot(at.x - x, at.y - 8 - y) }
+                        if (hit != null && hypot(hit.second.x - x, hit.second.y - 8 - y) < 22) onHouse(hit.first)
                     }
                 }) {
                     PixelView(scene, Modifier.fillMaxWidth())
@@ -114,6 +116,7 @@ fun VillageScreen(home: Home, onHouse: (String) -> Unit) {
                         Label(Words.house(h.id, home.ru), h.at.x, h.at.y + 9, scale)
                     }
                     Label(Words.house("post", home.ru), World.POST.x, World.POST.y + 10, scale)
+                    Label(Words.house(World.SCHOOL_ID, home.ru), World.SCHOOL.x, World.SCHOOL.y + 9, scale)
                     val next = (home.open + 1).takeIf { it <= 5 }
                     if (next != null) {
                         val y = when (next) { 1 -> 290.0; 2 -> 200.0; 3 -> 140.0; 4 -> 120.0; else -> 40.0 }

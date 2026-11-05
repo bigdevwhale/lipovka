@@ -41,6 +41,7 @@ import app.lipovka.data.Content
 import app.lipovka.data.Settings
 import app.lipovka.data.St
 import app.lipovka.domain.Env
+import app.lipovka.domain.World
 import app.lipovka.domain.Game
 import app.lipovka.domain.GameState
 import app.lipovka.ru
@@ -55,6 +56,7 @@ import app.lipovka.ui.settings.SettingsScreen
 import app.lipovka.ui.theme.C
 import app.lipovka.ui.theme.T
 import app.lipovka.ui.village.ResidentSheet
+import app.lipovka.ui.village.SchoolSheet
 import app.lipovka.ui.village.VillageScreen
 import app.lipovka.work.PostWidget
 import app.lipovka.work.WalkService
@@ -148,7 +150,9 @@ fun LipovkaRoot(settings: Settings) {
         when (val o = overlays.lastOrNull()) {
             Overlay.Visits -> VisitScreen(home, onDone = { pop() })
             is Overlay.Letter -> LetterScreen(home, o.id, onDone = { pop() })
-            is Overlay.Resident -> ResidentSheet(home, o.house, onClose = { pop() })
+            is Overlay.Resident ->
+                if (o.house == World.SCHOOL_ID) SchoolSheet(home, onHouse = { push(Overlay.Resident(it)) }, onClose = { pop() })
+                else ResidentSheet(home, o.house, onClose = { pop() })
             Overlay.Settings -> SettingsScreen(home, onBack = { pop() })
             null -> Unit
         }

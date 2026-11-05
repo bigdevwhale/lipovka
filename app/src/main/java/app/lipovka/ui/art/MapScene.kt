@@ -433,7 +433,7 @@ class MapScene(private val e: Env, private val open: Int, private val round: Map
 
     /** The school, the square, the trees of the village. */
     private fun village(b: Buf) {
-        hut(b, 122, 428, 30, R.thatch, rgb(0xf2ece0), e.phase.lamps && e.month !in listOf(6, 7, 8))
+        hut(b, World.SCHOOL.x.roundToInt(), World.SCHOOL.y.roundToInt(), 30, R.thatch, rgb(0xf2ece0), e.phase.lamps && e.month !in listOf(6, 7, 8))
         b.r(130, 404, 3, 8, rgb(0x7c4e30)); b.r(129, 403, 5, 2, rgb(0x4a2c1a)); b.disc(131, 408, 1, rgb(0xe8bf58))
         for ((x, y, k) in listOf(Triple(60, 540, 1), Triple(160, 530, 2), Triple(14, 500, 3), Triple(90, 444, 4), Triple(160, 480, 5), Triple(56, 452, 6)))
             Props.leafy(b, x, y, 5 + k % 2, e.leaves, if (k % 2 == 0) rgb(0xd83a2a) else null)
