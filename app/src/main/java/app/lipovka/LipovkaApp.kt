@@ -20,7 +20,6 @@ import app.lipovka.domain.Sun
 import app.lipovka.domain.Weather
 import app.lipovka.work.Alarms
 import app.lipovka.work.HealthSteps
-import app.lipovka.work.HuaweiSteps
 import app.lipovka.work.StepSensor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +38,6 @@ class AppContainer(context: Context) {
     val post = Post(db, game)
     val sensor = StepSensor(app)
     val health = HealthSteps(app)
-    val huawei = HuaweiSteps(app)
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     /** Fire-and-forget so a write survives the screen being closed right after tapping. */
@@ -73,15 +71,14 @@ class AppContainer(context: Context) {
         settings.update { it.copy(weather = now) }
     }
 
-    /** Reads the steps (the phone's counter, or Health Connect or Huawei Health if chosen) and sorts the morning post. */
+    /** Reads the steps (the phone's counter, or Health Connect if chosen) and sorts the morning post. */
     suspend fun sync() {
-        val s = settings.now()
-        val from = s.healthFrom
+        val from = settings.now().healthFrom
         if (from >= 0) {
             // A week back at most: watches and bands may hand over a day's steps only when they next sync.
             val today = LocalDate.now()
             val start = maxOf(LocalDate.ofEpochDay(from), today.minusDays(HEALTH_DAYS))
-            val totals = if (s.huawei) huawei.days(start, today) else health.days(start, today)
+            val totals = health.days(start, today)
             if (totals != null) post.health(totals) else post.tick()
             return
         }

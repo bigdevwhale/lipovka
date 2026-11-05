@@ -29,8 +29,6 @@ data class Settings(
     val notifiedEvening: Long = -1,
     /** The epoch day steps began to come from Health Connect; -1 while the phone's own counter counts them. */
     val healthFrom: Long = -1,
-    /** While [healthFrom] is set: the steps come from Huawei Health rather than Health Connect. */
-    val huawei: Boolean = false,
 )
 
 class SettingsStore(context: Context) {
@@ -50,7 +48,6 @@ class SettingsStore(context: Context) {
             notifiedMorning = this[N_MORNING] ?: -1,
             notifiedEvening = this[N_EVENING] ?: -1,
             healthFrom = this[HEALTH_FROM] ?: -1,
-            huawei = this[HUAWEI] ?: false,
         )
     }
 
@@ -76,7 +73,6 @@ class SettingsStore(context: Context) {
             it[N_MORNING] = s.notifiedMorning
             it[N_EVENING] = s.notifiedEvening
             it[HEALTH_FROM] = s.healthFrom
-            it[HUAWEI] = s.huawei
         }
     }
 
@@ -94,6 +90,5 @@ class SettingsStore(context: Context) {
         val N_MORNING = longPreferencesKey("n_morning")
         val N_EVENING = longPreferencesKey("n_evening")
         val HEALTH_FROM = longPreferencesKey("health_from")
-        val HUAWEI = booleanPreferencesKey("huawei")
     }
 }

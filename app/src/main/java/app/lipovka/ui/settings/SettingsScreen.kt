@@ -1,7 +1,6 @@
 package app.lipovka.ui.settings
 
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -92,28 +91,23 @@ fun PlacePicker(ru: Boolean, onPicked: (Place) -> Unit) {
     }
 }
 
-/** Where the steps come from: the phone's own counter, Health Connect, or Huawei Health. */
+/** Where the steps come from: the phone's own counter, or Health Connect. */
 @Composable
-private fun StepSource(health: Boolean, huawei: Boolean) {
+private fun StepSource(health: Boolean) {
     val ctx = LocalContext.current
     val c = ctx.container
-    val hc = health && !huawei
-    val hw = health && huawei
-    // null while asking Health Connect (or Huawei Health) whether reading is still allowed.
+    // null while asking Health Connect whether reading is still allowed.
     var allowed by remember { mutableStateOf<Boolean?>(null) }
-    LaunchedEffect(health, huawei) { allowed = if (hw) c.huawei.allowed() else c.health.allowed() }
-    // Why tapping a source didn't switch to it.
+    LaunchedEffect(health) { allowed = c.health.allowed() }
+    // Why tapping Health Connect didn't switch to it.
     var note by remember { mutableStateOf<Int?>(null) }
-    fun use(fromHuawei: Boolean) = c.write {
-        settings.update { it.copy(healthFrom = if (it.healthFrom >= 0 && it.huawei == fromHuawei) it.healthFrom else java.time.LocalDate.now().toEpochDay(), huawei = fromHuawei) }
+    fun useHealth() = c.write {
+        settings.update { it.copy(healthFrom = java.time.LocalDate.now().toEpochDay()) }
         sync()
     }
     val ask = rememberLauncherForActivityResult(HealthSteps.requestContract()) { got ->
         allowed = HealthSteps.READ in got
-        if (allowed == true) { note = null; use(false) } else note = R.string.health_denied
-    }
-    val askHuawei = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { r ->
-        if (c.huawei.granted(r.data)) { allowed = true; note = null; use(true) } else note = R.string.huawei_denied
+        if (allowed == true) { note = null; useHealth() } else note = R.string.health_denied
     }
     fun pickHealth() {
         when {
@@ -122,48 +116,27 @@ private fun StepSource(health: Boolean, huawei: Boolean) {
             else -> note = R.string.health_none
         }
     }
-    fun pickHuawei() {
-        when {
-            !c.huawei.services -> note = R.string.huawei_no_hms
-            !c.huawei.app -> note = R.string.huawei_no_app
-            else -> {
-                val i = c.huawei.requestIntent()
-                if (i == null || runCatching { askHuawei.launch(i) }.isFailure) note = R.string.huawei_denied
-            }
-        }
-    }
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         PixelButton(stringResource(R.string.source_phone), {
             note = null
-            c.write { settings.update { it.copy(healthFrom = -1, huawei = false) }; sync() }
+            c.write { settings.update { it.copy(healthFrom = -1) }; sync() }
         }, Modifier.weight(1f), kind = if (!health) Kind.PRIMARY else Kind.GHOST)
-        PixelButton(stringResource(R.string.source_health), { pickHealth() }, Modifier.weight(1f), kind = if (hc) Kind.PRIMARY else Kind.GHOST)
-    }
-    // Only where Huawei's services or its health app are about, so other phones aren't offered what they can't use.
-    if (c.huawei.offered || hw) {
-        PixelButton(stringResource(R.string.source_huawei), { pickHuawei() }, Modifier.fillMaxWidth(), kind = if (hw) Kind.PRIMARY else Kind.GHOST)
+        PixelButton(stringResource(R.string.source_health), { pickHealth() }, Modifier.weight(1f), kind = if (health) Kind.PRIMARY else Kind.GHOST)
     }
     val status = when {
         !health -> note ?: if (c.sensor.allowed && c.sensor.present) R.string.steps_ok else R.string.steps_off
         allowed == null -> null
-        hw -> when {
-            allowed == true -> note ?: R.string.huawei_ok
-            !c.huawei.services -> R.string.huawei_no_hms
-            !c.huawei.app -> R.string.huawei_no_app
-            else -> R.string.huawei_denied
-        }
-        allowed == true -> note ?: R.string.health_ok
+        allowed == true -> R.string.health_ok
         c.health.available -> R.string.health_denied
         c.health.installable -> R.string.health_install
         else -> R.string.health_none
     }
     status?.let { Text(stringResource(it), style = T.Body) }
-    if (hw && allowed == false && c.huawei.available) PixelButton(stringResource(R.string.huawei_allow), { pickHuawei() }, Modifier.fillMaxWidth())
-    if (hc && allowed == false) {
+    if (health && allowed == false) {
         if (c.health.available) PixelButton(stringResource(R.string.health_allow), { pickHealth() }, Modifier.fillMaxWidth())
         else if (c.health.installable) PixelButton(stringResource(R.string.health_get), { pickHealth() }, Modifier.fillMaxWidth())
     }
-    Text(stringResource(if (c.huawei.configured) R.string.source_hint_huawei else R.string.source_hint), style = T.Small)
+    Text(stringResource(R.string.source_hint), style = T.Small)
 }
 
 @Composable
@@ -187,7 +160,7 @@ fun SettingsScreen(home: Home, onBack: () -> Unit) {
             if (p != null) PixelButton(stringResource(R.string.weather_none), { c.write { settings.update { it.copy(place = null, weather = null) } } }, Modifier.fillMaxWidth(), kind = Kind.GHOST)
 
             Eyebrow(stringResource(R.string.steps_source))
-            StepSource(set.healthFrom >= 0, set.huawei)
+            StepSource(set.healthFrom >= 0)
 
             Eyebrow(stringResource(R.string.notifications))
             Row(verticalAlignment = Alignment.CenterVertically) {

@@ -107,13 +107,6 @@
     <string name="health_none">На этом телефоне нет Health Connect.</string>
     <string name="health_allow">Разрешить в Health Connect</string>
     <string name="health_get">Установить Health Connect</string>
-    <string name="source_huawei">Huawei Health</string>
-    <string name="source_hint_huawei">Телефон считает шаги сам. Или их можно брать из Health Connect: туда свои шаги складывают Samsung Health, Mi Fitness, Zepp Life, Google Fit, часы и браслеты. Или прямо из Huawei Health — с часами и браслетами Huawei. В Липовке будет столько же.</string>
-    <string name="huawei_ok">Шаги берутся из Huawei Health.</string>
-    <string name="huawei_denied">Huawei Health не разрешил читать шаги.</string>
-    <string name="huawei_no_hms">Huawei Health нужен HMS Core, а на этом телефоне его нет.</string>
-    <string name="huawei_no_app">Сначала установите Huawei Health и войдите в него.</string>
-    <string name="huawei_allow">Разрешить в Huawei Health</string>
     <string name="next">Дальше</string>
     <string name="skip">Пропустить</string>
     <string name="ob_title">Почта в Липовке</string>

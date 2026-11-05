@@ -22,8 +22,6 @@ jobs:
       SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
       SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
       SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-      # AppGallery Connect app id for Huawei Health Kit; unset leaves the Huawei Health choice out.
-      HUAWEI_APP_ID: ${{ secrets.HUAWEI_APP_ID }}
     steps:
       - uses: actions/checkout@v4
 
