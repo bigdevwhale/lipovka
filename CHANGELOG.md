@@ -6,6 +6,19 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.11] - 2026-11-05
+
+### Added
+- Stroke the cat: a tap on the sleeping cat at the post office, in the room or on the evening windowsill wakes it for a few seconds. It lifts its head, squints happily, and purrs (a real cat, "Misha purrs" by AstronautDown, CC0), hearts rise from it, and the phone buzzes softly in time.
+
+### Changed
+- Groundwork for taking steps straight from Huawei Health through Huawei Health Kit. The choice doesn't show yet: it waits for the app's registration with Huawei.
+
+<!-- tg
+Кота теперь можно погладить: нажмите на спящего кота на почте, в комнате или на вечернем подоконнике.
+Он поднимет мордочку, замурлычет, и телефон мягко завибрирует в такт.
+-->
+
 ## [1.0.10] - 2026-11-03
 
 ### Fixed
