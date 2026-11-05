@@ -228,7 +228,7 @@ class RoomScene(private val e: Env, private val gifts: List<Gift>, private val d
         Air.clouds(b, wx - wr, wy - wr, 2 * wr, wr, t, e, 2) { x, y -> skyShows(x, y) }
         Air.precip(b, e, t, wx - wr, wy - wr, 2 * wr, 2 * wr, .6, still = Art.still) { x, y -> outShows(x, y) }
         Air.glassDrops(b, e, t, wx - wr, wy - wr, 2 * wr, 2 * wr) { x, y -> outShows(x, y) }
-        Props.steam(b, 74, 148, t, 4, 14, .55f)
+        kettleSteam(b, 48, 145, .8, t, 74, 148, 4, 14, .55f)
         if (night) b.glow(13, 150, 30, rgb(0xfff0b0), (.05 + .04 * sin(t * .5)).toFloat(), 3)
         cat(b, 104, 146, t)
         if (dog) People.dogLying(b, 30, 214, (sin(t * .2) + 1) / 2)

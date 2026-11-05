@@ -59,4 +59,4 @@ Kotlin, Jetpack Compose, Room, DataStore, WorkManager. Every picture is pixel ar
 
 ## License
 
-[MIT](LICENSE). Font: m6x11 by Daniel Linssen, Cyrillic by Natto Games (free with attribution). Weather: [Open-Meteo.com](https://open-meteo.com) and [MET Norway](https://api.met.no) (CC BY 4.0). Purr: ["Misha purrs" by AstronautDown](https://freesound.org/s/376378/) (CC0).
+[MIT](LICENSE). Font: m6x11 by Daniel Linssen, Cyrillic by Natto Games (free with attribution). Weather: [Open-Meteo.com](https://open-meteo.com) and [MET Norway](https://api.met.no) (CC BY 4.0). Sounds: purr ["Misha purrs" by AstronautDown](https://freesound.org/s/376378/) (CC0), kettle ["Whistling kettle" by Work With Sounds / Konrad Gutkowski](https://commons.wikimedia.org/wiki/File:WWS_Whistlingkettle.ogg) ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), cut and made mono), clock [chime by gsb1039](https://freesound.org/s/415061/) (CC0).

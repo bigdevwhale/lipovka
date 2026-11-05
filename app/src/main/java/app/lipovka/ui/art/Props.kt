@@ -282,6 +282,35 @@ object Props {
 
     fun steam(b: Buf, x: Int, y: Int, t: Int, n: Int = 5, len: Int = 16, a: Float = .7f) = smoke(b, x, y, t, n, len, rgb(0xfffaf0), a, .2)
 
+    /**
+     * A kettle on the boil: a thick jet of steam shooting from the spout at ([x], [y]), up and away to the
+     * right, its puffs swelling and thinning as they go. [power] 0..1 is how hard it's boiling.
+     */
+    fun steamJet(b: Buf, x: Int, y: Int, t: Int, power: Double) {
+        if (power <= 0) return
+        val len = 34.0
+        val core = rgb(0xffffff)
+        // a cool grey rim, so the white shows against a pale wall as well as a dark one
+        val rim = rgb(0xb8c0cc)
+        val n = 20
+        for (pass in 0..1) for (i in 0 until n) {
+            val ph = (t * 2.4 + i * len / n) % len
+            val k = ph / len
+            // out of the spout fast and nearly level, then slowing and rising
+            val px = x + ph * (1.1 - k * .35) + sin(t * .7 + i * 2.1) * k * 2.5
+            val py = y - ph * (.25 + k * .9) + sin(t * .5 + i) * k * 2
+            val r = 1 + (k * 4.5 * power).roundToInt()
+            val a = (power * (1 - k * k) * .95).toFloat()
+            for (v in -r - 1..r + 1) for (u in -r - 1..r + 1) {
+                val d = hypot(u.toDouble(), v.toDouble())
+                val xx = (px + u).roundToInt()
+                val yy = (py + v).roundToInt()
+                if (pass == 0 && d <= r + 1) b.p(xx, yy, rim, a * .45f)
+                if (pass == 1 && d <= r) b.p(xx, yy, core, a * (1 - (d / (r + 1.5)).toFloat()))
+            }
+        }
+    }
+
     /** A fence of pickets between x0 and x1, tops at y, h tall. */
     fun fence(b: Buf, x0: Int, x1: Int, y: Int, h: Int, snow: Boolean) {
         var x = x0

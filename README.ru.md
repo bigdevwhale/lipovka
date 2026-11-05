@@ -56,4 +56,4 @@ Kotlin, Jetpack Compose, Room, DataStore, WorkManager. Вся графика —
 
 ## Лицензия
 
-[MIT](LICENSE). Шрифт m6x11: Daniel Linssen, кириллица: Natto Games. Погода: [Open-Meteo.com](https://open-meteo.com) и [MET Norway](https://api.met.no) (CC BY 4.0). Мурлыканье: [«Misha purrs», AstronautDown](https://freesound.org/s/376378/) (CC0).
+[MIT](LICENSE). Шрифт m6x11: Daniel Linssen, кириллица: Natto Games. Погода: [Open-Meteo.com](https://open-meteo.com) и [MET Norway](https://api.met.no) (CC BY 4.0). Звуки: мурлыканье [«Misha purrs», AstronautDown](https://freesound.org/s/376378/) (CC0), чайник [«Whistling kettle», Work With Sounds / Konrad Gutkowski](https://commons.wikimedia.org/wiki/File:WWS_Whistlingkettle.ogg) ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), обрезан и сведён в моно), часы [бой, gsb1039](https://freesound.org/s/415061/) (CC0).

@@ -356,16 +356,35 @@ class PostOffice(
         b.glow(70, 60, 30, rgb(0xfff0b0), .3f, 5)
     }
 
+    /** A note floating up beside the clock for each strike, left and right in turn. */
+    private fun chimeNotes(b: Buf, striking: Int) {
+        for (k in 0 until strikes) {
+            val age = striking - k * STRIKE_TICKS
+            if (age !in 0 until 16) continue
+            val x = if (k % 2 == 0) 73 else 106
+            val y = 24 - age
+            val a = (1f - age / 16f).coerceIn(0f, 1f)
+            val dx = (sin(age * .6 + k) * 1.2).roundToInt()
+            // brass, with a dark edge underneath so it reads on the pale wall
+            for ((u, v) in NOTE) { b.p(x + u + dx + 1, y + v + 1, rgb(0x3a2214), a * .6f); b.p(x + u + dx, y + v, rgb(0xc8952e), a) }
+        }
+    }
+
     override fun anim(b: Buf, t: Int) {
         val wait = Art.still
-        // pendulum, and the clock cat's eyes swinging with it
-        val an = sin(t * .5) * .32
+        // pendulum, and the clock cat's eyes swinging with it; striking the hour, both swing wide and quick
+        spot(Toy.CLOCK, 80, 7, 25, 74)
+        val striking = age(Toy.CLOCK, t)
+        val swing = if (striking >= 0) .32 + .22 * minOf(striking / 4.0, left(Toy.CLOCK, t) / 6.0, 1.0) else .32
+        val pace = if (striking >= 0) .9 else .5
+        val an = sin(t * pace) * swing
         val ex = 92 + sin(an) * 28
         val ey = 42 + cos(an) * 28
         b.line(92.0, 42.0, ex, ey, rgb(0x9a6a1c))
         b.ball(ex.roundToInt(), ey.roundToInt(), 3, R.brass, rgb(0x3e270c))
-        val eo = sin(t * .5).roundToInt()
+        val eo = (sin(t * pace) * (if (striking >= 0) 1.4 else 1.0)).roundToInt()
         b.p(89 + eo, 25, rgb(0x1e100a)); b.p(95 + eo, 25, rgb(0x1e100a))
+        if (striking >= 0) chimeNotes(b, striking)
         for ((x, y) in listOf(86 to 62, 98 to 70)) {
             b.line(x, 42, x, y, rgb(0x8e857a))
             b.vol(x - 2, y, 5, 9, ell(2.5, 4.5, 2.5, 4.5), { u, _ -> .6 - u * .08 }, R.brass, rgb(0x2a170e))
@@ -378,7 +397,7 @@ class PostOffice(
             b.r(10 + i * 5, 134, 3, 3, if (f > .6) rgb(0xf8c050) else if (f > .25) rgb(0xe07a28) else rgb(0xa03a14))
         }
         b.glow(22, 136, 16, rgb(0xff9a40), (.18 + .06 * sin(t * .7)).toFloat(), 4)
-        Props.steam(b, 38, 108, t, 6, 20, .8f)
+        kettleSteam(b, 5, 99, 1.0, t, 38, 108, 6, 20, .8f)
         Props.steam(b, 50, 130, t + 4, 4, 12, .55f)
         // weather in the window
         Air.clouds(b, wx, wy, ww, 30, t, e, if (e.sky == Sky.CLEAR) 1 else 3) { x, y -> skyShows(x, y) }
@@ -403,3 +422,6 @@ class PostOffice(
         purrHearts(b, t)
     }
 }
+
+/** A little quaver: stem, flag and head. */
+private val NOTE = listOf(2 to 0, 3 to 0, 2 to 1, 4 to 1, 2 to 2, 4 to 2, 2 to 3, 2 to 4, 0 to 4, 1 to 4, 0 to 5, 1 to 5, 2 to 5)

@@ -91,7 +91,7 @@ class EveningScene(private val e: Env, private val lit: Boolean = true) : Scene(
             b.glow(21, 86, 16, rgb(0xfff0b0), (.12 + .05 * sin(t * .7)).toFloat(), 4)
         }
         Props.kettle(b, 36, 90, .85)
-        Props.steam(b, 64, 96, t, 5, 16, .55f)
+        kettleSteam(b, 36, 90, .85, t, 64, 96, 5, 16, .55f)
         Props.cup(b, 64, 106)
         Props.steam(b, 70, 104, t + 5, 4, 12, .5f)
         if (e.phase.dark && !e.sky.grey) Air.stars(b, x0, y0, ww, 40, t, 12) { x, y -> skyShows(x, y) && !(x in x0 + 44..x0 + 56 && y in y0 + 12..y0 + 24) }

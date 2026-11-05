@@ -94,7 +94,7 @@
     <string name="language">Language</string>
     <string name="lang_system">As the phone</string>
     <string name="about">About</string>
-    <string name="credits">Font m6x11 by Daniel Linssen, Cyrillic by Natto Games. Weather by Open-Meteo.com and MET Norway (CC BY 4.0). The purr: AstronautDown, freesound.org (CC0). No ads, no accounts: everything stays on the phone.</string>
+    <string name="credits">Font m6x11 by Daniel Linssen, Cyrillic by Natto Games. Weather by Open-Meteo.com and MET Norway (CC BY 4.0). Sounds: the purr by AstronautDown (CC0), the kettle by Work With Sounds / Konrad Gutkowski (CC BY 4.0), the clock by gsb1039 (CC0). No ads, no accounts: everything stays on the phone.</string>
     <string name="steps_ok">Step counter: on</string>
     <string name="steps_off">Step counter: not allowed</string>
     <string name="steps_source">Steps</string>
