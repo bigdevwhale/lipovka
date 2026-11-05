@@ -143,6 +143,16 @@
     <string name="school_teacher">Учил здесь</string>
     <string name="school_year">Школьный год</string>
     <string name="school_now">сейчас</string>
+    <string name="backup">Резервная копия</string>
+    <string name="backup_text">Сохраните всю почту в файл: письма, марки, вещи, шаги и дневник. На новом телефоне установите Липовку и восстановите из этого файла.</string>
+    <string name="backup_save">Сохранить в файл</string>
+    <string name="backup_restore">Восстановить из файла</string>
+    <string name="backup_saved">Сохранено. Положите файл в надёжное место: в облако, в чат с самим собой.</string>
+    <string name="backup_restored">Восстановлено. С возвращением в Липовку.</string>
+    <string name="backup_failed">Не получилось: это не копия Липовки или файл повреждён.</string>
+    <string name="backup_confirm">Восстановить из файла? Всё, что сейчас на этом телефоне, заменится тем, что в нём.</string>
+    <string name="backup_yes">Заменить</string>
+    <string name="backup_cancel">Отмена</string>
     <plurals name="n_bag">
         <item quantity="one">В сумке %d письмо.</item>
         <item quantity="few">В сумке %d письма.</item>

@@ -93,6 +93,8 @@ abstract class ScreensBase {
         val m = h.s.mail.last { it.to == "me" && it.src.startsWith("arc:me_") }
         shot("8-letter") { LetterScreen(h, m.id) {} }
     }
+    @Test fun school() = home(env(10, Sky.CLEAR, 9.0)).let { h -> shot("9-school") { app.lipovka.ui.village.SchoolSheet(h, {}, {}) } }
+    @Test fun settings() = home().let { h -> shot("10-settings") { app.lipovka.ui.settings.SettingsScreen(h) {} } }
 }
 
 @Config(sdk = [34], qualifiers = "en-w411dp-h891dp-xxhdpi")

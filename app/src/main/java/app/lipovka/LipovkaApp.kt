@@ -4,6 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
+import android.net.Uri
+import app.lipovka.data.Backup
+import app.lipovka.data.Carried
 import app.lipovka.data.Content
 import app.lipovka.data.DemoSeed
 import app.lipovka.data.Event
@@ -20,6 +23,7 @@ import app.lipovka.domain.Sun
 import app.lipovka.domain.Weather
 import app.lipovka.work.Alarms
 import app.lipovka.work.HealthSteps
+import app.lipovka.work.PostWidget
 import app.lipovka.work.StepSensor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -84,6 +88,27 @@ class AppContainer(context: Context) {
         }
         val v = sensor.read()
         if (v != null) post.reading(v) else post.tick()
+    }
+
+    /** Writes the whole post office to a file the person picked. */
+    suspend fun backupTo(uri: Uri) {
+        val set = settings.now()
+        val text = Backup.write(post.snapshot(), Carried(set.place, set.notify))
+        withContext(Dispatchers.IO) {
+            (app.contentResolver.openOutputStream(uri, "wt") ?: error("can't write $uri")).use { it.write(text.toByteArray()) }
+        }
+    }
+
+    /** Replaces the post office with a backup's. Throws if the file isn't a Lipovka backup; nothing changes then. */
+    suspend fun restoreFrom(uri: Uri) {
+        val text = withContext(Dispatchers.IO) {
+            (app.contentResolver.openInputStream(uri) ?: error("can't read $uri")).use { it.readBytes().toString(Charsets.UTF_8) }
+        }
+        val (books, carried) = Backup.read(text)
+        post.restore(books)
+        settings.update { it.copy(onboarded = true, place = carried.place, weather = null, notify = carried.notify, lampOut = -1) }
+        runCatching { refreshWeather(force = true) }
+        runCatching { PostWidget.updateAll(app) }
     }
 
     private companion object {

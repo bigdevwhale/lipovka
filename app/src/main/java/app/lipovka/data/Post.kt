@@ -138,6 +138,51 @@ class Post(private val db: PostDb, val game: Game, private val zone: () -> ZoneI
     }
 
     val diary get() = dao.diaryFlow()
+
+    /** Every table of the books, for a backup. The step counter's raw readings stay behind: they belong to this phone. */
+    suspend fun snapshot(): Books = lock.withLock {
+        db.withTransaction {
+            Books(
+                mail = dao.all(), days = dao.days(), flags = dao.flags(), arcs = dao.arcs(),
+                items = dao.itemsOnce(), stamps = dao.stampsOnce(), diary = dao.diaryOnce(),
+                meta = dao.metaFlowOnce() - COUNTER_KEYS,
+            )
+        }
+    }
+
+    /**
+     * Replaces the books with a backup's. The counter baseline is dropped, so the next reading on this phone
+     * only sets it and no steps are made up from another phone's count.
+     */
+    suspend fun restore(b: Books) {
+        lock.withLock {
+            db.withTransaction {
+                dao.clearMail(); dao.clearDays(); dao.clearReadings(); dao.clearFlags(); dao.clearArcs()
+                dao.clearItems(); dao.clearStamps(); dao.clearDiary(); dao.clearMeta()
+                dao.putMail(b.mail); dao.putDays(b.days); dao.putFlags(b.flags); dao.putArcs(b.arcs)
+                dao.putItems(b.items); dao.putStamps(b.stamps); dao.putDiaries(b.diary)
+                dao.putMetas((b.meta - COUNTER_KEYS).map { (k, v) -> Meta(k, v) })
+            }
+            _state.value = db.withTransaction { load() }
+        }
+    }
+
+    private companion object {
+        /** The phone's step counter baseline: meaningless on another phone, or after a restore. */
+        val COUNTER_KEYS = setOf("lastValue", "lastAt")
+    }
 }
+
+/** Everything the post office keeps, as plain rows: what a backup carries. */
+data class Books(
+    val mail: List<Mail>,
+    val days: List<DayLog>,
+    val flags: List<Flag>,
+    val arcs: List<ArcState>,
+    val items: List<Owned>,
+    val stamps: List<Collected>,
+    val diary: List<Diary>,
+    val meta: Map<String, String>,
+)
 
 private suspend fun PostDao.metaFlowOnce(): Map<String, String> = metaAll().associate { it.k to it.v }

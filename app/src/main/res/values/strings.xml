@@ -143,6 +143,16 @@
     <string name="school_teacher">Taught here</string>
     <string name="school_year">The school year</string>
     <string name="school_now">now</string>
+    <string name="backup">Backup</string>
+    <string name="backup_text">Save the whole post office to a file: letters, stamps, things, steps and the diary. On a new phone, install Lipovka and restore from that file.</string>
+    <string name="backup_save">Save to a file</string>
+    <string name="backup_restore">Restore from a file</string>
+    <string name="backup_saved">Saved. Keep the file somewhere safe: in the cloud, in a chat with yourself.</string>
+    <string name="backup_restored">Restored. Welcome back to Lipovka.</string>
+    <string name="backup_failed">That didn\'t work: the file isn\'t a Lipovka backup or is damaged.</string>
+    <string name="backup_confirm">Restore from the file? Everything on this phone will be replaced with what is in it.</string>
+    <string name="backup_yes">Replace</string>
+    <string name="backup_cancel">Cancel</string>
     <plurals name="n_bag">
         <item quantity="one">%d letter in the bag.</item>
         <item quantity="other">%d letters in the bag.</item>

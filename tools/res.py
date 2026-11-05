@@ -163,6 +163,18 @@ S = [
     ("school_teacher", "Taught here", "Учил здесь"),
     ("school_year", "The school year", "Школьный год"),
     ("school_now", "now", "сейчас"),
+    # Backup: progress moves to another phone through a file
+    ("backup", "Backup", "Резервная копия"),
+    ("backup_text", "Save the whole post office to a file: letters, stamps, things, steps and the diary. On a new phone, install Lipovka and restore from that file.",
+     "Сохраните всю почту в файл: письма, марки, вещи, шаги и дневник. На новом телефоне установите Липовку и восстановите из этого файла."),
+    ("backup_save", "Save to a file", "Сохранить в файл"),
+    ("backup_restore", "Restore from a file", "Восстановить из файла"),
+    ("backup_saved", "Saved. Keep the file somewhere safe: in the cloud, in a chat with yourself.", "Сохранено. Положите файл в надёжное место: в облако, в чат с самим собой."),
+    ("backup_restored", "Restored. Welcome back to Lipovka.", "Восстановлено. С возвращением в Липовку."),
+    ("backup_failed", "That didn't work: the file isn't a Lipovka backup or is damaged.", "Не получилось: это не копия Липовки или файл повреждён."),
+    ("backup_confirm", "Restore from the file? Everything on this phone will be replaced with what is in it.", "Восстановить из файла? Всё, что сейчас на этом телефоне, заменится тем, что в нём."),
+    ("backup_yes", "Replace", "Заменить"),
+    ("backup_cancel", "Cancel", "Отмена"),
 ]
 
 PL = [

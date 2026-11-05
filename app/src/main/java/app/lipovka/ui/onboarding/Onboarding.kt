@@ -37,6 +37,7 @@ import app.lipovka.ui.art.PixelView
 import app.lipovka.ui.art.PostOffice
 import app.lipovka.ui.components.Kind
 import app.lipovka.ui.components.PixelButton
+import app.lipovka.ui.settings.BackupSection
 import app.lipovka.ui.settings.PlacePicker
 import app.lipovka.ui.theme.C
 import app.lipovka.ui.theme.T
@@ -68,6 +69,8 @@ fun Onboarding(startPage: Int = 0) {
                     Text(stringResource(R.string.ob_title), style = T.Display)
                     Text(stringResource(R.string.ob_text), style = T.Letter)
                     PixelButton(stringResource(R.string.next), { page = 1 }, Modifier.fillMaxWidth())
+                    // Coming from another phone: the whole post office from a backup file, and straight in.
+                    BackupSection(save = false)
                 }
                 1 -> {
                     Text(stringResource(R.string.ob_steps_title), style = T.Title)

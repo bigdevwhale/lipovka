@@ -188,6 +188,30 @@ interface PostDao {
 
     @Upsert
     suspend fun putMeta(m: Meta)
+
+    // ---- a backup: everything at once, out and back in
+
+    @Query("SELECT * FROM diary ORDER BY day")
+    suspend fun diaryOnce(): List<Diary>
+
+    @Query("DELETE FROM mail") suspend fun clearMail()
+    @Query("DELETE FROM day") suspend fun clearDays()
+    @Query("DELETE FROM reading") suspend fun clearReadings()
+    @Query("DELETE FROM flag") suspend fun clearFlags()
+    @Query("DELETE FROM arc") suspend fun clearArcs()
+    @Query("DELETE FROM item") suspend fun clearItems()
+    @Query("DELETE FROM stamp") suspend fun clearStamps()
+    @Query("DELETE FROM diary") suspend fun clearDiary()
+    @Query("DELETE FROM meta") suspend fun clearMeta()
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun putMail(m: List<Mail>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun putDays(d: List<DayLog>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun putFlags(f: List<Flag>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun putArcs(a: List<ArcState>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun putItems(i: List<Owned>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun putStamps(s: List<Collected>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun putDiaries(d: List<Diary>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun putMetas(m: List<Meta>)
 }
 
 @Database(

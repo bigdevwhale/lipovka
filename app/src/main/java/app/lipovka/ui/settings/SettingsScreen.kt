@@ -179,6 +179,9 @@ fun SettingsScreen(home: Home, onBack: () -> Unit) {
                 }
             }
 
+            Eyebrow(stringResource(R.string.backup))
+            BackupSection()
+
             Eyebrow(stringResource(R.string.community))
             CommunityLinks()
 
