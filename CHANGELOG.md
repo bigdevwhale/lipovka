@@ -6,6 +6,17 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.13] - 2026-11-05
+
+### Fixed
+- "Take more" halfway to a house no longer breaks the round. The steps already walked could count towards a different house, even one behind: its letters were delivered at once, and the house that was almost reached moved to the end of the round. Now the postman walks on to the house they were heading for, and the letters taken on the way come after it.
+
+<!-- tg
+Исправлено: «Взять ещё» посреди дня больше не ломает маршрут.
+Раньше письма могли разом доставиться в дома позади, а дом, до которого оставалось чуть-чуть, уезжал в конец маршрута.
+Теперь почтальон доходит до дома, к которому шёл, а новые письма встают в маршрут после него. Спасибо за находку!
+-->
+
 ## [1.0.12] - 2026-11-05
 
 ### Added
