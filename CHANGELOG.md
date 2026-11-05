@@ -6,6 +6,25 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.15] - 2026-11-06
+
+### Added
+- The widget has a picture of the hour: by day the post office with the cat asleep on the letters, from dusk the evening table with the kerosene lamp (out on the widget too if it was put out tonight), in the real weather and season. Under the words a road runs to the next gate, trodden as far as the postman has come.
+
+### Changed
+- Long diary entries rest folded to a few lines, on the evening card and in the Diary tab; a tap opens them.
+- The diary entry saves itself as you write, so closing the app without putting out the lamp no longer loses it.
+
+### Fixed
+- The line being typed in the diary stays above the keyboard instead of going on behind it.
+- The widget keeps up with the steps while you walk with the app minimized, not only when the app is opened again.
+
+<!-- tg
+Виджет стал уютнее: днём на нём почта с котом на письмах, вечером — стол с керосиновой лампой, а под текстом дорожка до следующей калитки.
+Дневник: строка больше не прячется за клавиатурой, длинные записи сворачиваются, а запись сохраняется сама, даже если не гасить лампу.
+Исправлено: виджет обновляет шаги на ходу, пока приложение свёрнуто.
+-->
+
 ## [1.0.14] - 2026-11-06
 
 ### Added
