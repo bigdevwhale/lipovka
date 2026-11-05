@@ -6,6 +6,25 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.14] - 2026-11-06
+
+### Added
+- Backup: Settings -> Backup saves the whole post office to a file, and "Restore from a file" brings it back on another phone: letters, stories, things, stamps, the steps of every day and the diary. The first page of the introduction offers the restore too, so a new phone goes straight back to the village.
+- The school answers a tap. The house above the Sokolovs' has its name on the map and its own card: what's going on there right now, its pupils and the old teacher (a tap opens their house), and the school year with its dates.
+
+### Changed
+- A day's line in the diary can be up to 2000 characters, not 240.
+
+### Fixed
+- Steps agree with their numbers: "1 шаг", "2 шага", "5 шагов" (and "1 step"), on the post screen, in the bag, on the widget and in the diary.
+- The evening lamp stays out once it's put out, after switching tabs or reopening the app, until the next day.
+
+<!-- tg
+Новое: резервная копия. Настройки → «Резервная копия» сохраняют всю почту в файл, а на новом телефоне её можно восстановить прямо с первого экрана.
+Школа над домом Соколовых теперь открывается: что там сегодня, ученики и школьный год.
+Исправлено: шаги склоняются по числу («2 шага», «5 шагов»), погашенная лампа больше не загорается сама, а запись в дневнике может быть до 2000 знаков.
+-->
+
 ## [1.0.13] - 2026-11-05
 
 ### Fixed
