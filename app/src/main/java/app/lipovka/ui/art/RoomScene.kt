@@ -230,8 +230,9 @@ class RoomScene(private val e: Env, private val gifts: List<Gift>, private val d
         Air.glassDrops(b, e, t, wx - wr, wy - wr, 2 * wr, 2 * wr) { x, y -> outShows(x, y) }
         Props.steam(b, 74, 148, t, 4, 14, .55f)
         if (night) b.glow(13, 150, 30, rgb(0xfff0b0), (.05 + .04 * sin(t * .5)).toFloat(), 3)
-        Props.cat(b, 104, 146, (sin(t * .18) + 1) / 2)
+        cat(b, 104, 146, t)
         if (dog) People.dogLying(b, 30, 214, (sin(t * .2) + 1) / 2)
         if (e.season == Season.WINTER && night) b.glow(wx, wy, 10, rgb(0xc8d0e8), .05f, 3)
+        purrHearts(b, t)
     }
 }

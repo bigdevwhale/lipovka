@@ -101,10 +101,11 @@ class EveningScene(private val e: Env, private val lit: Boolean = true) : Scene(
         Air.fog(b, e, t, x0, y0 + 30, ww, wh - 30, .4f) { x, y -> outShows(x, y) }
         // the cat sits in the window's frame, so the dark must find it by what it painted, not by where the window is
         if (!lit) System.arraycopy(b.d, 0, beforeCat, 0, beforeCat.size)
-        Props.cat(b, 112, 62, (sin(t * .18) + 1) / 2)
+        cat(b, 112, 62, t)
         if (!lit) for (y in 0 until h) for (x in 0 until w) {
             val i = y * w + x
             if (!outShows(x, y) || b.d[i] != beforeCat[i]) b.mul(x, y, rgb(0x1c2440), .78f)
         }
+        purrHearts(b, t)
     }
 }

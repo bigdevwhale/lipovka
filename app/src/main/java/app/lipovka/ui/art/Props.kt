@@ -87,8 +87,11 @@ object Props {
         b.ball((x + 14 * s).roundToInt(), (y + 5 * s).roundToInt(), max(1, (2 * s).roundToInt()), R.iron, ink)
     }
 
-    /** The sleeping ginger cat, curled up; [br] 0..1 is its breath. 48×28. */
-    fun cat(b: Buf, x: Int, y: Int, br: Double = 0.0, pal: IntArray = R.ginger, ol: Int = rgb(0x2e1206)) {
+    /**
+     * The sleeping ginger cat, curled up; [br] 0..1 is its breath. 48×28. [lift] raises its head that many
+     * pixels, as when it's stroked, and then it squints happily instead of sleeping.
+     */
+    fun cat(b: Buf, x: Int, y: Int, br: Double = 0.0, pal: IntArray = R.ginger, ol: Int = rgb(0x2e1206), lift: Int = 0) {
         val tail = listOf(44.0 to 17.0, 45.0 to 21.0, 42.0 to 24.5, 36.0 to 26.0, 28.0 to 26.5, 20.0 to 26.0, 14.0 to 24.5)
         val body = ell(26.0, 15.5 - br * .5, 18.0, 9.5 + br * .6)
         val sh = sph(24.0, 12.0, 19.0, 11.0, .2, .12)
@@ -109,17 +112,22 @@ object Props {
         for (t in 0 until tail.size - 1) b.p((x + tail[t].first).toInt(), (y + tail[t].second + 3).toInt(), ol)
         b.vol(x + 13, y + 20, 8, 5, ell(4.0, 2.5, 4.0, 2.5), sph(4.0, 2.0, 4.0, 2.5, .4), R.cream, ol)
         val hs = sph(9.0, 13.0, 9.0, 8.0, .22, .18)
-        b.vol(x, y, 22, 26, ell(10.5, 15.5, 8.5, 7.5), { u, v ->
+        // the head, ears and face all rise together when it lifts its head
+        val hy = y - lift
+        b.vol(x, hy, 22, 26, ell(10.5, 15.5, 8.5, 7.5), { u, v ->
             var l = hs(u, v)
             if (v < 12 && (u == 8 || u == 11 || u == 10)) l -= .18
             l
         }, pal, ol)
-        ear(b, x, y, 3, 10, 6, 4, 9, 9, pal)
-        ear(b, x, y, 11, 8, 14, 4, 17, 10, pal)
-        b.vol(x + 6, y + 16, 10, 5, ell(5.0, 2.5, 4.5, 2.5), sph(4.0, 1.5, 5.0, 3.0, .45), R.cream)
-        for ((u, v) in listOf(5 to 15, 6 to 16, 7 to 16, 13 to 15, 12 to 16, 11 to 16)) b.p(x + u, y + v, rgb(0x3a1608))
-        b.p(x + 9, y + 17, rgb(0xd8707a)); b.p(x + 10, y + 17, rgb(0xd8707a)); b.p(x + 9, y + 18, rgb(0x8a3a3a))
-        for ((u, v) in listOf(2 to 18, 1 to 19, 3 to 20, 17 to 18, 18 to 19)) b.p(x + u, y + v, rgb(0xfff6e0), .8f)
+        ear(b, x, hy, 3, 10, 6, 4, 9, 9, pal)
+        ear(b, x, hy, 11, 8, 14, 4, 17, 10, pal)
+        b.vol(x + 6, hy + 16, 10, 5, ell(5.0, 2.5, 4.5, 2.5), sph(4.0, 1.5, 5.0, 3.0, .45), R.cream)
+        // asleep the eyes curve down; awake and purring they squint up, ^ ^
+        val eyes = if (lift >= 2) listOf(5 to 16, 6 to 15, 7 to 16, 13 to 16, 12 to 15, 11 to 16)
+        else listOf(5 to 15, 6 to 16, 7 to 16, 13 to 15, 12 to 16, 11 to 16)
+        for ((u, v) in eyes) b.p(x + u, hy + v, rgb(0x3a1608))
+        b.p(x + 9, hy + 17, rgb(0xd8707a)); b.p(x + 10, hy + 17, rgb(0xd8707a)); b.p(x + 9, hy + 18, rgb(0x8a3a3a))
+        for ((u, v) in listOf(2 to 18, 1 to 19, 3 to 20, 17 to 18, 18 to 19)) b.p(x + u, hy + v, rgb(0xfff6e0), .8f)
     }
 
     private fun ear(b: Buf, x: Int, y: Int, ax: Int, ay: Int, cx: Int, cy: Int, ex: Int, ey: Int, pal: IntArray) {

@@ -94,7 +94,7 @@
     <string name="language">Язык</string>
     <string name="lang_system">Как в телефоне</string>
     <string name="about">О приложении</string>
-    <string name="credits">Шрифт m6x11: Daniel Linssen, кириллица: Natto Games. Погода: Open-Meteo.com и MET Norway (CC BY 4.0). Без рекламы и аккаунтов, всё остаётся в телефоне.</string>
+    <string name="credits">Шрифт m6x11: Daniel Linssen, кириллица: Natto Games. Погода: Open-Meteo.com и MET Norway (CC BY 4.0). Мурлыканье: AstronautDown, freesound.org (CC0). Без рекламы и аккаунтов, всё остаётся в телефоне.</string>
     <string name="steps_ok">Шагомер: работает</string>
     <string name="steps_off">Шагомер: нет разрешения</string>
     <string name="steps_source">Шаги</string>

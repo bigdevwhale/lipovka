@@ -396,9 +396,10 @@ class PostOffice(
         // the cat asleep on the letters (or on the desk when there are none)
         // the cat lies right on top of the stack: its belly (row 25 of the sprite) on the top envelope
         val catY = pileTop() - 24
-        Props.cat(b, 72, catY, (sin(t * .18) + 1) / 2)
+        cat(b, 72, catY, t)
         if (dim > .3f) {
             b.glow(70, 64, 18, rgb(0xfff0b0), (.05 + .03 * sin(t * .6)).toFloat(), 3)
         }
+        purrHearts(b, t)
     }
 }

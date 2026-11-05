@@ -13,6 +13,8 @@
     <!-- Only for the weather (Open-Meteo), and only if a town is chosen. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- The cat's purr is felt as well as heard. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <queries>
         <package android:name="com.google.android.apps.healthdata" />
