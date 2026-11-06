@@ -189,4 +189,20 @@
         <item quantity="one">%1$s step</item>
         <item quantity="other">%1$s steps</item>
     </plurals>
+    <string name="cal_title">calendar sheet</string>
+    <string name="cal_sun">Sunrise %1$s · sunset %2$s</string>
+    <string name="cal_day">Day %1$d h %2$02d min</string>
+    <string name="cal_delta">%1$s min on yesterday</string>
+    <string name="cal_names">name days</string>
+    <string name="cal_saying">saying of the month</string>
+    <string name="cal_back">on the back</string>
+    <string name="cal_close">Put it down</string>
+    <string name="moon_new">New moon</string>
+    <string name="moon_waxing_crescent">Waxing crescent</string>
+    <string name="moon_first_quarter">First quarter</string>
+    <string name="moon_waxing_gibbous">Waxing moon</string>
+    <string name="moon_full">Full moon</string>
+    <string name="moon_waning_gibbous">Waning moon</string>
+    <string name="moon_last_quarter">Last quarter</string>
+    <string name="moon_waning_crescent">Old crescent</string>
 </resources>

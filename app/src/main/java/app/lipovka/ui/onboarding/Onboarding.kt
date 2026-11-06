@@ -100,6 +100,7 @@ fun Onboarding(startPage: Int = 0) {
 }
 
 private fun finish(c: app.lipovka.AppContainer) = c.write {
-    settings.update { it.copy(onboarded = true) }
+    // the calendar starts on today's sheet; tearing yesterday's off is for the mornings after
+    settings.update { it.copy(onboarded = true, calendarTorn = java.time.LocalDate.now().toEpochDay()) }
     sync()
 }

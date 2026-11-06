@@ -1,6 +1,8 @@
 package app.lipovka.data
 
 import android.content.Context
+import app.lipovka.domain.Cal
+import java.time.LocalDate
 
 /** A pair of texts, Russian and English. */
 data class Tx(val ru: String, val en: String) {
@@ -87,6 +89,16 @@ data class Event(
     val stamp: String,
 )
 
+/**
+ * A line for the tear-off calendar. [kind] is "sign" (a folk saint's day and its weather sign, [on] = "MM-DD"),
+ * "saying" (a month's saying, [on] = "MM"), "tip" (a hint or recipe for the back of a month's sheets, [on] = "MM")
+ * or "name" (a name in [text], whose name days are the "MM-DD" dates in [on]).
+ */
+data class CalNote(val kind: String, val on: String, val title: Tx, val text: Tx)
+
+/** What a calendar sheet prints for its day: the day's sign or the month's saying, the name days, and the back. */
+data class Sheet(val sign: CalNote?, val names: List<String>, val tip: CalNote?)
+
 /** Everything written for the game, read once from assets/content. */
 class Content(
     val residents: List<Resident>,
@@ -96,6 +108,7 @@ class Content(
     val templates: List<Template>,
     val fillers: List<Filler>,
     val events: List<Event>,
+    val calendar: List<CalNote> = emptyList(),
 ) {
     val byId = residents.associateBy { it.id }
     val arcs: Map<String, List<Beat>> = beats.groupBy { it.arc }.mapValues { (_, b) -> b.sortedBy { it.n } }
@@ -108,6 +121,16 @@ class Content(
 
     /** The district of an arc: where its first letter goes (the postman's own letters count as the village). */
     fun arcDistrict(arc: String): Int = arcs[arc]?.firstOrNull()?.to?.let { byId[it]?.district } ?: 0
+
+    /** The tear-off calendar's sheet for [date]: the same day always prints the same things. */
+    fun sheet(date: LocalDate): Sheet {
+        val day = Cal.mmdd(date)
+        val month = "%02d".format(date.monthValue)
+        fun pick(kind: String) = calendar.filter { it.kind == kind && it.on == month }.let { it.getOrNull(date.dayOfMonth % it.size.coerceAtLeast(1)) }
+        val sign = calendar.firstOrNull { it.kind == "sign" && it.on == day } ?: pick("saying")
+        val names = calendar.filter { it.kind == "name" && day in it.on.split(',') }.flatMap { it.text.ru.split(", ") }
+        return Sheet(sign, names, pick("tip"))
+    }
 
     /** Residents who live in a house. */
     fun household(house: String) = residents.filter { it.house == house }
@@ -126,6 +149,7 @@ class Content(
                 templates = opt("templates.tsv"),
                 fillers = opt("fillers.tsv"),
                 events = opt("events.tsv"),
+                calendar = opt("calendar.tsv"),
             )
         }
 
@@ -142,6 +166,7 @@ class Content(
             templates: String,
             fillers: String,
             events: String,
+            calendar: String = "",
         ): Content = Content(
             residents = rows(residents).map { f ->
                 Resident(f[0], f[1], f[2].toInt(), f[3], f[4].split(','), f[5], Tx(f[6], f[7]), Tx(f[8], f[9]))
@@ -173,6 +198,7 @@ class Content(
             events = rows(events).filter { it.size >= 12 }.map { f ->
                 Event(f[0], f[1], f[2], f[3].toIntOrNull() ?: 0, f[4], Tx(f[5], f[6]), Tx(f[7], f[8]), Tx(f[9], f[10]), f[11])
             },
+            calendar = rows(calendar).filter { it.size >= 6 }.map { f -> CalNote(f[0], f[1], Tx(f[2], f[3]), Tx(f[4], f[5])) },
         )
     }
 }

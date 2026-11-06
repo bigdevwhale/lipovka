@@ -6,6 +6,11 @@ import app.lipovka.domain.Look
 import app.lipovka.domain.Phase
 import app.lipovka.domain.Season
 import app.lipovka.domain.Sky
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import java.time.DayOfWeek
+import java.time.LocalDate
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.roundToInt
@@ -13,15 +18,21 @@ import kotlin.math.sin
 
 /**
  * The post office in the morning (or whenever it is): the window onto the village, the wall clock with
- * the cat face, the pigeonholes, the desk with the kettle, the letters and the sleeping cat.
+ * the cat face, the tear-off calendar, the pigeonholes, the desk with the kettle, the letters and the sleeping cat.
  */
 class PostOffice(
     private val e: Env,
     /** Letters lying on the desk: 0 hides the pile. */
     private val letters: Int,
     private val dog: Boolean,
+    torn: Boolean = true,
+    /** Called when the calendar is tapped: with true once yesterday's sheet has been torn off, false after that. */
+    private val onCalendar: (tore: Boolean) -> Unit = {},
 ) : Scene(170, 214) {
-    override val key = listOf(e.copy(minute = e.minute / 5), letters.coerceAtMost(6), dog)
+    /** Whether today's sheet is on top of the calendar; until then it still shows yesterday. */
+    var torn by mutableStateOf(torn)
+
+    override val key: Any get() = listOf(e.copy(minute = e.minute / 5), letters.coerceAtMost(6), dog, torn)
 
     private val wx = 12
     private val wy = 20
@@ -236,14 +247,118 @@ class PostOffice(
         while (i < 20) { b.p(cx - 10 + i, 39, rgb(0xc8952e)); i += 4 }
     }
 
+    /**
+     * The tear-off calendar: a red board on a string, the block of sheets as thick as the days left in
+     * the year, and on top today's sheet, or yesterday's while it waits to be torn.
+     */
     private fun calendar(b: Buf) {
-        b.r(106, 22, 13, 20, rgb(0x2a1a10))
-        b.r(107, 23, 11, 18, rgb(0xfbf3dc))
-        b.r(107, 23, 11, 4, rgb(0xa33a2c))
-        b.p(109, 22, rgb(0x8e857a)); b.p(115, 22, rgb(0x8e857a))
-        val d = e.date.dayOfMonth.toString()
-        b.digits(d, if (d.length == 1) 111 else 108, 29, rgb(0xa33a2c))
-        b.r(108, 36, 9, 1, rgb(0x55504c)); b.r(108, 38, 7, 1, rgb(0x8e857a))
+        // the nail and the string
+        b.line(112, 14, CAL_X + 1, CAL_Y - 6, rgb(0x8e857a)); b.line(112, 14, CAL_X + 12, CAL_Y - 6, rgb(0x8e857a))
+        b.p(112, 13, rgb(0xc8952e)); b.p(112, 14, rgb(0x6a4614))
+        // the board, with its gilt edge and the header the sheets are stapled under
+        b.r(CAL_X - 1, CAL_Y - 7, 15, 34, rgb(0x2a1a10))
+        b.r(CAL_X, CAL_Y - 6, 13, 32, rgb(0x8e2a22))
+        b.r(CAL_X, CAL_Y - 6, 13, 1, rgb(0xb84a36))
+        for (x in CAL_X + 1 until CAL_X + 12) if (x % 2 == 0) b.p(x, CAL_Y - 4, rgb(0xe8bf58))
+        b.p(CAL_X + 6, CAL_Y - 3, rgb(0xe8bf58)); b.p(CAL_X + 5, CAL_Y - 2, rgb(0xc8952e)); b.p(CAL_X + 7, CAL_Y - 2, rgb(0xc8952e))
+        // the block: a sheet's edge for every few months still to come
+        val left = e.date.lengthOfYear() - e.date.dayOfYear
+        val thick = 1 + left * 3 / 365
+        for (i in 0 until thick) b.r(CAL_X + 1, CAL_Y + PAGE_H + i, 11, 1, if (i % 2 == 0) rgb(0xd8ccb0) else rgb(0xb8ab90))
+        b.r(CAL_X + 1, CAL_Y + PAGE_H + thick, 11, 1, rgb(0x5a1a14))
+        for (x in CAL_X + 2 until CAL_X + 11) if (x % 3 == 0) b.p(x, CAL_Y + 24, rgb(0xc8952e))
+        page(CAL_X, CAL_Y, if (torn) e.date else e.date.minusDays(1)) { x, y, c -> b.p(x, y, c) }
+        // scraps of the sheets torn before, left under the header
+        for (x in CAL_X until CAL_X + 13) if (hash(x, 5) > .45) b.p(x, CAL_Y, rgb(0xe6dabd))
+    }
+
+    /** A calendar sheet for [date] with its top left corner at ([x], [y]), drawn pixel by pixel with [px]. */
+    private fun page(x: Int, y: Int, date: LocalDate, px: (Int, Int, Int) -> Unit) {
+        for (j in 0 until PAGE_H) for (i in 0 until 13) px(x + i, y + j, if (j == PAGE_H - 1) rgb(0xe8dcc0) else rgb(0xfbf3dc))
+        // Sundays and Saturdays in red, as calendars print them; the rest in black
+        val red = date.dayOfWeek == DayOfWeek.SUNDAY || date.dayOfWeek == DayOfWeek.SATURDAY
+        val ink = if (red) rgb(0xa33a2c) else rgb(0x2a2420)
+        // the month on top, the big day, the weekday under it, then the small print about sunrise
+        for (i in 0 until 9) if (i != 4) px(x + 2 + i, y + 2, rgb(0xa33a2c))
+        val d = date.dayOfMonth.toString()
+        var cx = x + if (d.length == 1) 4 else 1
+        for (ch in d) { bigDigit(ch, cx, y + 4, ink, px); cx += 6 }
+        for (i in 0 until 7) px(x + 3 + i, y + 15, ink)
+        for (i in 0 until 9) if (i % 4 != 3) px(x + 2 + i, y + 17, rgb(0xa8a090))
+    }
+
+    /** A 3×5 digit drawn tall: twice as high, its side strokes doubled and the middle one single. */
+    private fun bigDigit(ch: Char, x: Int, y: Int, c: Int, px: (Int, Int, Int) -> Unit) {
+        val g = BIG[ch] ?: return
+        for (j in 0 until 5) for (i in 0 until 3) if (g[j * 3 + i] == '1') {
+            val u = intArrayOf(0, 2, 3)[i]
+            val w = if (i == 1) 1 else 2
+            for (a in 0 until w) for (v in 0 until 2) px(x + u + a, y + j * 2 + v, c)
+        }
+    }
+
+    /**
+     * Yesterday's sheet coming off: it tears from the block, then flutters down past the clock, turning over and
+     * over, and is gone by the desk. Painted over the finished room, so it takes the room's dimming itself.
+     */
+    private fun fallingSheet(b: Buf, age: Int) {
+        val fade = ((TEAR_TICKS - age) / 4f).coerceIn(0f, 1f)
+        val px = { x: Int, y: Int, c: Int ->
+            b.p(x, y, c, fade)
+            if (dim > 0f) b.mul(x, y, rgb(0x3a3050), dim * fade)
+        }
+        val yesterday = e.date.minusDays(1)
+        if (age < 2) {
+            // pulled a little away from the block as it tears
+            page(CAL_X + age, CAL_Y + age, yesterday, px)
+            return
+        }
+        val k = age - 2
+        val top = CAL_Y + 1 + k * 6 + k * k / 6
+        val left = CAL_X - k * 2 + (sin(k * .8) * 4).roundToInt()
+        val turn = cos(k * .5)
+        val w = (13 * kotlin.math.abs(turn)).roundToInt().coerceAtLeast(1)
+        val h = PAGE_H - k % 3
+        if (w >= 12 && turn > 0) { page(left, top, yesterday, px); return }
+        // turned edge-on, or showing its back with the small print of a calendar's reverse side
+        val x0 = left + (13 - w) / 2
+        val tilt = if (turn > 0) 1 else -1
+        for (j in 0 until h) for (i in 0 until w) {
+            px(x0 + i, top + j + i * tilt * (13 - w) / 26, if (i == 0 || i == w - 1) rgb(0xd8ccb0) else rgb(0xf0e6cc))
+        }
+        if (turn < 0 && w > 6) for (j in 3 until h - 2 step 2) for (i in 1 until w - 1) {
+            if (hash(i, j + k) > .3) px(x0 + i, top + j + i * tilt * (13 - w) / 26, rgb(0xb8ae9a))
+        }
+    }
+
+    /** Today's sheet lifting its bottom corner a little when tapped, with nothing left to tear. */
+    private fun peek(b: Buf, age: Int) = corner(b, minOf(age + 1, PEEK_TICKS - age, 3))
+
+    /**
+     * Yesterday's sheet, still waiting to be torn, stirring in a draught every few seconds: the corner lifts a
+     * pixel or two and settles, a hint that it will come away in the hand.
+     */
+    private fun stir(b: Buf, t: Int) {
+        val k = t % STIR_EVERY
+        if (k < STIR_LIFTS.size) corner(b, STIR_LIFTS[k])
+    }
+
+    /** The calendar sheet's bottom right corner curled up by [lift] pixels: a dark fold, its pale back, the shadow under it. */
+    private fun corner(b: Buf, lift: Int) {
+        if (lift <= 0) return
+        val x1 = CAL_X + 12
+        val y1 = CAL_Y + PAGE_H - 1
+        for (j in 0..lift) for (i in 0..lift) if (i + j <= lift) {
+            b.p(x1 - i, y1 - j, if (i + j == lift) rgb(0x6e655a) else if (i + j == lift - 1) rgb(0xe8dcc0) else rgb(0xc4b494))
+            if (dim > 0f) b.mul(x1 - i, y1 - j, rgb(0x3a3050), dim)
+        }
+    }
+
+    override fun tear(): Boolean {
+        if (torn) { onCalendar(false); return false }
+        torn = true
+        onCalendar(true)
+        return true
     }
 
     private fun pigeonholes(b: Buf) {
@@ -372,6 +487,10 @@ class PostOffice(
 
     override fun anim(b: Buf, t: Int) {
         val wait = Art.still
+        spot(Toy.CALENDAR, CAL_X - 1, CAL_Y - 9, 15, 37)
+        val calendar = age(Toy.CALENDAR, t)
+        if (calendar >= 0 && !tearing) peek(b, calendar)
+        else if (calendar < 0 && !torn && !wait) stir(b, t)
         // pendulum, and the clock cat's eyes swinging with it; striking the hour, both swing wide and quick
         spot(Toy.CLOCK, 80, 7, 25, 74)
         val striking = age(Toy.CLOCK, t)
@@ -420,8 +539,25 @@ class PostOffice(
             b.glow(70, 64, 18, rgb(0xfff0b0), (.05 + .03 * sin(t * .6)).toFloat(), 3)
         }
         purrHearts(b, t)
+        if (calendar >= 0 && tearing) fallingSheet(b, calendar)
     }
 }
+
+/** Ticks between the stirrings of yesterday's sheet (about four seconds), and how its corner lifts each time. */
+private const val STIR_EVERY = 36
+private val STIR_LIFTS = intArrayOf(1, 2, 2, 3, 2, 1, 1)
+
+/** Where the calendar's sheet sits on the wall, and how tall it is. */
+private const val CAL_X = 106
+private const val CAL_Y = 24
+private const val PAGE_H = 19
+
+/** The 3×5 digits again, for the calendar's big day (here and in [CalendarScene]). */
+internal val BIG = mapOf(
+    '0' to "111101101101111", '1' to "010110010010111", '2' to "111001111100111", '3' to "111001111001111",
+    '4' to "101101111001001", '5' to "111100111001111", '6' to "111100111101111", '7' to "111001010010010",
+    '8' to "111101111101111", '9' to "111101111001111",
+)
 
 /** A little quaver: stem, flag and head. */
 private val NOTE = listOf(2 to 0, 3 to 0, 2 to 1, 4 to 1, 2 to 2, 4 to 2, 2 to 3, 2 to 4, 0 to 4, 1 to 4, 0 to 5, 1 to 5, 2 to 5)

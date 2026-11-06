@@ -102,7 +102,7 @@ class PostWidget : AppWidgetProvider() {
             val env = c.env(now, set, s)
             val evening = env.phase == Phase.DUSK || env.phase == Phase.EVENING || env.phase == Phase.NIGHT
             val scene = if (evening) EveningScene(env, lit = set.lampOut != now.toLocalDate().toEpochDay())
-                else PostOffice(env, s.bag.size, s.has("dog"))
+                else PostOffice(env, s.bag.size, s.has("dog"), torn = set.calendarTorn == env.date.toEpochDay())
             val key = listOf(evening, scene.key)
             cached?.let { (k, bmp) -> if (k == key) return bmp }
             val full = scene.frame().toBitmap()

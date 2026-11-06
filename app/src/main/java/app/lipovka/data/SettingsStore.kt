@@ -31,6 +31,8 @@ data class Settings(
     val healthFrom: Long = -1,
     /** The day the evening lamp was last put out; it stays out until lit again or the next day. */
     val lampOut: Long = -1,
+    /** The day the post office calendar last had a sheet torn off; until it's torn, it shows yesterday. */
+    val calendarTorn: Long = -1,
 )
 
 class SettingsStore(context: Context) {
@@ -51,6 +53,7 @@ class SettingsStore(context: Context) {
             notifiedEvening = this[N_EVENING] ?: -1,
             healthFrom = this[HEALTH_FROM] ?: -1,
             lampOut = this[LAMP_OUT] ?: -1,
+            calendarTorn = this[CAL_TORN] ?: -1,
         )
     }
 
@@ -77,6 +80,7 @@ class SettingsStore(context: Context) {
             it[N_EVENING] = s.notifiedEvening
             it[HEALTH_FROM] = s.healthFrom
             it[LAMP_OUT] = s.lampOut
+            it[CAL_TORN] = s.calendarTorn
         }
     }
 
@@ -95,5 +99,6 @@ class SettingsStore(context: Context) {
         val N_EVENING = longPreferencesKey("n_evening")
         val HEALTH_FROM = longPreferencesKey("health_from")
         val LAMP_OUT = longPreferencesKey("lamp_out")
+        val CAL_TORN = longPreferencesKey("calendar_torn")
     }
 }

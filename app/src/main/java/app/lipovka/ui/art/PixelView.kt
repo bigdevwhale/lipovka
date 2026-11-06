@@ -35,8 +35,11 @@ object Art {
     const val FRAME_MS = 110L
 }
 
-/** Things in a picture that answer a tap: the cat purrs, the kettle boils, the clock strikes the hour. */
-enum class Toy { CAT, KETTLE, CLOCK }
+/**
+ * Things in a picture that answer a tap: the cat purrs, the kettle boils, the clock strikes the hour, the
+ * calendar gives up yesterday's sheet.
+ */
+enum class Toy { CAT, KETTLE, CLOCK, CALENDAR }
 
 /**
  * A picture painted into a [Buf]: [base] once (cached while [key] stays the same), then [anim] on
@@ -57,6 +60,13 @@ abstract class Scene(val w: Int, val h: Int) {
     var strikes = 0
         private set
 
+    /** Whether the calendar's last tap tore a sheet off (rather than only lifting a corner of today's). */
+    var tearing = false
+        private set
+
+    /** Tears the calendar's sheet off if there's one to tear; false when it already shows today. */
+    protected open fun tear(): Boolean = false
+
     /** Marks where [toy] sits, so a tap there finds it. */
     protected fun spot(toy: Toy, x: Int, y: Int, w: Int, h: Int) {
         spots[toy] = intArrayOf(x, y, w, h)
@@ -74,6 +84,10 @@ abstract class Scene(val w: Int, val h: Int) {
             Toy.CLOCK -> {
                 strikes = (LocalTime.now().hour % 12).let { if (it == 0) 12 else it }
                 strikes * STRIKE_TICKS + 20
+            }
+            Toy.CALENDAR -> {
+                tearing = tear()
+                if (tearing) TEAR_TICKS else PEEK_TICKS
             }
         }
         play[toy] = intArrayOf(t, t + ticks)
@@ -142,6 +156,12 @@ const val PURR_TICKS = 37
 /** How long the kettle boils and whistles, in art ticks. */
 const val KETTLE_TICKS = 40
 
+/** How long yesterday's sheet takes to come off the calendar and flutter down, in art ticks. */
+const val TEAR_TICKS = 18
+
+/** How long today's sheet lifts its corner when there's nothing left to tear, in art ticks. */
+const val PEEK_TICKS = 8
+
 /** Art ticks between the clock's strikes (the sound's own spacing). */
 const val STRIKE_TICKS = 8
 
@@ -179,7 +199,7 @@ fun PixelView(scene: Scene, modifier: Modifier = Modifier) {
             val toy = scene.toyAt((down.position.x * k).toInt(), (down.position.y * k).toInt()) ?: return@awaitEachGesture
             val up = waitForUpOrCancellation() ?: return@awaitEachGesture
             up.consume()
-            if (scene.start(toy, tick)) Toys.play(ctx, toy, scene.strikes)
+            if (scene.start(toy, tick)) Toys.play(ctx, toy, scene.strikes, scene.tearing)
         }
     }
     Canvas(modifier.aspectRatio(scene.w.toFloat() / scene.h).then(taps)) {

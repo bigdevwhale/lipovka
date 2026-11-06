@@ -30,6 +30,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -63,7 +64,9 @@ import app.lipovka.domain.Phase
 import app.lipovka.domain.World
 import app.lipovka.ui.Home
 import app.lipovka.ui.Words
+import app.lipovka.ui.art.Art
 import app.lipovka.ui.art.EveningScene
+import app.lipovka.ui.art.TEAR_TICKS
 import app.lipovka.ui.art.Icons
 import app.lipovka.ui.art.PixelView
 import app.lipovka.ui.art.PostOffice
@@ -91,7 +94,27 @@ fun PostScreen(home: Home, onVisits: () -> Unit, onLetter: (Long) -> Unit, onSet
     val s = home.s
     val ru = home.ru
     val waiting = s.bag.size + home.desk.size
-    val scene = remember(home.env, waiting, home.dog) { PostOffice(home.env, waiting, home.dog) }
+    // The calendar on the wall shows yesterday until its sheet is torn off; the scene keeps tearing to itself,
+    // so the sheet can finish falling, and only learns from the settings that it's already been torn.
+    val day = home.env.date.toEpochDay()
+    val torn = home.settings.calendarTorn == day
+    // Tapped, the calendar's sheet is held up to read: once the torn one has fallen, or straight away.
+    var sheetAsk by remember { mutableIntStateOf(0) }
+    var sheetWait by remember { mutableStateOf(0L) }
+    var sheetOpen by remember { mutableStateOf(false) }
+    val scene = remember(home.env, waiting, home.dog) {
+        PostOffice(home.env, waiting, home.dog, torn) { tore ->
+            if (tore) c.write {
+                settings.update { it.copy(calendarTorn = day) }
+                runCatching { PostWidget.updateAll(app) }
+            }
+            sheetWait = if (tore) TEAR_TICKS * Art.FRAME_MS else 250L
+            sheetAsk++
+        }
+    }
+    LaunchedEffect(scene, torn) { if (torn) scene.torn = true }
+    LaunchedEffect(sheetAsk) { if (sheetAsk > 0) { delay(sheetWait); sheetOpen = true } }
+    if (sheetOpen) CalendarSheet(home, home.env.date) { sheetOpen = false }
     Column(Modifier.fillMaxSize().background(C.paper).verticalScroll(rememberScrollState())) {
         Box {
             PixelView(scene, Modifier.fillMaxWidth())

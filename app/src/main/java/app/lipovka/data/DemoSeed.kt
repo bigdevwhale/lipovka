@@ -27,7 +27,7 @@ object DemoSeed {
     suspend fun seedIfEmpty(context: Context, c: AppContainer) {
         if (c.db.dao().all().isNotEmpty()) return
         val ru = context.resources.configuration.locales[0].language == "ru"
-        c.settings.update { it.copy(onboarded = true) }
+        c.settings.update { it.copy(onboarded = true, calendarTorn = LocalDate.now().toEpochDay()) }
         val zone = ZoneId.systemDefault()
         val today = LocalDate.now()
         val lines = mutableListOf<Pair<Long, String>>()

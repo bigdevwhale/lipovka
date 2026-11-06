@@ -19,6 +19,7 @@ import kotlin.math.sqrt
  * - the cat's purr: "Misha purrs" by AstronautDown (freesound.org/s/376378), CC0;
  * - the kettle's whistle: "Whistling kettle" by Work With Sounds / Konrad Gutkowski (Wikimedia Commons), CC BY 4.0;
  * - the clock's strike: "clock chime" by gsb1039 (freesound.org/s/415061), CC0.
+ * The calendar's sheet tearing off is made up here: a short crackle of noise, fibre by fibre.
  */
 object Toys {
     private const val TAG = "Toys"
@@ -35,7 +36,7 @@ object Toys {
     private val tracks = HashMap<Toy, AudioTrack>()
     private var trackStrikes = 0
 
-    fun play(context: Context, toy: Toy, strikes: Int = 0) {
+    fun play(context: Context, toy: Toy, strikes: Int = 0, tear: Boolean = true) {
         val app = context.applicationContext
         when (toy) {
             Toy.CAT -> clip(app, R.raw.purr)?.let { sound(toy, it); buzz(app, follow(it)) }
@@ -45,6 +46,7 @@ object Toys {
                 sound(toy, strikes(strike, strikes))
                 buzz(app, knocks(strikes))
             }
+            Toy.CALENDAR -> if (tear) rip.let { sound(toy, it); buzz(app, follow(it, 70)) } else buzz(app, intArrayOf(30))
         }
     }
 
@@ -66,6 +68,25 @@ object Toys {
         }
         error("no data in raw $res")
     }.onFailure { Log.w(TAG, "load", it) }.getOrNull()?.also { clips[res] = it }
+
+    /** Paper tearing along the perforation: a burst of fine noise, its loudness jumping as each fibre gives. */
+    private val rip: Clip by lazy {
+        val rate = 22050
+        val n = (rate * .34).toInt()
+        val r = java.util.Random(7)
+        var last = 0.0
+        var fibre = 0.0
+        Clip(rate, ShortArray(n) { i ->
+            val t = i.toDouble() / n
+            if (i % (rate / 90) == 0) fibre = .3 + r.nextDouble() * .7
+            val noise = r.nextGaussian()
+            // the difference of white noise leans it towards the hiss of paper rather than a rumble
+            val hiss = noise - last
+            last = noise
+            val shape = minOf(t * 30, 1.0) * (1 - t) * (1 - t)
+            (hiss * fibre * shape * 9000).coerceIn(-32767.0, 32767.0).toInt().toShort()
+        })
+    }
 
     /** The clock's strike rung [n] times, each ringing on under the next. */
     private fun strikes(one: Clip, n: Int): Clip {

@@ -6,6 +6,16 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [Unreleased]
+
+### Added
+- A tear-off calendar hangs on the post office wall. Each morning it still shows yesterday, its corner stirring now and then; a tap tears the sheet off, it flutters down to the desk, and today's sheet is held up to read: the day and the weekday, what's on in the village, sunrise, sunset and the length of the day, the moon, the name days (in Russian), a folk sign or the month's saying, and a hint or a recipe on the back. A new or restored post office starts on today's sheet.
+
+<!-- tg
+Новое: на почте висит отрывной календарь. Утром на нём ещё вчерашний день — оторвите листок.
+На листке восход и закат, луна, именины, народная примета и совет или рецепт на обороте.
+-->
+
 ## [1.0.16] - 2026-11-06
 
 ### Fixed
