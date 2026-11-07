@@ -131,6 +131,8 @@
     <string name="community_follow_sub">the bot writes when a version is out</string>
     <string name="community_chat">StillCraft chat</string>
     <string name="community_chat_sub">all the apps and people</string>
+    <string name="community_support">Support Lipovka</string>
+    <string name="community_support_sub">for new letters and warm evenings</string>
     <string name="school_about">A log schoolhouse with a stove and a bell that is seventy years old. There are few pupils, and they all know each other by name; the youngest sit by the window, the oldest by the stove.</string>
     <string name="school_today">Today</string>
     <string name="school_lessons">Lessons are on. Through the open window someone is answering at the blackboard.</string>

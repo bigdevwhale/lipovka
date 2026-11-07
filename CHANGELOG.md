@@ -6,6 +6,15 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [Unreleased]
+
+### Added
+- Settings -> Community has a "Support Lipovka" line: it opens the StillCraft support page, for new letters and warm evenings.
+
+<!-- tg
+Новое: в Настройках, в разделе «Сообщество», появилась строчка «Поддержать Липовку» — на новые письма и тёплые вечера.
+-->
+
 ## [1.0.17] - 2026-11-07
 
 ### Added

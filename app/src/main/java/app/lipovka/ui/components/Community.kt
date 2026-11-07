@@ -26,9 +26,10 @@ object Community {
     const val IDEA = "${BOT}wish_$SLUG"
     const val FOLLOW = "${BOT}f_$SLUG"
     const val CHAT = "https://t.me/+Q4gFEDk8O842OGVi"
+    const val SUPPORT = "https://bigdevwhale.github.io/stillcraft/support/"
 }
 
-/** Report a bug, suggest an idea, follow updates, join the chat; each opens Telegram. */
+/** Report a bug, suggest an idea, follow updates, join the chat (each opens Telegram), or support the village on the web. */
 @Composable
 fun CommunityLinks() {
     val ctx = LocalContext.current
@@ -40,6 +41,7 @@ fun CommunityLinks() {
             Link("💡", R.string.community_idea, R.string.community_idea_sub, Community.IDEA),
             Link("🔔", R.string.community_follow, R.string.community_follow_sub, Community.FOLLOW),
             Link("💬", R.string.community_chat, R.string.community_chat_sub, Community.CHAT),
+            Link("❤️", R.string.community_support, R.string.community_support_sub, Community.SUPPORT),
         )) {
             Panel(Modifier.fillMaxWidth(), onClick = { open(url) }) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
