@@ -6,7 +6,7 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
-## [Unreleased]
+## [1.0.19] - 2026-11-09
 
 ### Added
 - The diary is a month calendar: each day tinted by how far it was walked, marked if something was written, with the month's kilometres, letters and notes underneath. A tap on a day opens it: its line, and a log of what was handed to whom.
