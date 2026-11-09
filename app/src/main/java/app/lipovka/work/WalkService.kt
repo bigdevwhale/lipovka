@@ -51,6 +51,7 @@ class WalkService : Service() {
                 var drawnTotal = -1L
                 c.sensor.live().conflate().collect { v ->
                     val delivered = c.post.reading(v)
+                    Notes.delivered(applicationContext, delivered)
                     Notes.check(applicationContext)
                     val total = c.post.state.value?.total ?: -1L
                     val now = System.currentTimeMillis()

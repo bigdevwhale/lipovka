@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -161,7 +162,8 @@ fun Spacer8() = Spacer(Modifier.height(8.dp))
 
 @Composable
 fun Stat(value: String, label: String, modifier: Modifier = Modifier) {
-    Column(modifier.pixelBox(C.paper2).padding(horizontal = 10.dp, vertical = 6.dp)) {
+    // Fills the row's height, so boxes side by side stand level even when a label wraps.
+    Column(modifier.fillMaxHeight().pixelBox(C.paper2).padding(horizontal = 10.dp, vertical = 6.dp)) {
         Text(value, style = T.Number)
         Text(label, style = T.Small)
     }

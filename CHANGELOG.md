@@ -6,6 +6,34 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [Unreleased]
+
+### Added
+- The diary is a month calendar: each day tinted by how far it was walked, marked if something was written, with the month's kilometres, letters and notes underneath. A tap on a day opens it: its line, and a log of what was handed to whom.
+- A line can be written or added to on any past day, not only tonight.
+- A tapped stamp opens over the album with a little story of how it came: who it was addressed to, how they handed it over, who the letter was from.
+- The post screen labels its tiles "today": steps, kilometres and letters for today, with yesterday's and the day before's steps under them; the total distance and letters are in the line under the bag.
+- After the last letter the postman walks back to the post office instead of spending the night at a gate.
+- "Take more" is there even when the shelf is empty: there's always an everyday letter for a neighbour, up to a full bag.
+- An optional note for every letter handed over at a gate, with the next stop (Settings → Notifications, off by default).
+- Letters to the postman in the diary fold to the last three.
+
+### Fixed
+- The app could close while typing in the evening diary.
+- After midnight the evening is called the night ("The night before 8 November"), and the line written then goes to the day just walked; a dark winter morning no longer shows the evening.
+- The newspaper's news no longer says "Thursday" when it is delivered on another day.
+- The weather town is shown in the search field when settings are opened again.
+- The morning post notification waits until you're up: the first steps, an alarm clock that has rung, or ten o'clock.
+- A long diary line no longer goes under the keyboard and buttons.
+- Steps a watch hands over late for an earlier day count for that day, not for today's round; a road begun on an earlier day says how much of it was walked today.
+- "Letters" and "days" agree with their numbers; the stat tiles stand level.
+
+<!-- tg
+Новое: дневник стал календарём — нажмите на день, чтобы увидеть запись и кому что разнесли. Писать можно и задним числом.
+У марки теперь своя история: кто её отдал и откуда пришло письмо. Почтальон после разноса возвращается на почту.
+Исправлено: вылет при записи в дневник, «вечер» после полуночи, четверг в новостях, ранние утренние уведомления и шкала шагов.
+-->
+
 ## [1.0.18] - 2026-11-07
 
 ### Added

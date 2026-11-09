@@ -167,6 +167,56 @@ class GameTest {
         assertEquals("mill", game.plan(s).first().house.id)
         assertEquals(listOf("fedor"), game.walk(s, 20, day, 0).map { it.to })
     }
+
+    /** The last letter given out, the postman walks back to the post office instead of staying at the gate. */
+    @Test fun walksHomeAfterTheLastLetter() {
+        val game = Game(content)
+        val date = LocalDate.of(2026, 11, 5)
+        val day = date.toEpochDay()
+        val s = GameState(start = day - 30, at = "post")
+        s.mail += Mail(id = 1, src = "fill:0", kind = "LETTER", to = "fedor", day = day, state = St.BAG)
+        val toMill = game.plan(s).first().leg
+        assertEquals(listOf("fedor"), game.walk(s, toMill + 10, day, 0).map { it.to })
+        assertEquals("mill", s.at)
+        assertTrue(game.homing(s))
+        assertEquals("the steps past the gate are already on the way home", 10, s.leg)
+        val home = game.homeLeg(s)
+        game.walk(s, home - 11, day, 0)
+        assertEquals("mill", s.at)
+        game.walk(s, 1, day, 0)
+        assertEquals("post", s.at)
+        assertEquals(0, s.leg)
+        assertTrue(!game.homing(s))
+    }
+
+    /** #49: yesterday's steps handed over by a watch after the morning post count for yesterday, not today's round. */
+    @Test fun lateStepsDontCarryTodaysBag() {
+        val game = Game(content)
+        val date = LocalDate.of(2026, 11, 5)
+        val day = date.toEpochDay()
+        val s = GameState(start = day - 30, at = "post", morning = day)
+        s.mail += Mail(id = 1, src = "fill:0", kind = "LETTER", to = "fedor", day = day, state = St.BAG)
+        val leg = game.plan(s).first().leg
+        assertTrue("nothing delivered with last night's steps", game.walk(s, leg + 500, day - 1, 0).isEmpty())
+        assertEquals(0, s.leg)
+        assertEquals(leg + 500, s.days[day - 1])
+        assertEquals((leg + 500).toLong(), s.total)
+        assertEquals(listOf("fedor"), game.walk(s, leg, day, 0).map { it.to })
+    }
+
+    /** On the way home, taking more letters turns the postman round where he stands. */
+    @Test fun takeMoreOnTheWayHome() {
+        val game = Game(content)
+        val date = LocalDate.of(2026, 11, 5)
+        val day = date.toEpochDay()
+        val s = GameState(start = day - 30, at = "mill", leg = 50, heading = Game.HOME)
+        s.mail += Mail(id = 2, src = "fill:1", kind = "LETTER", to = "dima", day = day, state = St.SHELF, priority = 2)
+        game.takeMore(s, date)
+        assertTrue(s.bag.isNotEmpty())
+        assertEquals(0, s.leg)
+        assertEquals("", s.heading)
+        assertEquals("mill", s.at)
+    }
 }
 
 class WeatherTest {

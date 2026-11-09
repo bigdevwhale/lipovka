@@ -57,11 +57,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-/** A search for a town whose weather the village should share. */
+/**
+ * A search for a town whose weather the village should share. The field starts with the town already
+ * chosen, so coming back to it doesn't look as if the choice was forgotten.
+ */
 @Composable
-fun PlacePicker(ru: Boolean, onPicked: (Place) -> Unit) {
+fun PlacePicker(ru: Boolean, current: String = "", onPicked: (Place) -> Unit) {
     val scope = rememberCoroutineScope()
-    var q by remember { mutableStateOf("") }
+    var q by remember(current) { mutableStateOf(current) }
     var results by remember { mutableStateOf<List<Place>>(emptyList()) }
     var failed by remember { mutableStateOf(false) }
     fun search() {
@@ -156,7 +159,7 @@ fun SettingsScreen(home: Home, onBack: () -> Unit) {
                 style = T.Body,
             )
             Text(stringResource(R.string.weather_hint), style = T.Small)
-            PlacePicker(home.ru) { picked -> c.write { settings.update { it.copy(place = picked, weather = null) }; refreshWeather(force = true) } }
+            PlacePicker(home.ru, p?.name.orEmpty()) { picked -> c.write { settings.update { it.copy(place = picked, weather = null) }; refreshWeather(force = true) } }
             if (p != null) PixelButton(stringResource(R.string.weather_none), { c.write { settings.update { it.copy(place = null, weather = null) } } }, Modifier.fillMaxWidth(), kind = Kind.GHOST)
 
             Eyebrow(stringResource(R.string.steps_source))
@@ -167,6 +170,11 @@ fun SettingsScreen(home: Home, onBack: () -> Unit) {
                 Text(stringResource(R.string.notify_text), style = T.Body, modifier = Modifier.weight(1f))
                 PixelButton(stringResource(if (set.notify) R.string.on else R.string.off), { c.write { settings.update { it.copy(notify = !it.notify) } } },
                     kind = if (set.notify) Kind.PRIMARY else Kind.GHOST)
+            }
+            if (set.notify) Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.notify_delivered), style = T.Body, modifier = Modifier.weight(1f))
+                PixelButton(stringResource(if (set.notifyDelivered) R.string.on else R.string.off), { c.write { settings.update { it.copy(notifyDelivered = !it.notifyDelivered) } } },
+                    kind = if (set.notifyDelivered) Kind.PRIMARY else Kind.GHOST)
             }
 
             Eyebrow(stringResource(R.string.language))

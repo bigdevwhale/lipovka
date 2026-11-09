@@ -67,7 +67,8 @@ fun roundOf(home: Home): MapRound {
         later += prev.at
         for (st in plan.drop(1)) { later += World.path(prev.at, prev.district, st.house.at, st.house.district).drop(1); prev = st.house }
     }
-    val ahead = if (plan.isEmpty()) emptyList() else {
+    val homeward = g.homing(s)
+    val ahead = if (plan.isEmpty() && !homeward) emptyList() else {
         // the rest of the current leg, from the postman's spot on
         val total = road.path.zipWithNext().sumOf { (p, q) -> p.to(q) }
         var acc = 0.0
@@ -79,7 +80,7 @@ fun roundOf(home: Home): MapRound {
     val visited = s.mail.filter { (it.state == St.DELIVERED || it.state == St.SEEN) && it.deliveredAt >= startOfDay }
         .mapNotNull { home.resident(it.to)?.house }.toSet()
     val pending = s.bag.mapNotNull { home.resident(it.to)?.house }.toSet()
-    return MapRound(ahead, later, road.at, pending, visited - pending, walking = plan.isNotEmpty())
+    return MapRound(ahead, later, road.at, pending, visited - pending, walking = plan.isNotEmpty() || homeward)
 }
 
 @Composable

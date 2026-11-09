@@ -10,6 +10,7 @@ import app.lipovka.data.Carried
 import app.lipovka.data.Content
 import app.lipovka.data.DemoSeed
 import app.lipovka.data.Event
+import app.lipovka.data.Mail
 import app.lipovka.data.Post
 import app.lipovka.data.PostDb
 import app.lipovka.data.Settings
@@ -75,19 +76,18 @@ class AppContainer(context: Context) {
         settings.update { it.copy(weather = now) }
     }
 
-    /** Reads the steps (the phone's counter, or Health Connect if chosen) and sorts the morning post. */
-    suspend fun sync() {
+    /** Reads the steps (the phone's counter, or Health Connect if chosen) and sorts the morning post. Returns the letters delivered. */
+    suspend fun sync(): List<Mail> {
         val from = settings.now().healthFrom
         if (from >= 0) {
             // A week back at most: watches and bands may hand over a day's steps only when they next sync.
             val today = LocalDate.now()
             val start = maxOf(LocalDate.ofEpochDay(from), today.minusDays(HEALTH_DAYS))
             val totals = health.days(start, today)
-            if (totals != null) post.health(totals) else post.tick()
-            return
+            return if (totals != null) post.health(totals) else { post.tick(); emptyList() }
         }
         val v = sensor.read()
-        if (v != null) post.reading(v) else post.tick()
+        return if (v != null) post.reading(v) else { post.tick(); emptyList() }
     }
 
     /** Writes the whole post office to a file the person picked. */

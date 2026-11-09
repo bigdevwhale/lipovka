@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -128,19 +129,26 @@ fun PostScreen(home: Home, onVisits: () -> Unit, onLetter: (Long) -> Unit, onSet
             for (m in home.desk) DeskCard(home, m) { onLetter(m.id) }
             if (home.visits.isNotEmpty()) VisitsCard(home, onVisits)
             Round(home)
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                Stat(Words.num(home.stepsToday), pluralStringResource(R.plurals.steps_today, Words.q(home.stepsToday)), Modifier.weight(1f))
-                Stat(Words.km(s.total), stringResource(R.string.s_km), Modifier.weight(1f))
-                Stat(delivered(home).toString(), stringResource(R.string.s_letters), Modifier.weight(1f))
+            // Today's walk; the whole road so far is in the line under the bag.
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Eyebrow(stringResource(R.string.today))
+                Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    val n = delivered(home)
+                    Stat(Words.num(home.stepsToday), pluralStringResource(R.plurals.s_steps, Words.q(home.stepsToday)), Modifier.weight(1f))
+                    Stat(Words.km(home.stepsToday.toLong()), stringResource(R.string.s_km), Modifier.weight(1f))
+                    Stat(n.toString(), pluralStringResource(R.plurals.s_letters, n), Modifier.weight(1f))
+                }
+                Before(home)
             }
             Bag(home)
             val shelf = s.shelf.size
-            if (shelf > 0) {
-                Text(stringResource(R.string.shelf_hint, shelf), style = T.Sub)
+            // With the shelf empty, a postman who wants a longer walk still finds letters: everyday ones for the neighbours.
+            if (shelf > 0 || home.plan.isEmpty()) {
+                Text(if (shelf > 0) stringResource(R.string.shelf_hint, shelf) else stringResource(R.string.more_hint), style = T.Sub)
                 PixelButton(stringResource(R.string.bag_more), { c.write { post.takeMore() } }, Modifier.fillMaxWidth(), kind = BtnKind.GHOST)
             }
             NextDistrict(home)
-            if (home.env.phase in setOf(Phase.DUSK, Phase.EVENING, Phase.NIGHT) || home.now.hour >= 18) Evening(home)
+            if (eveningTime(home)) Evening(home)
             if (BuildConfig.DEBUG || BuildConfig.DEMO) PixelButton(stringResource(R.string.add_steps), { c.write { post.addSteps(1000) } }, Modifier.fillMaxWidth(), kind = BtnKind.GHOST)
             Spacer(Modifier.height(8.dp))
         }
@@ -215,7 +223,19 @@ private fun VisitsCard(home: Home, onVisits: () -> Unit) {
 private fun Round(home: Home) {
     val next = home.plan.firstOrNull()
     if (next == null) {
-        Panel(fill = C.paper2) { Text(stringResource(R.string.bag_empty), style = T.Body) }
+        if (home.game.homing(home.s)) {
+            // Everything given out: the way back to the post office.
+            val leg = home.game.homeLeg(home.s)
+            val left = max(0, leg - home.s.leg)
+            Panel(fill = C.paper2) {
+                Eyebrow(stringResource(R.string.going_home))
+                Text(stringResource(R.string.bag_empty), style = T.Body)
+                Spacer(Modifier.height(6.dp))
+                Segments(home.s.leg.coerceAtMost(leg).toFloat() / leg)
+                Spacer(Modifier.height(4.dp))
+                Text(pluralStringResource(R.plurals.steps_left, Words.q(left), Words.num(left)), style = T.Body, modifier = Modifier.align(Alignment.End))
+            }
+        } else Panel(fill = C.paper2) { Text(stringResource(R.string.bag_empty), style = T.Body) }
         return
     }
     val walked = home.s.leg.coerceAtMost(next.leg)
@@ -228,10 +248,24 @@ private fun Round(home: Home) {
         Segments(walked.toFloat() / next.leg)
         Spacer(Modifier.height(4.dp))
         Row {
-            Text(stringResource(R.string.steps_walked, Words.num(walked)), style = T.Small, modifier = Modifier.weight(1f))
+            // A road begun on an earlier day says so, or "walked 1 134" next to 134 steps today looks like a mistake.
+            val todayPart = home.stepsToday.coerceAtMost(walked)
+            Text(if (walked > todayPart) stringResource(R.string.steps_walked_today, Words.num(walked), Words.num(todayPart))
+                else stringResource(R.string.steps_walked, Words.num(walked)), style = T.Small, modifier = Modifier.weight(1f))
             Text(pluralStringResource(R.plurals.steps_left, Words.q(left), Words.num(left)), style = T.Body)
         }
     }
+}
+
+/** Yesterday's and the day before's steps, to set today against. */
+@Composable
+private fun Before(home: Home) {
+    val today = home.now.toLocalDate().toEpochDay()
+    val parts = listOf(1L to R.string.yesterday, 2L to R.string.day_before).mapNotNull { (back, name) ->
+        val n = home.s.days[today - back] ?: return@mapNotNull null
+        stringResource(name) + ": " + pluralStringResource(R.plurals.steps_n, Words.q(n), Words.num(n))
+    }
+    if (parts.isNotEmpty()) Text(parts.joinToString(" · "), style = T.Small)
 }
 
 @Composable
@@ -274,9 +308,20 @@ private fun NextDistrict(home: Home) {
         stringResource(R.string.next_district, Words.district(next, home.ru), String.format("%.1f", left.coerceAtLeast(.1)).replace('.', ','))
     }
     Column {
-        Text(stringResource(R.string.km_total, Words.km(home.s.total)), style = T.Small)
+        val letters = home.s.mail.count { (it.state == St.SEEN || it.state == St.DELIVERED) && it.to != "me" }
+        Text(stringResource(R.string.km_total, Words.km(home.s.total)) + " · " + pluralStringResource(R.plurals.letters_n, letters, letters), style = T.Small)
         Text(text, style = T.Small)
     }
+}
+
+/**
+ * The evening lasts from dusk (or six o'clock) until the mail day turns over in the small hours. A dark
+ * winter morning before work is not an evening, even though the sun isn't up yet.
+ */
+private fun eveningTime(home: Home): Boolean {
+    val h = home.now.hour
+    val dark = home.env.phase == Phase.DUSK || home.env.phase == Phase.EVENING || home.env.phase == Phase.NIGHT
+    return h >= 18 || home.now.toLocalDate() != home.game.mailDay(home.now) || (h >= 12 && dark)
 }
 
 /** How long a day's line in the diary can be: a page, not a tweet. */
@@ -293,7 +338,9 @@ fun Evening(home: Home) {
     val ctx = LocalContext.current
     val c = ctx.container
     val focus = LocalFocusManager.current
-    val day = home.now.toLocalDate().toEpochDay()
+    // The evening belongs to the mail day: written after midnight, the line still goes to the day just walked.
+    val day = home.today
+    val night = home.now.toLocalDate().toEpochDay() != day
     // The lamp is remembered: put out tonight, it stays out when you come back to the screen.
     val lit = home.settings.lampOut != day
     fun light(on: Boolean) = c.write {
@@ -333,18 +380,24 @@ fun Evening(home: Home) {
     LaunchedEffect(focused, ime, field.selection, text, layout) {
         val l = layout ?: return@LaunchedEffect
         if (!focused || ime == 0) return@LaunchedEffect
-        val r = l.getCursorRect(field.selection.end.coerceIn(0, text.length))
+        // The layout can still be the previous text's for a moment (a word from the keyboard's suggestions
+        // lands all at once): asking it about an offset past its own text throws, so stay within what it laid out.
+        val r = runCatching { l.getCursorRect(field.selection.end.coerceIn(0, l.layoutInput.text.length)) }.getOrNull()
+            ?: return@LaunchedEffect
         // a little room below the line, so it doesn't sit flush on the keyboard
         cursorView.bringIntoView(r.copy(bottom = r.bottom + r.height))
     }
-    val start = home.now.toLocalDate().atStartOfDay(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
+    val date = java.time.LocalDate.ofEpochDay(day)
+    val start = date.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli()
     val today = home.s.mail.filter { (it.state == St.SEEN || it.state == St.DELIVERED) && it.deliveredAt >= start }
     val news = today.map { Words.mail(ctx, home.content, it, home.ru, home.year).brief }.filter { it.isNotBlank() }.distinct() +
-        c.events(home.now.toLocalDate(), home.s).map { it.brief(home.ru) }
+        c.events(date, home.s).map { it.brief(home.ru) }
     Column(Modifier.pixelBox(C.night).padding(4.dp)) {
         PixelView(scene, Modifier.fillMaxWidth())
         Column(Modifier.pixelBox(C.paper).padding(horizontal = 14.dp, vertical = 12.dp)) {
-            Text(stringResource(R.string.evening_title, Words.date(ctx, day)), style = T.Title)
+            // After midnight it's no longer an evening but the night: "the night before the 8th".
+            Text(if (night) stringResource(R.string.night_title, Words.date(ctx, day + 1))
+                else stringResource(R.string.evening_title, Words.date(ctx, day)), style = T.Title)
             Spacer(Modifier.height(8.dp))
             Eyebrow(stringResource(R.string.evening_news))
             if (news.isEmpty()) Text(stringResource(R.string.evening_none), style = T.Body)

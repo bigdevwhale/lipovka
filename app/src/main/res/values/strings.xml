@@ -18,8 +18,12 @@
     <string name="bag_title">Today\'s bag</string>
     <string name="bag_empty">The bag is empty. Everything is delivered.</string>
     <string name="bag_more">Take more</string>
+    <string name="more_hint">Fancy a longer walk? There\'s always a letter for a neighbour.</string>
+    <string name="going_home">back to the post office</string>
+    <string name="day_before">the day before</string>
     <string name="going_to">on the way to %1$s</string>
     <string name="steps_walked">walked %1$s</string>
+    <string name="steps_walked_today">walked %1$s, %2$s of them today</string>
     <string name="letter_for_you">A letter for you</string>
     <string name="visit_go">Go to the gate</string>
     <string name="km_total">%1$s km walked in all</string>
@@ -30,13 +34,13 @@
     <string name="allow">Allow</string>
     <string name="no_sensor">This phone has no step counter, so the post will wait.</string>
     <string name="evening_title">Evening, %1$s</string>
+    <string name="night_title">The night before %1$s</string>
     <string name="evening_news">today\'s news</string>
     <string name="evening_none">A quiet day. The letters will wait. Never mind, tomorrow.</string>
     <string name="diary_title">the postman\'s diary</string>
     <string name="diary_hint">One line about today…</string>
     <string name="lamp_off">Put out the lamp</string>
     <string name="lamp_on">Light the lamp</string>
-    <string name="s_letters">letters</string>
     <string name="s_km">km</string>
     <string name="k_letter">letter</string>
     <string name="k_postcard">postcard</string>
@@ -70,6 +74,15 @@
     <string name="album_title">Stamp album</string>
     <string name="album_hint">Stamps come with the letters. The rarest ones come from the far roads.</string>
     <string name="stamp_got">received %1$s</string>
+    <string name="diary_write">write about this day</string>
+    <string name="diary_edit">add to it</string>
+    <string name="diary_save">Save</string>
+    <string name="diary_cancel">Cancel</string>
+    <string name="diary_hint_past">What do you remember of that day?</string>
+    <string name="diary_fold">Fold</string>
+    <string name="diary_all_letters">All letters (%1$d)</string>
+    <string name="day_rest">The postman had a day off.</string>
+    <string name="km_short">%1$s km</string>
     <string name="diary_tab">The postman\'s diary</string>
     <string name="served">year %1$d of service</string>
     <string name="day_line">%1$s · %2$s</string>
@@ -83,6 +96,9 @@
     <string name="weather_off">No town: Lipovka keeps its own weather, by the season.</string>
     <string name="weather_now">%1$s now: %2$s, %3$s°</string>
     <string name="weather_fail">Couldn\'t reach the weather service.</string>
+    <string name="notify_delivered">Each letter handed over at a gate</string>
+    <string name="n_delivered_next">Next: %1$s, %2$d steps on.</string>
+    <string name="n_delivered_done">The bag is empty. Back to the post office.</string>
     <string name="notifications">Notifications</string>
     <string name="notify_text">The morning post and an evening \"almost there\"</string>
     <string name="on">On</string>
@@ -155,6 +171,14 @@
     <string name="backup_confirm">Restore from the file? Everything on this phone will be replaced with what is in it.</string>
     <string name="backup_yes">Replace</string>
     <string name="backup_cancel">Cancel</string>
+    <plurals name="n_delivered">
+        <item quantity="one">%d letter delivered</item>
+        <item quantity="other">%d letters delivered</item>
+    </plurals>
+    <plurals name="notes_n">
+        <item quantity="one">%d note</item>
+        <item quantity="other">%d notes</item>
+    </plurals>
     <plurals name="n_bag">
         <item quantity="one">%d letter in the bag.</item>
         <item quantity="other">%d letters in the bag.</item>
@@ -178,6 +202,14 @@
     <plurals name="steps_today" tools:ignore="ImpliedQuantity">
         <item quantity="one">step today</item>
         <item quantity="other">steps today</item>
+    </plurals>
+    <plurals name="s_letters" tools:ignore="ImpliedQuantity">
+        <item quantity="one">letter</item>
+        <item quantity="other">letters</item>
+    </plurals>
+    <plurals name="s_days" tools:ignore="ImpliedQuantity">
+        <item quantity="one">day</item>
+        <item quantity="other">days</item>
     </plurals>
     <plurals name="s_steps" tools:ignore="ImpliedQuantity">
         <item quantity="one">step</item>

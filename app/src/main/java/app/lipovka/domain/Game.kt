@@ -91,6 +91,8 @@ class Game(val content: Content) {
         const val BAG_MAX = 9
         const val ARCS_PER_DAY = 3
         const val DEFAULT_TARGET = 5000
+        /** [GameState.heading] while walking back to the post office. */
+        const val HOME = "post"
     }
 
     // ---------------------------------------------------------------- places
@@ -132,7 +134,18 @@ class Game(val content: Content) {
     /** Steps left to the next stop (0 with an empty bag). */
     fun toNext(s: GameState): Int = plan(s).firstOrNull()?.let { max(0, it.leg - s.leg) } ?: 0
 
+    /** Steps from the last stop back to the post office. */
+    fun homeLeg(s: GameState): Int = World.steps(point(s.at), districtOf(s.at), World.POST, 0)
+
+    /** The bag is empty and the postman is walking back to the post office. */
+    fun homing(s: GameState): Boolean = s.bag.isEmpty() && s.at != "post"
+
     fun onRoad(s: GameState): OnRoad {
+        if (homing(s)) {
+            val path = World.path(point(s.at), districtOf(s.at), World.POST, 0)
+            val t = (s.leg.toDouble() / homeLeg(s)).coerceIn(0.0, 1.0)
+            return OnRoad(World.along(path, t), path, t)
+        }
         val next = plan(s).firstOrNull() ?: return OnRoad(point(s.at), listOf(point(s.at)), 0.0)
         val path = World.path(point(s.at), districtOf(s.at), next.house.at, next.house.district)
         val t = (s.leg.toDouble() / next.leg).coerceIn(0.0, 1.0)
@@ -141,16 +154,21 @@ class Game(val content: Content) {
 
     // ---------------------------------------------------------------- walking
 
-    /** Real steps walked: the bag goes round, letters are delivered, milestones are reached. */
+    /**
+     * Real steps walked: the bag goes round, letters are delivered, milestones are reached. Steps of a day
+     * before the morning post was sorted (a watch handing over last night's walk late) count towards the
+     * day and the kilometres, but not today's round: by then the postman had already gone home.
+     */
     fun walk(s: GameState, steps: Int, day: Long, now: Long): List<Mail> {
         if (steps <= 0) return emptyList()
         s.total += steps
         s.days[day] = (s.days[day] ?: 0) + steps
         s.dirtyDays += day
         val delivered = mutableListOf<Mail>()
-        if (s.bag.isEmpty()) {
-            s.leg = 0
-            s.heading = ""
+        if (s.morning >= 0 && day < s.morning) {
+            // walked before today's round began
+        } else if (s.bag.isEmpty()) {
+            walkHome(s, steps)
         } else {
             s.leg += steps
             while (true) {
@@ -162,10 +180,19 @@ class Game(val content: Content) {
                 s.heading = ""
                 for (m in next.mail) delivered += deliver(s, m, day, now)
             }
-            if (s.bag.isEmpty()) { s.leg = 0; s.heading = "" }
+            // The last letter given out: what's left of these steps is already the way home.
+            if (s.bag.isEmpty()) { val rest = s.leg; s.leg = 0; s.heading = ""; walkHome(s, rest) }
         }
         milestones(s, day)
         return delivered
+    }
+
+    /** With the bag empty the postman goes back to the post office instead of staying at the last gate. */
+    private fun walkHome(s: GameState, steps: Int) {
+        if (s.at == "post") { s.leg = 0; s.heading = ""; return }
+        s.heading = HOME
+        s.leg += steps
+        if (s.leg >= homeLeg(s)) { s.at = "post"; s.leg = 0; s.heading = "" }
     }
 
     private fun deliver(s: GameState, m: Mail, day: Long, now: Long): Mail {
@@ -270,6 +297,8 @@ class Game(val content: Content) {
         val today = date.toEpochDay()
         if (s.morning >= today) return false
         s.morning = today
+        // A long road to a far house may take a light walker more than a day, so a begun leg carries over the
+        // night; with nothing left in the bag the morning starts at the post office.
         if (s.bag.isEmpty()) { s.at = "post"; s.leg = 0; s.heading = "" }
         milestones(s, today)
 
@@ -348,7 +377,8 @@ class Game(val content: Content) {
         }
         // Everyday letters fill a light day.
         var tries = 0
-        while (count < 6 && cost(s, houses) < budget * 0.8 && tries++ < 12) {
+        val fill = if (extra > 0) BAG_MAX else 6
+        while (count < fill && cost(s, houses) < budget * 0.8 && tries++ < 12) {
             val m = filler(s, date, houses) ?: break
             val h = houseOf(m.to)!!.id
             if (cost(s, houses + h) > budget * 1.15 && count > 0) break
@@ -356,6 +386,8 @@ class Game(val content: Content) {
             count++
             s.add(m.copy(state = St.BAG))
         }
+        // On the way home, new letters turn the postman round where he is: those steps went to the post office.
+        if (s.heading == HOME && s.bag.isNotEmpty()) { s.leg = 0; s.heading = "" }
         if (s.bag.isEmpty() && s.leg == 0) { s.at = "post"; s.heading = "" }
     }
 

@@ -31,7 +31,8 @@ class PostWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
     override suspend fun doWork(): Result {
         val c = applicationContext.container
         runCatching { c.refreshWeather() }
-        c.sync()
+        val delivered = c.sync()
+        Notes.delivered(applicationContext, delivered)
         Notes.check(applicationContext)
         PostWidget.updateAll(applicationContext)
         return Result.success()
@@ -48,6 +49,12 @@ object Alarms {
 /** The two gentle notifications: the morning post, and an evening "almost there". */
 object Notes {
     private const val CHANNEL = "post"
+
+    /** Steps that show the person is up and about, not just turning over in bed. */
+    private const val AWAKE_STEPS = 150
+
+    /** An alarm clock set to ring within this long means the person is still asleep. */
+    private const val ALARM_WINDOW_MS = 4 * 60 * 60 * 1000L
 
     private fun channel(context: Context) {
         val m = context.getSystemService(NotificationManager::class.java)
@@ -69,7 +76,12 @@ object Notes {
         val r = context.localized()
         val bag = s.bag
         val desk = s.mail.count { it.state == St.DESK }
-        if (set.notifiedMorning < day && now.hour in 7..11 && s.morning == day && (bag.isNotEmpty() || desk > 0)) {
+        // The morning post waits for the person to be up: the first steps of the day, or ten o'clock if the
+        // phone hasn't counted any (left on the table). Never before an alarm clock that hasn't rung yet.
+        val alarm = runCatching { context.getSystemService(android.app.AlarmManager::class.java).nextAlarmClock?.triggerTime }.getOrNull()
+        val sleeping = alarm != null && alarm - System.currentTimeMillis() in 0..ALARM_WINDOW_MS
+        val up = !sleeping && ((s.days[now.toLocalDate().toEpochDay()] ?: 0) >= AWAKE_STEPS || now.hour >= 10)
+        if (set.notifiedMorning < day && now.hour in 7..11 && up && s.morning == day && (bag.isNotEmpty() || desk > 0)) {
             val tele = bag.firstOrNull { it.kind == Kind.TELEGRAM.name }
             val text = when {
                 tele != null -> r.getString(R.string.n_telegram, c.content.resident(tele.to)?.name?.invoke(r.ru) ?: "")
@@ -88,6 +100,29 @@ object Notes {
                 c.settings.update { it.copy(notifiedEvening = day) }
             }
         }
+    }
+
+    /** "Handed over at the gate": for the letters just delivered, if the person asked for it. */
+    suspend fun delivered(context: Context, mail: List<app.lipovka.data.Mail>) {
+        val out = mail.filter { it.to != "me" }
+        if (out.isEmpty()) return
+        val c = context.container
+        val set = c.settings.now()
+        if (!set.notify || !set.notifyDelivered || !allowed(context)) return
+        val r = context.localized()
+        val s = c.post.state.value ?: return
+        val year = ((c.game.mailDay(LocalDateTime.now()).toEpochDay() - s.start) / 365 + 1).toInt().coerceAtLeast(1)
+        val lines = out.map { m ->
+            val t = app.lipovka.ui.Words.mail(r, c.content, m, r.ru, year)
+            t.brief.ifBlank { "${app.lipovka.ui.Words.kind(r, Kind.of(m.kind))} · ${t.title}" }
+        }
+        // what's still ahead, so the walk can go on without opening the app
+        val next = c.game.plan(s).firstOrNull()
+        val ahead = next?.let { n ->
+            val who = n.mail.firstNotNullOfOrNull { c.content.resident(it.to) }?.name?.invoke(r.ru) ?: ""
+            r.getString(R.string.n_delivered_next, who, (n.leg - s.leg).coerceAtLeast(0))
+        } ?: r.getString(R.string.n_delivered_done)
+        show(context, 3, r.resources.getQuantityString(R.plurals.n_delivered, out.size, out.size), (lines + ahead).joinToString("\n"))
     }
 
     private fun show(context: Context, id: Int, title: String, text: String) {

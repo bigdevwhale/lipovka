@@ -18,8 +18,12 @@
     <string name="bag_title">Сумка на сегодня</string>
     <string name="bag_empty">Сумка пуста. Всё разнесено.</string>
     <string name="bag_more">Взять ещё</string>
+    <string name="more_hint">Хочется пройтись ещё? Для соседей письмо всегда найдётся.</string>
+    <string name="going_home">иду на почту</string>
+    <string name="day_before">позавчера</string>
     <string name="going_to">иду: %1$s</string>
     <string name="steps_walked">пройдено %1$s</string>
+    <string name="steps_walked_today">пройдено %1$s, из них сегодня %2$s</string>
     <string name="letter_for_you">Письмо вам</string>
     <string name="visit_go">К калитке</string>
     <string name="km_total">всего пройдено %1$s км</string>
@@ -30,13 +34,13 @@
     <string name="allow">Разрешить</string>
     <string name="no_sensor">В этом телефоне нет шагомера. Почта подождёт.</string>
     <string name="evening_title">Вечер, %1$s</string>
+    <string name="night_title">Ночь на %1$s</string>
     <string name="evening_news">новости дня</string>
     <string name="evening_none">Тихий день. Письма подождут. Ничего, завтра.</string>
     <string name="diary_title">дневник почтальона</string>
     <string name="diary_hint">Одна строчка о сегодняшнем дне…</string>
     <string name="lamp_off">Погасить лампу</string>
     <string name="lamp_on">Зажечь лампу</string>
-    <string name="s_letters">писем</string>
     <string name="s_km">км</string>
     <string name="k_letter">письмо</string>
     <string name="k_postcard">открытка</string>
@@ -70,6 +74,15 @@
     <string name="album_title">Альбом марок</string>
     <string name="album_hint">Марки приходят с письмами. Самые редкие идут дальними дорогами.</string>
     <string name="stamp_got">получена %1$s</string>
+    <string name="diary_write">написать об этом дне</string>
+    <string name="diary_edit">дописать</string>
+    <string name="diary_save">Сохранить</string>
+    <string name="diary_cancel">Отмена</string>
+    <string name="diary_hint_past">Что запомнилось в тот день?</string>
+    <string name="diary_fold">Свернуть</string>
+    <string name="diary_all_letters">Все письма (%1$d)</string>
+    <string name="day_rest">В этот день почтальон отдыхал.</string>
+    <string name="km_short">%1$s км</string>
     <string name="diary_tab">Дневник почтальона</string>
     <string name="served">%1$d-й год службы</string>
     <string name="day_line">%1$s · %2$s</string>
@@ -83,6 +96,9 @@
     <string name="weather_off">Без города: в Липовке своя погода, по сезону.</string>
     <string name="weather_now">%1$s сейчас: %2$s, %3$s°</string>
     <string name="weather_fail">Не удалось связаться с сервисом погоды.</string>
+    <string name="notify_delivered">О каждом письме, отданном у калитки</string>
+    <string name="n_delivered_next">Дальше: %1$s, осталось шагов: %2$d.</string>
+    <string name="n_delivered_done">Сумка пуста. Можно на почту.</string>
     <string name="notifications">Уведомления</string>
     <string name="notify_text">Утренняя почта и вечернее «совсем рядом»</string>
     <string name="on">Вкл.</string>
@@ -155,6 +171,18 @@
     <string name="backup_confirm">Восстановить из файла? Всё, что сейчас на этом телефоне, заменится тем, что в нём.</string>
     <string name="backup_yes">Заменить</string>
     <string name="backup_cancel">Отмена</string>
+    <plurals name="n_delivered">
+        <item quantity="one">Доставлено %d письмо</item>
+        <item quantity="few">Доставлено %d письма</item>
+        <item quantity="many">Доставлено %d писем</item>
+        <item quantity="other">Доставлено %d письма</item>
+    </plurals>
+    <plurals name="notes_n">
+        <item quantity="one">%d запись</item>
+        <item quantity="few">%d записи</item>
+        <item quantity="many">%d записей</item>
+        <item quantity="other">%d записи</item>
+    </plurals>
     <plurals name="n_bag">
         <item quantity="one">В сумке %d письмо.</item>
         <item quantity="few">В сумке %d письма.</item>
@@ -190,6 +218,18 @@
         <item quantity="few">шага сегодня</item>
         <item quantity="many">шагов сегодня</item>
         <item quantity="other">шага сегодня</item>
+    </plurals>
+    <plurals name="s_letters" tools:ignore="ImpliedQuantity">
+        <item quantity="one">письмо</item>
+        <item quantity="few">письма</item>
+        <item quantity="many">писем</item>
+        <item quantity="other">письма</item>
+    </plurals>
+    <plurals name="s_days" tools:ignore="ImpliedQuantity">
+        <item quantity="one">день</item>
+        <item quantity="few">дня</item>
+        <item quantity="many">дней</item>
+        <item quantity="other">дня</item>
     </plurals>
     <plurals name="s_steps" tools:ignore="ImpliedQuantity">
         <item quantity="one">шаг</item>

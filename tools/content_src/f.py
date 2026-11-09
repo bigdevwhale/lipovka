@@ -95,7 +95,7 @@ S("f_cheese", "goat", "cream", 6, "Сырный день", "Cheese day", "zarech
 # --------------------------------------------------------------------------- templates: the newspaper
 PAPER_TO = "teacher,zina,fedor,erofey,grisha,tamara,matvei,timofei"
 PAPER_FROM = ("«Сельская новь»", "The Village News")
-PAPER_BRIEF = ("Четверг: по деревне разошлась «Сельская новь».", "Thursday: the Village News went round the village.")
+PAPER_BRIEF = ("По деревне разошёлся свежий номер «Сельской нови».", "A fresh Village News went round the village.")
 
 T("paper_winter", "weekly", "4", "12,1,2", PAPER_TO, "newspaper", PAPER_FROM, PAPER_BRIEF, "f_news", [
     ("В Борках вырастили лимон на подоконнике — сорок лимонов! А у меня алоэ третий год решает, цвести ему или нет.",

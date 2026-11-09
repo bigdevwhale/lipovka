@@ -27,6 +27,8 @@ data class Settings(
     /** The mail day the morning notification was last shown, and the evening one. */
     val notifiedMorning: Long = -1,
     val notifiedEvening: Long = -1,
+    /** A note for every letter handed over at a gate (off unless asked for). */
+    val notifyDelivered: Boolean = false,
     /** The epoch day steps began to come from Health Connect; -1 while the phone's own counter counts them. */
     val healthFrom: Long = -1,
     /** The day the evening lamp was last put out; it stays out until lit again or the next day. */
@@ -51,6 +53,7 @@ class SettingsStore(context: Context) {
             notify = this[NOTIFY] ?: true,
             notifiedMorning = this[N_MORNING] ?: -1,
             notifiedEvening = this[N_EVENING] ?: -1,
+            notifyDelivered = this[N_DELIVERED] ?: false,
             healthFrom = this[HEALTH_FROM] ?: -1,
             lampOut = this[LAMP_OUT] ?: -1,
             calendarTorn = this[CAL_TORN] ?: -1,
@@ -78,6 +81,7 @@ class SettingsStore(context: Context) {
             it[NOTIFY] = s.notify
             it[N_MORNING] = s.notifiedMorning
             it[N_EVENING] = s.notifiedEvening
+            it[N_DELIVERED] = s.notifyDelivered
             it[HEALTH_FROM] = s.healthFrom
             it[LAMP_OUT] = s.lampOut
             it[CAL_TORN] = s.calendarTorn
@@ -97,6 +101,7 @@ class SettingsStore(context: Context) {
         val NOTIFY = booleanPreferencesKey("notify")
         val N_MORNING = longPreferencesKey("n_morning")
         val N_EVENING = longPreferencesKey("n_evening")
+        val N_DELIVERED = booleanPreferencesKey("n_delivered")
         val HEALTH_FROM = longPreferencesKey("health_from")
         val LAMP_OUT = longPreferencesKey("lamp_out")
         val CAL_TORN = longPreferencesKey("calendar_torn")
