@@ -217,6 +217,23 @@ class GameTest {
         assertEquals("", s.heading)
         assertEquals("mill", s.at)
     }
+
+    /** A long walker who empties the bag keeps getting letters: each "take more" fills the bag again. */
+    @Test fun takeMoreAgainAndAgain() {
+        val start = LocalDate.of(2026, 3, 2)
+        val run = play(start, 20) { 6000 }
+        val game = Game(content)
+        val s = run.s
+        val date = start.plusDays(19)
+        val day = date.toEpochDay()
+        val got = mutableListOf<Int>()
+        for (k in 0 until 6) {
+            game.walk(s, 30000, day, 0)
+            game.takeMore(s, date)
+            got += s.bag.size
+        }
+        assertTrue("take more gave $got", got.all { it >= 3 })
+    }
 }
 
 class WeatherTest {

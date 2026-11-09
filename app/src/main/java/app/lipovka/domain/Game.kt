@@ -379,7 +379,7 @@ class Game(val content: Content) {
         var tries = 0
         val fill = if (extra > 0) BAG_MAX else 6
         while (count < fill && cost(s, houses) < budget * 0.8 && tries++ < 12) {
-            val m = filler(s, date, houses) ?: break
+            val m = filler(s, date, houses, more = extra > 0) ?: break
             val h = houseOf(m.to)!!.id
             if (cost(s, houses + h) > budget * 1.15 && count > 0) break
             houses += h
@@ -397,14 +397,21 @@ class Game(val content: Content) {
         if (b.id < 0) s.newMail.replaceAll { if (it.id == b.id) b else it }
     }
 
-    /** An everyday letter for someone who hasn't had post for a couple of days, the nearer the likelier. */
-    private fun filler(s: GameState, date: LocalDate, houses: Set<String>): Mail? {
+    /**
+     * An everyday letter for someone who hasn't had post for a couple of days, the nearer the likelier. When the
+     * postman asks for more ([more]), anyone not in the bag may get one, strictly in turn: first those with no
+     * post today, then those who had none lately, the nearer first within each. A long walker must never come
+     * back to an empty shelf.
+     */
+    private fun filler(s: GameState, date: LocalDate, houses: Set<String>, more: Boolean = false): Mail? {
         if (content.fillers.isEmpty()) return null
         val today = date.toEpochDay()
         val recent = s.mail.filter { today - it.day < 3 }.map { it.to }.toSet()
-        val people = residentsOpen(s).filter { it.id !in recent && World.house(it.house)?.id !in houses }
+        val people = residentsOpen(s).filter { (more || it.id !in recent) && World.house(it.house)?.id !in houses }
         if (people.isEmpty()) return null
-        val r = people.minBy { legSteps(s.at, World.house(it.house)!!) * (0.6 + rndOf(it.id, today)) }
+        val todays = s.mail.filter { it.day == today }.groupingBy { it.to }.eachCount()
+        val r = people.minWith(compareBy<Resident>({ todays[it.id] ?: 0 }, { it.id in recent })
+            .thenBy { legSteps(s.at, World.house(it.house)!!) * (0.6 + rndOf(it.id, today)) })
         val tags = buildSet {
             add("any")
             if (r.old) add("old")
