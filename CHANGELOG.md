@@ -6,6 +6,19 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.21] - 2026-11-09
+
+### Changed
+- "Take more" puts one letter into the bag per press, and the button is there whenever the bag isn't full, also in the middle of a round. The shelf goes first; then an everyday letter for a neighbour who had no post today.
+- Each press makes the walk longer by a growing stretch: 1 500 steps the first time in a day, then 2 250, 3 000 and so on. When the house is nearer than that, the road to it goes the long way round.
+- The round card shows the whole bag's road under the steps to the next gate, so a letter taken is a walk you can see.
+
+<!-- tg
+Новое: «Взять ещё» добавляет по одному письму за нажатие, и кнопка видна, пока сумка не полная.
+Каждое нажатие удлиняет прогулку всё больше: 1 500 шагов, потом 2 250, 3 000 и дальше.
+Под «ещё N шагов» теперь видно, сколько шагов во всей сумке.
+-->
+
 ## [1.0.20] - 2026-11-09
 
 ### Fixed
