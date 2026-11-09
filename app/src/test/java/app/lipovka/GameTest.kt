@@ -218,7 +218,7 @@ class GameTest {
         assertEquals("mill", s.at)
     }
 
-    /** A long walker who empties the bag keeps getting letters: each "take more" fills the bag again. */
+    /** A long walker who empties the bag keeps getting letters: each "take more" adds one, up to a full bag. */
     @Test fun takeMoreAgainAndAgain() {
         val start = LocalDate.of(2026, 3, 2)
         val run = play(start, 20) { 6000 }
@@ -228,11 +228,36 @@ class GameTest {
         val day = date.toEpochDay()
         val got = mutableListOf<Int>()
         for (k in 0 until 6) {
-            game.walk(s, 30000, day, 0)
-            game.takeMore(s, date)
+            game.walk(s, 500_000, day, 0)
+            repeat(Game.BAG_MAX + 2) { game.takeMore(s, date) }
             got += s.bag.size
         }
-        assertTrue("take more gave $got", got.all { it >= 3 })
+        assertTrue("take more gave $got", got.all { it == Game.BAG_MAX })
+        game.walk(s, 500_000, day, 0)
+        assertTrue(s.bag.isEmpty())
+        game.takeMore(s, date)
+        assertEquals("one letter per press", 1, s.bag.size)
+        // Each press makes the round longer, by a growing share of a usual day (10%, 15%, 20%...), 1 500 steps at least.
+        val day2 = day + 1
+        val date2 = date.plusDays(1)
+        fun presses(open: Boolean): Pair<List<Int>, List<Int>> {
+            val s2 = GameState(start = s.start, days = s.days.toMutableMap())
+            if (open) for (d in 1..5) s2.flag("d$d", s.start)
+            val rounds = mutableListOf(0)
+            val mins = mutableListOf<Int>()
+            repeat(4) {
+                mins += game.moreSteps(s2, day2)
+                game.takeMore(s2, date2); rounds += game.plan(s2).last().cum
+            }
+            return rounds.zipWithNext { a, b -> b - a } to mins
+        }
+        val (wide, mins) = presses(open = true)
+        assertEquals(listOf(1500, 2250, 3000, 3750), mins)
+        assertTrue("added $wide, at least $mins", wide.zip(mins).all { (a, m) -> a >= m })
+        // Lipovka alone has no house that far: the rest is a roundabout road, and the share holds just the same.
+        val (small, _) = presses(open = false)
+        assertTrue("added $small, at least $mins", small.zip(mins).all { (a, m) -> a >= m })
+        println("presses: wide $wide, small $small, at least $mins")
     }
 }
 

@@ -61,6 +61,7 @@ import app.lipovka.container
 import app.lipovka.data.Kind
 import app.lipovka.data.Mail
 import app.lipovka.data.St
+import app.lipovka.domain.Game
 import app.lipovka.domain.Phase
 import app.lipovka.domain.World
 import app.lipovka.ui.Home
@@ -142,8 +143,8 @@ fun PostScreen(home: Home, onVisits: () -> Unit, onLetter: (Long) -> Unit, onSet
             }
             Bag(home)
             val shelf = s.shelf.size
-            // With the shelf empty, a postman who wants a longer walk still finds letters: everyday ones for the neighbours.
-            if (shelf > 0 || home.plan.isEmpty()) {
+            // One more letter per press, up to a full bag; with the shelf empty, an everyday one for a neighbour.
+            if (s.bag.size < Game.BAG_MAX) {
                 Text(if (shelf > 0) stringResource(R.string.shelf_hint, shelf) else stringResource(R.string.more_hint), style = T.Sub)
                 PixelButton(stringResource(R.string.bag_more), { c.write { post.takeMore() } }, Modifier.fillMaxWidth(), kind = BtnKind.GHOST)
             }
@@ -253,6 +254,11 @@ private fun Round(home: Home) {
             Text(if (walked > todayPart) stringResource(R.string.steps_walked_today, Words.num(walked), Words.num(todayPart))
                 else stringResource(R.string.steps_walked, Words.num(walked)), style = T.Small, modifier = Modifier.weight(1f))
             Text(pluralStringResource(R.plurals.steps_left, Words.q(left), Words.num(left)), style = T.Body)
+        }
+        // The road round the whole bag: it grows with every letter taken, while the next gate stays as near.
+        if (home.plan.size > 1) {
+            val all = max(0, home.plan.last().cum - home.s.leg)
+            Text(pluralStringResource(R.plurals.bag_left, Words.q(all), Words.num(all)), style = T.Small, modifier = Modifier.align(Alignment.End))
         }
     }
 }

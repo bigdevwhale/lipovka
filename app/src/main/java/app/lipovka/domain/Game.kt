@@ -91,6 +91,16 @@ class Game(val content: Content) {
         const val BAG_MAX = 9
         const val ARCS_PER_DAY = 3
         const val DEFAULT_TARGET = 5000
+        /**
+         * Each "take more" makes the round longer by at least a share of a usual day's walk ([target]): the
+         * first press of the day by [MORE_FIRST], every next one by [MORE_STEP] more (10%, 15%, 20%...). A day
+         * shorter than [MORE_DAY_MIN] counts as that long, so the first press is never less than 1 500 steps.
+         */
+        const val MORE_FIRST = 0.10
+        const val MORE_STEP = 0.05
+        const val MORE_DAY_MIN = 15000
+        /** [Mail.priority] of an everyday letter taken with "take more", to count the presses of the day. */
+        const val MORE_PRIORITY = -1
         /** [GameState.heading] while walking back to the post office. */
         const val HOME = "post"
     }
@@ -122,7 +132,7 @@ class Game(val content: Content) {
             val next = if (out.isEmpty() && going != null) going
                 else pool.minBy { legSteps(from, World.house(it)!!) * 1000 + it.hashCode() % 997 }
             val h = World.house(next)!!
-            val leg = legSteps(from, h)
+            val leg = legSteps(from, h) + byHouse[next]!!.sumOf { it.detour }
             cum += leg
             out += Stop(h, byHouse[next]!!, leg, cum)
             left -= next
@@ -358,12 +368,12 @@ class Game(val content: Content) {
     }
 
     /** Puts shelf mail into the bag by priority until the round is about a usual day's walk. */
-    fun fillBag(s: GameState, date: LocalDate, extra: Int = 0) {
+    fun fillBag(s: GameState, date: LocalDate) {
         // Halfway to a house, it stays the next one, whatever goes into the bag now. (A leg saved before
         // the heading was remembered gets it here, before the bag changes.)
         if (s.leg > 0 && s.heading.isEmpty()) s.heading = plan(s).firstOrNull()?.house?.id ?: ""
         val today = date.toEpochDay()
-        val budget = target(s, today) + extra
+        val budget = target(s, today)
         val houses = s.bag.mapNotNull { houseOf(it.to)?.id }.toMutableSet()
         var count = s.bag.size
         for (m in s.shelf.sortedWith(compareByDescending<Mail> { it.priority }.thenBy { it.day }.thenBy { it.id })) {
@@ -377,9 +387,8 @@ class Game(val content: Content) {
         }
         // Everyday letters fill a light day.
         var tries = 0
-        val fill = if (extra > 0) BAG_MAX else 6
-        while (count < fill && cost(s, houses) < budget * 0.8 && tries++ < 12) {
-            val m = filler(s, date, houses, more = extra > 0) ?: break
+        while (count < 6 && cost(s, houses) < budget * 0.8 && tries++ < 12) {
+            val m = filler(s, date, houses) ?: break
             val h = houseOf(m.to)!!.id
             if (cost(s, houses + h) > budget * 1.15 && count > 0) break
             houses += h
@@ -403,15 +412,26 @@ class Game(val content: Content) {
      * post today, then those who had none lately, the nearer first within each. A long walker must never come
      * back to an empty shelf.
      */
-    private fun filler(s: GameState, date: LocalDate, houses: Set<String>, more: Boolean = false): Mail? {
+    private fun filler(s: GameState, date: LocalDate, houses: Set<String>, more: Boolean = false, minAdd: Int = 0): Mail? {
         if (content.fillers.isEmpty()) return null
         val today = date.toEpochDay()
         val recent = s.mail.filter { today - it.day < 3 }.map { it.to }.toSet()
         val people = residentsOpen(s).filter { (more || it.id !in recent) && World.house(it.house)?.id !in houses }
         if (people.isEmpty()) return null
         val todays = s.mail.filter { it.day == today }.groupingBy { it.to }.eachCount()
-        val r = people.minWith(compareBy<Resident>({ todays[it.id] ?: 0 }, { it.id in recent })
-            .thenBy { legSteps(s.at, World.house(it.house)!!) * (0.6 + rndOf(it.id, today)) })
+        // With [minAdd], the nearest house that makes the round at least that much longer; failing that, the
+        // one that adds the most.
+        val base = if (minAdd > 0) cost(s, houses) else 0
+        val adds = if (minAdd > 0) people.associate { it.id to cost(s, houses + World.house(it.house)!!.id) - base } else emptyMap()
+        val r = people.minWith(compareBy<Resident>({ todays[it.id] ?: 0 }, { it.id in recent }, { (adds[it.id] ?: minAdd) < minAdd })
+            .thenBy {
+                val add = adds[it.id]
+                when {
+                    add == null -> legSteps(s.at, World.house(it.house)!!) * (0.6 + rndOf(it.id, today))
+                    add >= minAdd -> add * (0.6 + rndOf(it.id, today))
+                    else -> -add.toDouble()
+                }
+            })
         val tags = buildSet {
             add("any")
             if (r.old) add("old")
@@ -428,8 +448,39 @@ class Game(val content: Content) {
 
     private fun rndOf(id: String, day: Long) = app.lipovka.ui.art.hash(id.hashCode(), day.toInt())
 
-    /** Takes more letters from the shelf on a day the postman wants a longer walk. */
-    fun takeMore(s: GameState, date: LocalDate) = fillBag(s, date, extra = 4000)
+    /**
+     * "Take more": one letter into the bag per press, up to a full bag. The shelf goes first, by priority, a
+     * house not yet on the round before one that is; with the shelf empty, an everyday letter for a neighbour
+     * that makes the round longer by a growing share of a usual day ([moreSteps]).
+     */
+    fun takeMore(s: GameState, date: LocalDate) {
+        // Halfway to a house, it stays the next one (see [fillBag]).
+        if (s.leg > 0 && s.heading.isEmpty()) s.heading = plan(s).firstOrNull()?.house?.id ?: ""
+        if (s.bag.size >= BAG_MAX) return
+        val houses = s.bag.mapNotNull { houseOf(it.to)?.id }.toSet()
+        val shelf = s.shelf.filter { houseOf(it.to) != null }
+            .sortedWith(compareByDescending<Mail> { it.priority }.thenBy { houseOf(it.to)!!.id in houses }.thenBy { it.day }.thenBy { it.id })
+            .firstOrNull()
+        if (shelf != null) take(s, shelf)
+        else {
+            // A house that near makes the rest of the share a roundabout road to it.
+            val want = moreSteps(s, date.toEpochDay())
+            val before = plan(s).lastOrNull()?.cum ?: 0
+            filler(s, date, houses, more = true, minAdd = want)?.let { m ->
+                val added = s.add(m.copy(state = St.BAG, priority = MORE_PRIORITY))
+                val grew = (plan(s).lastOrNull()?.cum ?: 0) - before
+                if (grew < want) take(s, added.copy(detour = want - grew))
+            }
+        }
+        // On the way home, a new letter turns the postman round where he is.
+        if (s.heading == HOME && s.bag.isNotEmpty()) { s.leg = 0; s.heading = "" }
+    }
+
+    /** How many steps longer the next "take more" makes the round at least: 10%, 15%, 20%... of a usual day. */
+    fun moreSteps(s: GameState, today: Long): Int {
+        val presses = s.mail.count { it.day == today && it.priority == MORE_PRIORITY }
+        return (max(target(s, today), MORE_DAY_MIN) * (MORE_FIRST + MORE_STEP * presses)).toInt()
+    }
 
     // ---------------------------------------------------------------- at the gate
 

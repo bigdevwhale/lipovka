@@ -243,6 +243,12 @@
         <item quantity="many">ещё %1$s шагов</item>
         <item quantity="other">ещё %1$s шага</item>
     </plurals>
+    <plurals name="bag_left">
+        <item quantity="one">вся сумка: %1$s шаг</item>
+        <item quantity="few">вся сумка: %1$s шага</item>
+        <item quantity="many">вся сумка: %1$s шагов</item>
+        <item quantity="other">вся сумка: %1$s шага</item>
+    </plurals>
     <plurals name="steps_n">
         <item quantity="one">%1$s шаг</item>
         <item quantity="few">%1$s шага</item>

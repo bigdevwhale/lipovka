@@ -26,7 +26,7 @@ object Backup {
         put("mail", JSONArray(b.mail.map { m ->
             JSONObject().put("id", m.id).put("src", m.src).put("kind", m.kind).put("to", m.to).put("day", m.day)
                 .put("state", m.state).put("variant", m.variant).put("priority", m.priority).put("deliveredAt", m.deliveredAt)
-                .put("gift", m.gift).put("stamp", m.stamp).put("reply", m.reply).put("from", m.from)
+                .put("gift", m.gift).put("stamp", m.stamp).put("reply", m.reply).put("from", m.from).put("detour", m.detour)
         }))
         put("days", JSONArray(b.days.map { JSONObject().put("day", it.day).put("steps", it.steps) }))
         put("flags", JSONArray(b.flags.map { JSONObject().put("key", it.key).put("day", it.day) }))
@@ -54,7 +54,7 @@ object Backup {
                     id = m.getLong("id"), src = m.getString("src"), kind = m.getString("kind"), to = m.getString("to"),
                     day = m.getLong("day"), state = m.getInt("state"), variant = m.optInt("variant"), priority = m.optInt("priority"),
                     deliveredAt = m.optLong("deliveredAt"), gift = m.optString("gift"), stamp = m.optString("stamp"),
-                    reply = m.optString("reply"), from = m.optString("from"),
+                    reply = m.optString("reply"), from = m.optString("from"), detour = m.optInt("detour"),
                 )
             },
             days = rows("days").map { DayLog(it.getLong("day"), it.getInt("steps")) },

@@ -1,6 +1,8 @@
 package app.lipovka.data
 
 import android.content.Context
+import androidx.room.ColumnInfo
+import androidx.room.AutoMigration
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Entity
@@ -52,6 +54,8 @@ data class Mail(
     val reply: String = "",
     /** For a reply: who wrote it. */
     val from: String = "",
+    /** Extra steps on the way to this house: a "take more" letter's roundabout road, so each press adds its share. */
+    @ColumnInfo(defaultValue = "0") val detour: Int = 0,
 )
 
 /** Steps walked on one day. */
@@ -216,8 +220,9 @@ interface PostDao {
 
 @Database(
     entities = [Mail::class, DayLog::class, Reading::class, Flag::class, ArcState::class, Owned::class, Collected::class, Diary::class, Meta::class],
-    version = 1,
+    version = 2,
     exportSchema = true,
+    autoMigrations = [AutoMigration(from = 1, to = 2)],
 )
 abstract class PostDb : RoomDatabase() {
     abstract fun dao(): PostDao

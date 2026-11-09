@@ -219,6 +219,10 @@
         <item quantity="one">%1$s step to go</item>
         <item quantity="other">%1$s steps to go</item>
     </plurals>
+    <plurals name="bag_left">
+        <item quantity="one">the whole bag: %1$s step</item>
+        <item quantity="other">the whole bag: %1$s steps</item>
+    </plurals>
     <plurals name="steps_n">
         <item quantity="one">%1$s step</item>
         <item quantity="other">%1$s steps</item>
