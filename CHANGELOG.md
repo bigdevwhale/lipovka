@@ -6,6 +6,16 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.20] - 2026-11-09
+
+### Fixed
+- "Take more" always finds letters, however far you walk: after a few rounds the bag no longer comes back empty. The neighbours who had no post today go first, then the others, a second letter the same day only when everyone has had one.
+
+<!-- tg
+Исправлено: «Взять ещё» больше не возвращается с пустой сумкой — сколько бы вы ни прошли, письма найдутся.
+Сначала письма получают те, кому сегодня ещё ничего не приносили, а уже потом — по второму разу.
+-->
+
 ## [1.0.19] - 2026-11-09
 
 ### Added
