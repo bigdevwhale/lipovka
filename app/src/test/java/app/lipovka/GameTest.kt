@@ -259,6 +259,45 @@ class GameTest {
         assertTrue("added $small, at least $mins", small.zip(mins).all { (a, m) -> a >= m })
         println("presses: wide $wide, small $small, at least $mins")
     }
+    /** Two letters for one person on the shelf (a restored backup): never one straight after the other. */
+    @Test fun takeMoreNeverTheSameHouseTwiceInARow() {
+        val start = LocalDate.of(2026, 3, 2)
+        val run = play(start, 20) { 6000 }
+        val game = Game(content)
+        val s = run.s
+        val date = start.plusDays(19)
+        val day = date.toEpochDay()
+        game.walk(s, 500_000, day, 0)
+        s.days[day] = 0
+        for (k in 0 until 3) s.mail += Mail(id = 9000L + k, src = "tpl:x$k", kind = "LETTER", to = "fedor", day = day, state = St.SHELF, priority = 2)
+        val seq = mutableListOf<String>()
+        var t = Long.MAX_VALUE / 2
+        repeat(30) {
+            game.takeMore(s, date)
+            seq += game.walk(s, 500_000, day, t++).map { game.houseOf(it.to)!!.id }
+        }
+        assertTrue("delivered $seq", seq.zipWithNext().none { (a, b) -> a == b })
+    }
+    /** Many letters taken last night and not yet carried: the morning only tops the round up to a usual day, if at all: their roundabout roads count. */
+    @Test fun takeMoreDoesntSwellTomorrow() {
+        val start = LocalDate.of(2026, 3, 2)
+        val run = play(start, 20) { 6000 }
+        val game = Game(content)
+        val s = run.s
+        val date = start.plusDays(19)
+        game.walk(s, 500_000, date.toEpochDay(), 0)
+        for (m in s.shelf) s.put(m.copy(state = St.GONE))
+        repeat(6) { game.takeMore(s, date) }
+        assertTrue(s.bag.any { it.detour > 0 })
+        game.walk(s, game.plan(s).last().cum * 2 / 3, date.toEpochDay(), 0)
+        val before = s.bag.map { it.id }.toSet()
+        val next = date.plusDays(1)
+        game.morning(s, next, 0)
+        val added = s.bag.filter { it.id !in before && it.priority < 3 }
+        val round = game.plan(s).last().cum
+        val target = game.target(s, next.toEpochDay())
+        assertTrue("added ${added.map { it.src }}, round $round, a usual day $target", added.isEmpty() || round <= target * 1.15)
+    }
 }
 
 class WeatherTest {

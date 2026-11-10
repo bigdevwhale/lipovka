@@ -237,10 +237,13 @@ class Game(val content: Content) {
         return (med * 0.85).toInt().coerceIn(2000, 14000)
     }
 
-    /** The cost in steps of walking round these houses from where the postman is. */
+    /**
+     * The cost in steps of walking round these houses from where the postman is, with the roundabout roads of
+     * the letters already in the bag for them ("take more" left over from yesterday is a long road too).
+     */
     fun cost(s: GameState, houses: Collection<String>): Int {
         var from = s.at
-        var total = 0
+        var total = s.bag.filter { houseOf(it.to)?.id in houses }.sumOf { it.detour }
         val left = houses.toMutableSet()
         while (left.isNotEmpty()) {
             val n = left.minBy { legSteps(from, World.house(it)!!) }
@@ -412,11 +415,15 @@ class Game(val content: Content) {
      * post today, then those who had none lately, the nearer first within each. A long walker must never come
      * back to an empty shelf.
      */
-    private fun filler(s: GameState, date: LocalDate, houses: Set<String>, more: Boolean = false, minAdd: Int = 0): Mail? {
+    private fun filler(
+        s: GameState, date: LocalDate, houses: Set<String>, more: Boolean = false, minAdd: Int = 0, avoid: Set<String> = emptySet(),
+    ): Mail? {
         if (content.fillers.isEmpty()) return null
         val today = date.toEpochDay()
         val recent = s.mail.filter { today - it.day < 3 }.map { it.to }.toSet()
-        val people = residentsOpen(s).filter { (more || it.id !in recent) && World.house(it.house)?.id !in houses }
+        val open = residentsOpen(s).filter { (more || it.id !in recent) && World.house(it.house)?.id !in houses }
+        // [avoid]: houses that just had their post; someone else's turn, unless there is no one else.
+        val people = open.filter { World.house(it.house)?.id !in avoid }.ifEmpty { open }
         if (people.isEmpty()) return null
         val todays = s.mail.filter { it.day == today }.groupingBy { it.to }.eachCount()
         // With [minAdd], the nearest house that makes the round at least that much longer; failing that, the
@@ -449,24 +456,29 @@ class Game(val content: Content) {
     private fun rndOf(id: String, day: Long) = app.lipovka.ui.art.hash(id.hashCode(), day.toInt())
 
     /**
-     * "Take more": one letter into the bag per press, up to a full bag. The shelf goes first, by priority, a
-     * house not yet on the round before one that is; with the shelf empty, an everyday letter for a neighbour
-     * that makes the round longer by a growing share of a usual day ([moreSteps]).
+     * "Take more": one letter into the bag per press, up to a full bag. The shelf goes first, by priority; with
+     * the shelf empty, an everyday letter for a neighbour that makes the round longer by a growing share of a
+     * usual day ([moreSteps]). Never a second letter in a row for the same house: not for one already in the
+     * bag, and not for the one that had the last letter.
      */
     fun takeMore(s: GameState, date: LocalDate) {
         // Halfway to a house, it stays the next one (see [fillBag]).
         if (s.leg > 0 && s.heading.isEmpty()) s.heading = plan(s).firstOrNull()?.house?.id ?: ""
         if (s.bag.size >= BAG_MAX) return
+        val today = date.toEpochDay()
         val houses = s.bag.mapNotNull { houseOf(it.to)?.id }.toSet()
-        val shelf = s.shelf.filter { houseOf(it.to) != null }
-            .sortedWith(compareByDescending<Mail> { it.priority }.thenBy { houseOf(it.to)!!.id in houses }.thenBy { it.day }.thenBy { it.id })
+        val last = s.mail.filter { it.state == St.DELIVERED || it.state == St.SEEN }.maxByOrNull { it.deliveredAt }
+            ?.let { houseOf(it.to)?.id }
+        val avoid = setOfNotNull(last, s.at.takeIf { it != HOME })
+        val shelf = s.shelf.filter { m -> houseOf(m.to)?.id.let { it != null && it !in houses && it !in avoid } }
+            .sortedWith(compareByDescending<Mail> { it.priority }.thenBy { it.day }.thenBy { it.id })
             .firstOrNull()
         if (shelf != null) take(s, shelf)
         else {
             // A house that near makes the rest of the share a roundabout road to it.
-            val want = moreSteps(s, date.toEpochDay())
+            val want = moreSteps(s, today)
             val before = plan(s).lastOrNull()?.cum ?: 0
-            filler(s, date, houses, more = true, minAdd = want)?.let { m ->
+            filler(s, date, houses, more = true, minAdd = want, avoid = avoid)?.let { m ->
                 val added = s.add(m.copy(state = St.BAG, priority = MORE_PRIORITY))
                 val grew = (plan(s).lastOrNull()?.cum ?: 0) - before
                 if (grew < want) take(s, added.copy(detour = want - grew))
