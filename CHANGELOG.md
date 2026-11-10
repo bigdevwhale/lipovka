@@ -6,6 +6,17 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.22] - 2026-11-10
+
+### Fixed
+- After taking many letters with "Take more", the next morning no longer adds more on top: the long roads of the letters still in the bag count towards the usual day, and the bag is only topped up to it.
+- "Take more" no longer brings a letter to the house that has just had one, or to one already in the bag, so the same person doesn't get two letters in a row.
+
+<!-- tg
+Исправлено: если вечером взять много писем через «Взять ещё», утром игра больше не накидывает новые сверху, а только добирает до обычной нормы.
+«Взять ещё» больше не даёт одному и тому же человеку два письма подряд.
+-->
+
 ## [1.0.21] - 2026-11-09
 
 ### Changed
