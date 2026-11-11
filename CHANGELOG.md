@@ -6,6 +6,21 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.24] - 2026-11-11
+
+### Added
+- Post office sounds, on unless turned off in Settings → Sounds, while the app is open: the wall clock ticks in step with its pendulum, and the hour and weather bring rain, a thunderstorm, the wind, birds on a summer day, crickets on a warm evening, the stove crackling on a cold one. Upstairs in the room the clock isn't heard. The rain, storm, wind, birds and crickets are real recordings (credits in About).
+- A notification when Bublik the dog starts walking with the postman, and when a district opens, with a word about what is there.
+
+### Fixed
+- The newest thing on the room's shelf no longer stands on the desk lamp's shade.
+
+<!-- tg
+Новое: звуки почты. Тикают ходики в такт маятнику, за стеной дождь, гроза, ветер, летом птицы и сверчки, зимой трещит печка. Выключаются в настройках.
+Новое: уведомления, когда к почтальону прибивается Бублик и когда открывается новый район.
+Исправлено: новая вещь на полке больше не стоит на абажуре лампы.
+-->
+
 ## [1.0.23] - 2026-11-11
 
 ### Fixed
