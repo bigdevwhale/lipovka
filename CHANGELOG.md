@@ -6,6 +6,15 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.23] - 2026-11-11
+
+### Fixed
+- The morning bag could come empty after a few evenings of "Take more" in Lipovka alone: every neighbour had had a letter lately, so no everyday letter went out. Now those who have waited longest get them.
+
+<!-- tg
+Исправлено: после нескольких вечеров со «Взять ещё» утренняя сумка могла прийти пустой. Теперь утром письма есть всегда.
+-->
+
 ## [1.0.22] - 2026-11-10
 
 ### Fixed
