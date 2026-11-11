@@ -413,7 +413,7 @@ class Game(val content: Content) {
      * An everyday letter for someone who hasn't had post for a couple of days, the nearer the likelier. When the
      * postman asks for more ([more]), anyone not in the bag may get one, strictly in turn: first those with no
      * post today, then those who had none lately, the nearer first within each. A long walker must never come
-     * back to an empty shelf.
+     * back to an empty shelf, nor wake to an empty bag.
      */
     private fun filler(
         s: GameState, date: LocalDate, houses: Set<String>, more: Boolean = false, minAdd: Int = 0, avoid: Set<String> = emptySet(),
@@ -421,7 +421,11 @@ class Game(val content: Content) {
         if (content.fillers.isEmpty()) return null
         val today = date.toEpochDay()
         val recent = s.mail.filter { today - it.day < 3 }.map { it.to }.toSet()
-        val open = residentsOpen(s).filter { (more || it.id !in recent) && World.house(it.house)?.id !in houses }
+        val free = residentsOpen(s).filter { World.house(it.house)?.id !in houses }
+        // When everyone had post lately (evenings of "take more" in a small village), the morning still brings
+        // some: to those who have waited longest.
+        val open = free.filter { more || it.id !in recent }.ifEmpty { free }
+        val lastDay = s.mail.groupBy { it.to }.mapValues { (_, l) -> l.maxOf { it.day } }
         // [avoid]: houses that just had their post; someone else's turn, unless there is no one else.
         val people = open.filter { World.house(it.house)?.id !in avoid }.ifEmpty { open }
         if (people.isEmpty()) return null
@@ -430,7 +434,8 @@ class Game(val content: Content) {
         // one that adds the most.
         val base = if (minAdd > 0) cost(s, houses) else 0
         val adds = if (minAdd > 0) people.associate { it.id to cost(s, houses + World.house(it.house)!!.id) - base } else emptyMap()
-        val r = people.minWith(compareBy<Resident>({ todays[it.id] ?: 0 }, { it.id in recent }, { (adds[it.id] ?: minAdd) < minAdd })
+        val r = people.minWith(compareBy<Resident>({ todays[it.id] ?: 0 }, { it.id in recent }, { if (more) 0L else lastDay[it.id] ?: 0L },
+            { (adds[it.id] ?: minAdd) < minAdd })
             .thenBy {
                 val add = adds[it.id]
                 when {

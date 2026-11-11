@@ -298,6 +298,47 @@ class GameTest {
         val target = game.target(s, next.toEpochDay())
         assertTrue("added ${added.map { it.src }}, round $round, a usual day $target", added.isEmpty() || round <= target * 1.15)
     }
+    /** An evening of "take more" gives every neighbour a letter; the next morning must still bring post. */
+    @Test fun morningAfterAWholeVillageOfTakeMore() {
+        val start = LocalDate.of(2026, 3, 2)
+        val run = play(start, 20) { 6000 }
+        val game = Game(content)
+        val s = run.s
+        val date = start.plusDays(20)
+        val day = date.toEpochDay()
+        game.walk(s, 500_000, day, 0)
+        for (m in s.shelf) s.put(m.copy(state = St.GONE))
+        var t = Long.MAX_VALUE / 2
+        repeat(40) { game.takeMore(s, date); game.walk(s, 500_000, day, t++) }
+        val open = game.residentsOpen(s).map { it.id }.toSet()
+        val got = s.mail.filter { it.day == day }.map { it.to }.toSet()
+        assertTrue("everyone had a letter: ${open - got}", got.containsAll(open))
+        for (k in 1..3) {
+            val next = date.plusDays(k.toLong())
+            game.morning(s, next, 0)
+            assertTrue("morning ${next}: an empty bag", s.bag.isNotEmpty())
+            game.walk(s, 500_000, next.toEpochDay(), t++)
+        }
+    }
+    /**
+     * Everyone in Lipovka had a letter in the last days (evenings of "take more") and today brings no story or
+     * paper: the morning still fills the bag with everyday letters, the longest without post first.
+     */
+    @Test fun morningWhenEveryoneHadPostLately() {
+        val game = Game(content)
+        val date = LocalDate.of(2026, 11, 11)
+        val day = date.toEpochDay()
+        val s = GameState(start = day - 4, morning = day)
+        var id = 1L
+        val people = game.residentsOpen(s)
+        people.forEachIndexed { i, r ->
+            s.mail += Mail(id = id++, src = "fill:$i", kind = "LETTER", to = r.id, day = day - 1 - i % 2, state = St.SEEN, priority = Game.MORE_PRIORITY)
+        }
+        game.fillBag(s, date)
+        assertTrue("an empty bag", s.bag.isNotEmpty())
+        val older = people.filterIndexed { i, _ -> i % 2 == 1 }.map { it.id }.toSet()
+        assertTrue("the longest without post first: ${s.bag.map { it.to }}", s.bag.first().to in older)
+    }
 }
 
 class WeatherTest {
