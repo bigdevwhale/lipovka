@@ -29,7 +29,8 @@ class RoomScene(private val e: Env, private val gifts: List<Gift>, private val d
     private val night = e.phase.lamps
     private fun inWin(x: Int, y: Int) = hypot((x - wx).toDouble(), (y - wy).toDouble()) <= wr - .5
 
-    private val shelfSpots = listOf(14, 27, 40, 53, 66, 79).map { it to 124 } + listOf(104, 117, 130, 143).map { it to 140 }
+    /** The left shelf's places start past the desk lamp, whose shade reaches up to the board. */
+    private val shelfSpots = listOf(31, 44, 57, 70, 82).map { it to 124 } + listOf(104, 117, 130, 143).map { it to 140 }
     private val wallSpots = listOf(12 to 80, 28 to 82, 44 to 80, 60 to 84, 76 to 82, 18 to 102, 34 to 104, 50 to 102, 66 to 104, 82 to 100)
     private val lineSpots = listOf(96, 110, 124, 138, 152)
 
@@ -206,7 +207,7 @@ class RoomScene(private val e: Env, private val gifts: List<Gift>, private val d
             }
         }
         // until the village fills them, a few things of the postman's own
-        if (shelf == 0) { Props.jar(b, 8, 113, R.jam); Props.jar(b, 19, 113, R.honey, rgb(0x3c6c44)) }
+        if (shelf == 0) { Props.jar(b, 30, 113, R.jam); Props.jar(b, 41, 113, R.honey, rgb(0x3c6c44)) }
         if (wall == 0) { ItemArt.draw(b, "postcard", "sea", 16, 82); ItemArt.draw(b, "photo", "old", 34, 82) }
     }
 

@@ -177,6 +177,14 @@ fun SettingsScreen(home: Home, onBack: () -> Unit) {
                     kind = if (set.notifyDelivered) Kind.PRIMARY else Kind.GHOST)
             }
 
+            Eyebrow(stringResource(R.string.sounds))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.ambience_text), style = T.Body, modifier = Modifier.weight(1f))
+                PixelButton(stringResource(if (set.ambience) R.string.on else R.string.off), { c.write { settings.update { it.copy(ambience = !it.ambience) } } },
+                    kind = if (set.ambience) Kind.PRIMARY else Kind.GHOST)
+            }
+            Text(stringResource(R.string.ambience_hint), style = T.Small)
+
             Eyebrow(stringResource(R.string.language))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 for ((tag, label) in listOf("" to stringResource(R.string.lang_system), "ru" to "Русский", "en" to "English")) {

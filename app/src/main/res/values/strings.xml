@@ -106,7 +106,7 @@
     <string name="language">Language</string>
     <string name="lang_system">As the phone</string>
     <string name="about">About</string>
-    <string name="credits">Font m6x11 by Daniel Linssen, Cyrillic by Natto Games. Weather by Open-Meteo.com and MET Norway (CC BY 4.0). Sounds: the purr by AstronautDown (CC0), the kettle by Work With Sounds / Konrad Gutkowski (CC BY 4.0), the clock by gsb1039 (CC0). No ads, no accounts: everything stays on the phone.</string>
+    <string name="credits">Font m6x11 by Daniel Linssen, Cyrillic by Natto Games. Weather by Open-Meteo.com and MET Norway (CC BY 4.0). Sounds: the purr by AstronautDown (CC0), the kettle by Work With Sounds / Konrad Gutkowski (CC BY 4.0), the clock by gsb1039 (CC0). Ambient sounds collected by the Blanket project: rain by alex36917 and the thunderstorm by Digifish music (CC BY), wind by felix.blume and birds by kvgarlic (CC0), crickets by Lisa Redfern (public domain). No ads, no accounts: everything stays on the phone.</string>
     <string name="steps_ok">Step counter: on</string>
     <string name="steps_off">Step counter: not allowed</string>
     <string name="steps_source">Steps</string>
@@ -243,4 +243,17 @@
     <string name="moon_waning_gibbous">Waning moon</string>
     <string name="moon_last_quarter">Last quarter</string>
     <string name="moon_waning_crescent">Old crescent</string>
+    <string name="n_dog_title">Bublik</string>
+    <string name="n_dog">The tan dog with the curled tail has followed you for a week and decided to stay. Now the post goes round with two.</string>
+    <string name="n_district_title">Now open: %1$s</string>
+    <string-array name="n_district">
+        <item>The bridge over the Lipka is mended. The post goes to Zarechye now: the farmstead, the forester\'s lodge, the woodcarver\'s workshop.</item>
+        <item>The road reaches the Halt at 118 km: a tiny station, a telegraph and the Cuckoo train.</item>
+        <item>Ozyorki is open, a fishing hamlet on a big lake.</item>
+        <item>The post goes out to the Pine Cordon now, to the weather station in the forest.</item>
+        <item>Gorodok is open: the newspaper office and the local history museum.</item>
+    </string-array>
+    <string name="sounds">Sounds</string>
+    <string name="ambience_text">Post office sounds</string>
+    <string name="ambience_hint">While the app is open: the wall clock ticks, and outside there\'s rain or wind, birds in summer, crickets on a summer evening, the stove crackling in winter.</string>
 </resources>

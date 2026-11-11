@@ -106,7 +106,7 @@
     <string name="language">Язык</string>
     <string name="lang_system">Как в телефоне</string>
     <string name="about">О приложении</string>
-    <string name="credits">Шрифт m6x11: Daniel Linssen, кириллица: Natto Games. Погода: Open-Meteo.com и MET Norway (CC BY 4.0). Звуки: мурлыканье — AstronautDown (CC0), чайник — Work With Sounds / Konrad Gutkowski (CC BY 4.0), часы — gsb1039 (CC0). Без рекламы и аккаунтов, всё остаётся в телефоне.</string>
+    <string name="credits">Шрифт m6x11: Daniel Linssen, кириллица: Natto Games. Погода: Open-Meteo.com и MET Norway (CC BY 4.0). Звуки: мурлыканье — AstronautDown (CC0), чайник — Work With Sounds / Konrad Gutkowski (CC BY 4.0), часы — gsb1039 (CC0). Звуки погоды собраны проектом Blanket: дождь — alex36917 и гроза — Digifish music (CC BY), ветер — felix.blume и птицы — kvgarlic (CC0), сверчки — Lisa Redfern (общественное достояние). Без рекламы и аккаунтов, всё остаётся в телефоне.</string>
     <string name="steps_ok">Шагомер: работает</string>
     <string name="steps_off">Шагомер: нет разрешения</string>
     <string name="steps_source">Шаги</string>
@@ -271,4 +271,17 @@
     <string name="moon_waning_gibbous">Убывающая луна</string>
     <string name="moon_last_quarter">Последняя четверть</string>
     <string name="moon_waning_crescent">Старый месяц</string>
+    <string name="n_dog_title">Бублик</string>
+    <string name="n_dog">Рыжий пёс с хвостом-бубликом неделю ходил следом и решил остаться. Теперь почту носят вдвоём.</string>
+    <string name="n_district_title">Открылось: %1$s</string>
+    <string-array name="n_district">
+        <item>Мост через Липку починили. Теперь почта ходит в Заречье: хутор, сторожка лесника, мастерская резчика.</item>
+        <item>Дорога дошла до Разъезда 118 км: полустанок, телеграф и «Кукушка».</item>
+        <item>Открылись Озёрки, рыбацкая деревня на большом озере.</item>
+        <item>Почта теперь ходит на Сосновый кордон, к метеостанции в лесу.</item>
+        <item>Открылся Городок: редакция газеты и краеведческий музей.</item>
+    </string-array>
+    <string name="sounds">Звуки</string>
+    <string name="ambience_text">Звуки почты</string>
+    <string name="ambience_hint">Пока приложение открыто: тикают ходики, а за стеной то дождь, то ветер, летом поют птицы, вечером стрекочут сверчки, зимой трещит печка.</string>
 </resources>

@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import app.lipovka.domain.Place
 import app.lipovka.domain.Sky
@@ -35,6 +36,10 @@ data class Settings(
     val lampOut: Long = -1,
     /** The day the post office calendar last had a sheet torn off; until it's torn, it shows yesterday. */
     val calendarTorn: Long = -1,
+    /** The quiet sounds of the post office while the app is open; on until turned off. */
+    val ambience: Boolean = true,
+    /** The milestones (the dog, the districts) already told of; null until first looked at, so old ones aren't. */
+    val milestonesSeen: Set<String>? = null,
 )
 
 class SettingsStore(context: Context) {
@@ -57,6 +62,8 @@ class SettingsStore(context: Context) {
             healthFrom = this[HEALTH_FROM] ?: -1,
             lampOut = this[LAMP_OUT] ?: -1,
             calendarTorn = this[CAL_TORN] ?: -1,
+            ambience = this[AMBIENCE] ?: true,
+            milestonesSeen = this[MILESTONES],
         )
     }
 
@@ -85,6 +92,9 @@ class SettingsStore(context: Context) {
             it[HEALTH_FROM] = s.healthFrom
             it[LAMP_OUT] = s.lampOut
             it[CAL_TORN] = s.calendarTorn
+            it[AMBIENCE] = s.ambience
+            val seen = s.milestonesSeen
+            if (seen != null) it[MILESTONES] = seen else it.remove(MILESTONES)
         }
     }
 
@@ -105,5 +115,7 @@ class SettingsStore(context: Context) {
         val HEALTH_FROM = longPreferencesKey("health_from")
         val LAMP_OUT = longPreferencesKey("lamp_out")
         val CAL_TORN = longPreferencesKey("calendar_torn")
+        val AMBIENCE = booleanPreferencesKey("ambience")
+        val MILESTONES = stringSetPreferencesKey("milestones_seen")
     }
 }

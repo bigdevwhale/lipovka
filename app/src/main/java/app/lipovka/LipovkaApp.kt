@@ -106,7 +106,7 @@ class AppContainer(context: Context) {
         }
         val (books, carried) = Backup.read(text)
         post.restore(books)
-        settings.update { it.copy(onboarded = true, place = carried.place, weather = null, notify = carried.notify, lampOut = -1, calendarTorn = LocalDate.now().toEpochDay()) }
+        settings.update { it.copy(onboarded = true, place = carried.place, weather = null, notify = carried.notify, milestonesSeen = null, lampOut = -1, calendarTorn = LocalDate.now().toEpochDay()) }
         runCatching { refreshWeather(force = true) }
         runCatching { PostWidget.updateAll(app) }
     }

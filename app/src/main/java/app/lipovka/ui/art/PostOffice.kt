@@ -495,13 +495,16 @@ class PostOffice(
         spot(Toy.CLOCK, 80, 7, 25, 74)
         val striking = age(Toy.CLOCK, t)
         val swing = if (striking >= 0) .32 + .22 * minOf(striking / 4.0, left(Toy.CLOCK, t) / 6.0, 1.0) else .32
+        // At rest it swings in step with the ticking heard (or its own time when silent): a beat at each end.
+        val beat = if (striking >= 0 || Art.still) null else (app.lipovka.ui.Ambience.clockMs() ?: android.os.SystemClock.uptimeMillis())
         val pace = if (striking >= 0) .9 else .5
-        val an = sin(t * pace) * swing
+        val phase = if (beat != null) cos(PI * (beat % (2L * app.lipovka.ui.Ambience.BEAT_MS)) / app.lipovka.ui.Ambience.BEAT_MS) else sin(t * pace)
+        val an = phase * swing
         val ex = 92 + sin(an) * 28
         val ey = 42 + cos(an) * 28
         b.line(92.0, 42.0, ex, ey, rgb(0x9a6a1c))
         b.ball(ex.roundToInt(), ey.roundToInt(), 3, R.brass, rgb(0x3e270c))
-        val eo = (sin(t * pace) * (if (striking >= 0) 1.4 else 1.0)).roundToInt()
+        val eo = (phase * (if (striking >= 0) 1.4 else 1.0)).roundToInt()
         b.p(89 + eo, 25, rgb(0x1e100a)); b.p(95 + eo, 25, rgb(0x1e100a))
         if (striking >= 0) chimeNotes(b, striking)
         for ((x, y) in listOf(86 to 62, 98 to 70)) {

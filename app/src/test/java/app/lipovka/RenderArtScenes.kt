@@ -67,6 +67,17 @@ class RenderArtScenes {
         for (r in content.residents) save("who-${r.id}", frame(GateScene(e, World.house(r.house)!!, r, false)), 2)
     }
 
+    /** The room with only a few gifts, where the first shelf places show (the newest gift stands first). */
+    @Test fun roomFew() {
+        Art.still = true
+        val pie = content.items["b_pie_cabbage"]!!
+        val jar = content.items.values.first { ItemArt.slot(it.family) == ItemArt.Slot.SHELF && it.family != "pie" }
+        for ((name, e) in listOf(envs[1], envs[2])) for (n in 1..3) {
+            val gifts = (listOf(pie) + List(n - 1) { jar }).map { Gift(it.family, it.variant) }
+            save("room-few$n-$name", frame(RoomScene(e, gifts, false)))
+        }
+    }
+
     @Test fun sheets() {
         val items = content.items.values.toList()
         val cols = 12

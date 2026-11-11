@@ -66,11 +66,15 @@ object Notes {
     fun allowed(context: Context) = Build.VERSION.SDK_INT < 33 ||
         ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
 
+    /** The things that happen once in the game and are worth a word: Bublik joining, a district opening. */
+    private val MILESTONES = listOf("dog", "d1", "d2", "d3", "d4", "d5")
+
     suspend fun check(context: Context) {
         val c = context.container
         val set = c.settings.now()
-        if (!set.notify || !allowed(context)) return
         val s = c.post.state.value ?: return
+        milestones(context, s, set)
+        if (!set.notify || !allowed(context)) return
         val now = LocalDateTime.now()
         val day = c.game.mailDay(now).toEpochDay()
         val r = context.localized()
@@ -100,6 +104,25 @@ object Notes {
                 c.settings.update { it.copy(notifiedEvening = day) }
             }
         }
+    }
+
+    /** Tells of each milestone reached since last looked; the first look only remembers what's there already. */
+    private suspend fun milestones(context: Context, s: app.lipovka.domain.GameState, set: app.lipovka.data.Settings) {
+        val reached = MILESTONES.filter { s.has(it) }.toSet()
+        val seen = set.milestonesSeen
+        if (seen != null && reached.all { it in seen }) return
+        if (seen != null && set.notify && allowed(context)) {
+            val r = context.localized()
+            for (k in MILESTONES.filter { it in reached && it !in seen }) {
+                if (k == "dog") show(context, 10, r.getString(R.string.n_dog_title), r.getString(R.string.n_dog))
+                else {
+                    val d = k.removePrefix("d").toInt()
+                    val text = r.resources.getStringArray(R.array.n_district).getOrElse(d - 1) { "" }
+                    show(context, 10 + d, r.getString(R.string.n_district_title, app.lipovka.ui.Words.district(d, r.ru)), text)
+                }
+            }
+        }
+        context.container.settings.update { it.copy(milestonesSeen = (it.milestonesSeen ?: emptySet()) + reached) }
     }
 
     /** "Handed over at the gate": for the letters just delivered, if the person asked for it. */

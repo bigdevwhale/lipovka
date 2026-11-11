@@ -128,6 +128,12 @@ fun LipovkaRoot(settings: Settings) {
     val home = Home(s, settings, c.content, c.game, env, now, ctx.ru)
 
     var tab by remember { mutableStateOf(Tab.POST) }
+    // The post office's own sounds, while it's in sight; upstairs in the room the wall clock isn't heard.
+    val sounds = if (!settings.ambience) emptySet() else Ambience.layers(env).let { if (tab == Tab.ROOM) it - Ambience.Layer.CLOCK else it }
+    LifecycleResumeEffect(sounds) {
+        Ambience.play(ctx, sounds)
+        onPauseOrDispose { Ambience.stop(ctx) }
+    }
     val overlays = remember { mutableStateListOf<Overlay>() }
     fun push(o: Overlay) = overlays.add(o)
     fun pop() { if (overlays.isNotEmpty()) overlays.removeAt(overlays.lastIndex) }
