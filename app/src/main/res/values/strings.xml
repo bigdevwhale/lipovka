@@ -23,7 +23,7 @@
     <string name="day_before">the day before</string>
     <string name="going_to">on the way to %1$s</string>
     <string name="steps_walked">walked %1$s</string>
-    <string name="steps_walked_today">walked %1$s, %2$s of them today</string>
+    <string name="steps_walked_today">walked %1$s, %2$s of them today</string>
     <string name="letter_for_you">A letter for you</string>
     <string name="visit_go">Go to the gate</string>
     <string name="km_total">%1$s km walked in all</string>

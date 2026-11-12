@@ -23,7 +23,7 @@
     <string name="day_before">позавчера</string>
     <string name="going_to">иду: %1$s</string>
     <string name="steps_walked">пройдено %1$s</string>
-    <string name="steps_walked_today">пройдено %1$s, из них сегодня %2$s</string>
+    <string name="steps_walked_today">пройдено %1$s, из них сегодня %2$s</string>
     <string name="letter_for_you">Письмо вам</string>
     <string name="visit_go">К калитке</string>
     <string name="km_total">всего пройдено %1$s км</string>

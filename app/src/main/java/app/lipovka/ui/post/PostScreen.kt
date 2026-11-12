@@ -248,7 +248,8 @@ private fun Round(home: Home) {
         Spacer(Modifier.height(6.dp))
         Segments(walked.toFloat() / next.leg)
         Spacer(Modifier.height(4.dp))
-        Row {
+        // A gap between the two, and the steps-left line sits on the last line when the left one wraps.
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Bottom) {
             // A road begun on an earlier day says so, or "walked 1 134" next to 134 steps today looks like a mistake.
             val todayPart = home.stepsToday.coerceAtMost(walked)
             Text(if (walked > todayPart) stringResource(R.string.steps_walked_today, Words.num(walked), Words.num(todayPart))
