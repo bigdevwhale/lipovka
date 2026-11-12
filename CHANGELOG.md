@@ -6,6 +6,15 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.25] - 2026-11-12
+
+### Fixed
+- On the "going to" card, "walked N, M of them today" no longer runs into "N steps to go": there is a gap between them, and when the line wraps the steps to go sit level with its last line. The number stays with "today" when it wraps.
+
+<!-- tg
+Исправлено: на карточке «иду:» строка «пройдено…, из них сегодня…» больше не налезает на «ещё … шагов».
+-->
+
 ## [1.0.24] - 2026-11-11
 
 ### Added
