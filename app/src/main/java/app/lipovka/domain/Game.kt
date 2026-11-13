@@ -451,10 +451,17 @@ class Game(val content: Content) {
             if (r.child) add("child")
             if (!r.child && !r.old) add("family")
         }
-        val used = s.mail.filter { it.to == r.id && it.src.startsWith("fill:") && today - it.day < 365 }.map { it.src }.toSet()
+        val fills = s.mail.filter { it.src.startsWith("fill:") }
+        val used = fills.filter { it.to == r.id && today - it.day < 365 }.map { it.src }.toSet()
         val pool = content.fillers.filter { it.tags.any { t -> t in tags } && "fill:${it.index}" !in used }
         if (pool.isEmpty()) return null
-        val f = pool[Math.floorMod((r.id + today).hashCode(), pool.size)]
+        // The village reads its post together: a letter someone else already had (the hikers' rainbow over the
+        // village) waits until every other one has gone round, and then the longest-forgotten go first.
+        val lastUse = fills.groupBy { it.src }.mapValues { (_, l) -> l.maxOf { it.day } }
+        val fresh = pool.filter { "fill:${it.index}" !in lastUse }.ifEmpty {
+            pool.sortedBy { lastUse["fill:${it.index}"] }.let { it.take(max(1, it.size / 3)) }
+        }
+        val f = fresh[Math.floorMod((r.id + today).hashCode(), fresh.size)]
         return Mail(src = "fill:${f.index}", kind = Kind.LETTER.name, to = r.id, day = today, state = St.SHELF, priority = 0)
     }
 

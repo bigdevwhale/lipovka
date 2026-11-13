@@ -70,6 +70,16 @@ class GameTest {
         assertEquals(2, m.size)
     }
 
+    @Test fun lateStepsKeepTheirDay() {
+        // Last night's walk handed over at 00:40: its letters were delivered last night, not today.
+        val day = LocalDate.of(2026, 11, 11)
+        val at = day.plusDays(1).atTime(0, 40).atZone(zone).toInstant().toEpochMilli()
+        val stamp = Steps.stamp(day.toEpochDay(), at, zone)
+        assertEquals(day, java.time.Instant.ofEpochMilli(stamp).atZone(zone).toLocalDate())
+        // Today's steps keep the moment they came in.
+        assertEquals(at, Steps.stamp(day.toEpochDay() + 1, at, zone))
+    }
+
     @Test fun counterReadings() {
         val boot = 1_000_000_000L
         val t = boot + 3_600_000L * 24 * 5
@@ -338,6 +348,23 @@ class GameTest {
         assertTrue("an empty bag", s.bag.isNotEmpty())
         val older = people.filterIndexed { i, _ -> i % 2 == 1 }.map { it.id }.toSet()
         assertTrue("the longest without post first: ${s.bag.map { it.to }}", s.bag.first().to in older)
+    }
+    /** An everyday letter goes to a second neighbour only once every other one of its kind has gone round. */
+    @Test fun everydayLettersDoNotRepeatAcrossNeighbours() {
+        val start = LocalDate.of(2026, 3, 2)
+        val game = Game(content)
+        val s = play(start, 5) { 6000 }.s
+        var t = Long.MAX_VALUE / 2
+        for (i in 5 until 30) {
+            val date = start.plusDays(i.toLong())
+            game.morning(s, date, 0)
+            repeat(10) { game.takeMore(s, date); game.walk(s, 500_000, date.toEpochDay(), t++) }
+        }
+        val fills = s.mail.filter { it.src.startsWith("fill:") }
+        val twice = fills.groupBy { it.src }.filterValues { l -> l.map { it.to }.toSet().size > 1 }.keys
+        val tags = fills.flatMap { content.fillers[it.src.removePrefix("fill:").toInt()].tags }.toSet()
+        val left = content.fillers.count { f -> "fill:${f.index}" !in fills.map { it.src } && "any" in f.tags }
+        assertTrue("${fills.size} letters, repeated $twice while $left 'any' were never sent (tags $tags)", twice.isEmpty() || left == 0)
     }
 }
 

@@ -101,7 +101,7 @@ class Post(private val db: PostDb, val game: Game, private val zone: () -> ZoneI
         if (s.lastValue >= 0) {
             val d = Steps.delta(s.lastValue, s.lastAt, value, at, bootAt)
             for ((day, n) in Steps.spread(d, if (s.lastAt > 0) s.lastAt else at, at, zone()).toSortedMap()) {
-                out += game.walk(s, n, day, at)
+                out += game.walk(s, n, day, Steps.stamp(day, at, zone()))
             }
         }
         s.lastValue = value
@@ -116,7 +116,7 @@ class Post(private val db: PostDb, val game: Game, private val zone: () -> ZoneI
      */
     suspend fun health(totals: Map<Long, Long>, at: Long = System.currentTimeMillis()): List<Mail> = change { s ->
         val out = mutableListOf<Mail>()
-        for ((day, n) in Steps.catchUp(s.days, totals).toSortedMap()) out += game.walk(s, n, day, at)
+        for ((day, n) in Steps.catchUp(s.days, totals).toSortedMap()) out += game.walk(s, n, day, Steps.stamp(day, at, zone()))
         s.lastValue = -1
         s.lastAt = 0
         game.morning(s, game.mailDay(now()), at)

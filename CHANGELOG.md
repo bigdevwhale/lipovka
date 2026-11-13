@@ -6,6 +6,21 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.26] - 2026-11-13
+
+### Added
+- 59 new everyday letters: a beekeeper sending linden honey "seeing as you're Lipovka", Olkhovka challenging the village to football, Dad repeating his text message by post, a grandson's first card and more. Most of them can come to anyone.
+
+### Fixed
+- The same everyday letter could come to two neighbours (the hikers' rainbow over the village for both Grisha and Fyodor Ilyich). Now a letter someone has already had waits until all the others have gone round.
+- Steps from a late walk handed over after midnight deliver their letters as last night's, not today's.
+
+<!-- tg
+Новое: 59 новых писем — от пасечника, от соседней Ольховки, от пап, бабушек и внуков.
+Исправлено: одно и то же письмо больше не приходит двум соседям, пока не разошлись все остальные.
+Исправлено: письма за поздний вечерний обход, засчитанный после полуночи, остаются вчерашними.
+-->
+
 ## [1.0.25] - 2026-11-12
 
 ### Fixed

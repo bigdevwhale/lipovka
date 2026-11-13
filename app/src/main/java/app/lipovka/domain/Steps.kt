@@ -52,6 +52,13 @@ object Steps {
         return out
     }
 
+    /**
+     * When steps of [day] that came in at [at] were walked, for the letters they deliver: [at] itself, or the
+     * last moment of [day] when they were handed over after midnight, so yesterday's round stays yesterday's.
+     */
+    fun stamp(day: Long, at: Long, zone: ZoneId = ZoneId.systemDefault()): Long =
+        min(at, LocalDate.ofEpochDay(day + 1).atStartOfDay(zone).toInstant().toEpochMilli() - 1)
+
     fun spread(steps: Long, from: Long, to: Long, zone: ZoneId = ZoneId.systemDefault()): Map<Long, Int> {
         if (steps <= 0) return emptyMap()
         val a = Instant.ofEpochMilli(min(from, to)).atZone(zone)
