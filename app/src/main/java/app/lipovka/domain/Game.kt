@@ -326,8 +326,9 @@ class Game(val content: Content) {
             val homes = residentsOpen(s).filter { it.district == e.district }.distinctBy { it.house }
                 .sortedBy { kotlin.math.abs((it.house + e.key + date.year).hashCode()) }.take(3)
             homes.forEachIndexed { i, r ->
+                // each house gets its own line to say at the gate, and the lines go round from year to year
                 s.add(Mail(src = "evt:${e.key}", kind = Kind.NOTICE.name, to = r.id, day = today, state = St.SHELF, priority = 3,
-                    stamp = if (i == 0) e.stamp else ""))
+                    stamp = if (i == 0) e.stamp else "", variant = i + date.year))
             }
         }
 
@@ -341,12 +342,17 @@ class Game(val content: Content) {
                 "yearly" -> t.day == Cal.mmdd(date)
                 else -> false
             }
-            for (id in t.to) {
-                val r = content.resident(id) ?: continue
-                if (!s.open(r.district)) continue
+            // The same letter to several houses on one day deals its variants out like cards: nobody gets
+            // what the neighbour got until every variant has gone round.
+            val start = Math.floorMod(t.key.hashCode() + year * 7 + date.dayOfYear * 13, t.variants.size.coerceAtLeast(1))
+            val getting = t.to.filter { id ->
+                val r = content.resident(id) ?: return@filter false
+                s.open(r.district) && (due || t.every == "birthday" && r.birthday == Cal.mmdd(date))
+            }.sortedBy { (it + t.key + today).hashCode() }
+            getting.forEachIndexed { i, id ->
+                val r = content.resident(id)!!
                 val birthday = t.every == "birthday" && r.birthday == Cal.mmdd(date)
-                if (!due && !birthday) continue
-                val v = Math.floorMod((id + t.key).hashCode() + year * 7 + date.dayOfYear * 13, t.variants.size)
+                val v = Math.floorMod(start + i, t.variants.size)
                 s.add(Mail(src = "tpl:${t.key}", kind = t.kind.name, to = id, day = today, state = St.SHELF, variant = v,
                     priority = if (birthday || t.every == "yearly") 3 else 1, stamp = t.stamp))
             }

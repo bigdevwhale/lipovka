@@ -87,6 +87,8 @@ data class Event(
     val notice: Tx,
     val brief: Tx,
     val stamp: String,
+    /** What the houses say at the gate when the poster comes: each house its own line. */
+    val says: List<Tx> = emptyList(),
 )
 
 /**
@@ -199,7 +201,10 @@ class Content(
                 Filler(i, f[0].split(',').map { it.trim() }.toSet(), Tx(f[1], f[2]), Tx(f[3], f[4]), Tx(f[5], f[6]))
             },
             events = rows(events).filter { it.size >= 12 }.map { f ->
-                Event(f[0], f[1], f[2], f[3].toIntOrNull() ?: 0, f[4], Tx(f[5], f[6]), Tx(f[7], f[8]), Tx(f[9], f[10]), f[11])
+                val ru = f.getOrElse(12) { "" }.split(" | ").filter { it.isNotBlank() }
+                val en = f.getOrElse(13) { "" }.split(" | ")
+                Event(f[0], f[1], f[2], f[3].toIntOrNull() ?: 0, f[4], Tx(f[5], f[6]), Tx(f[7], f[8]), Tx(f[9], f[10]), f[11],
+                    says = ru.indices.map { Tx(ru[it], en.getOrElse(it) { "" }) })
             },
             calendar = rows(calendar).filter { it.size >= 6 }.map { f -> CalNote(f[0], f[1], Tx(f[2], f[3]), Tx(f[4], f[5])) },
         )

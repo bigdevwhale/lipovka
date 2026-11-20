@@ -270,14 +270,23 @@ private fun Day(home: Home, day: Long, line: String?, letters: List<Mail>) {
         if (!editing && letters.isEmpty() && steps == 0 && line == null) Text(stringResource(R.string.day_rest), style = T.Sub)
         // the delivery log: what went to whom, in the order it was carried
         if (letters.isNotEmpty()) Column(Modifier.padding(top = 2.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            for (m in letters.sortedBy { it.deliveredAt }) {
+            // one notice carried to several houses (a poster, the power bill) is one line with all the names
+            val rows = letters.sortedBy { it.deliveredAt }.map { m ->
                 val t = Words.mail(ctx, home.content, m, home.ru, home.year)
                 val kind = Kind.of(m.kind)
-                val name = home.resident(m.to)?.name?.invoke(home.ru).orEmpty()
+                Triple(kind, t.brief.ifBlank { Words.kind(ctx, kind) }, home.resident(m.to)?.name?.invoke(home.ru).orEmpty())
+            }.groupBy { it.first to it.second }
+            for ((key, group) in rows) {
+                val (kind, brief) = key
+                val names = group.map { it.third }.filter { it.isNotEmpty() }.distinct()
+                val name = names.singleOrNull().orEmpty()
                 // a brief that doesn't say whose letter it was gets the name in front
                 val first = name.substringBefore(' ')
-                val brief = t.brief.ifBlank { Words.kind(ctx, kind) }
-                val text = if (name.isEmpty() || first.length >= 3 && brief.contains(first.dropLast(1))) brief else "$name · $brief"
+                val text = when {
+                    names.size > 1 -> "$brief — ${names.joinToString(", ")}"
+                    name.isEmpty() || first.length >= 3 && brief.contains(first.dropLast(1)) -> brief
+                    else -> "$name · $brief"
+                }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     BufImage(Icons.kind(kind), scale = 1.dp)
                     Spacer(Modifier.width(8.dp))

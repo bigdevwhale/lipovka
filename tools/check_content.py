@@ -18,7 +18,7 @@ ITEM_COLS = ["key", "family", "variant", "name_ru", "name_en"]
 STAMP_COLS = ["key", "family", "bg", "value", "name_ru", "name_en", "series"]
 TPL_COLS = ["key", "every", "day", "months", "to", "kind", "from_ru", "from_en", "brief_ru", "brief_en", "news_ru", "news_en", "stamp"]
 FILL_COLS = ["tags", "from_ru", "from_en", "brief_ru", "brief_en", "news_ru", "news_en"]
-EVENT_COLS = ["key", "start", "end", "district", "look", "name_ru", "name_en", "notice_ru", "notice_en", "brief_ru", "brief_en", "stamp"]
+EVENT_COLS = ["key", "start", "end", "district", "look", "name_ru", "name_en", "notice_ru", "notice_en", "brief_ru", "brief_en", "stamp", "says_ru", "says_en"]
 
 KINDS = {"letter", "postcard", "parcel", "telegram", "registered", "newspaper", "notice"}
 ITEM_FAMILIES = {
@@ -226,6 +226,9 @@ def main():
             text_ok(where, r, "name", 40)
             text_ok(where, r, "notice", 340)
             text_ok(where, r, "brief", 80)
+            ru, en = r["says_ru"].split(" | "), r["says_en"].split(" | ")
+            if len(ru) < 3 or len(ru) != len(en):
+                bad(where, f"gate lines: {len(ru)} ru, {len(en)} en (need 3+, one en per ru)")
 
     for k in sorted(set(items) - used_items):
         bad("items", f"item {k} is never given")

@@ -86,6 +86,10 @@ fun Gate(home: Home, m: Mail, total: Int = 1, preview: Boolean = false, onDone: 
                 }
                 if (m.src.startsWith("evt:")) {
                     Panel(fill = C.telegram) { Text(t.news, style = T.Letter) }
+                    if (t.says.isNotBlank()) {
+                        Text(who?.name?.invoke(home.ru) ?: "", style = T.Heading)
+                        Panel { Text(if (home.ru) "«${t.says}»" else "“${t.says}”", style = T.Letter) }
+                    }
                 } else {
                     Text(who?.name?.invoke(home.ru) ?: "", style = T.Heading)
                     Panel { Text("«${t.news}»".let { if (home.ru) it else "“${t.news}”" }, style = T.Letter) }

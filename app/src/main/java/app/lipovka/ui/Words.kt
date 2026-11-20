@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 /** The words of a piece of mail, resolved for the reader's language. */
-data class MailText(val from: String, val brief: String, val news: String, val kind: Kind, val title: String)
+data class MailText(val from: String, val brief: String, val news: String, val kind: Kind, val title: String, val says: String = "")
 
 object Words {
     private val houses = mapOf(
@@ -109,7 +109,8 @@ object Words {
             }
             src.startsWith("evt:") -> {
                 val e = content.eventByKey[src.removePrefix("evt:")]
-                MailText(e?.name?.invoke(ru) ?: "", e?.brief?.invoke(ru) ?: "", e?.notice?.invoke(ru) ?: "", kind, name)
+                val says = e?.says?.takeIf { it.isNotEmpty() }?.let { it[Math.floorMod(m.variant, it.size)](ru) }.orEmpty()
+                MailText(e?.name?.invoke(ru) ?: "", e?.brief?.invoke(ru) ?: "", e?.notice?.invoke(ru) ?: "", kind, name, says)
             }
             src.startsWith("reply:") -> {
                 val from = content.resident(m.from)?.name?.invoke(ru) ?: c.getString(R.string.unknown_sender)

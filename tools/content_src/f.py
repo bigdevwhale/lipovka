@@ -1539,6 +1539,222 @@ E("ice_fishing", "02-12", "02-18", 3, "fishing", ("Подлёдный лов н�
   ("На Озёрках подлёдный лов: на льду точки рыбаков и дымок от чайников.", "Ice fishing at Ozyorki: anglers dotted on the ice and steam rising from kettles."), "f_icefish")
 
 
+# What a house says at the gate when the poster comes. A poster goes to three houses, and each gets its own line,
+# so any line may be said by anyone: an old woman, a fisherman or a schoolgirl. No gendered past tense, no names.
+SAYS = {
+    "capel": [
+        ("Сосульки-то какие — как трубы у органа. Хожу теперь посередине дороги.", "Look at those icicles, like organ pipes. I walk down the middle of the road now."),
+        ("Слышите? Под водостоком капает в ведро, как часы. Весна считает.", "Hear that? Dripping into the bucket under the drainpipe like a clock. Spring is counting."),
+        ("Кот уже на крыльце растянулся. Значит, точно весна — коты не ошибаются.", "The cat's stretched out on the steps already. So it's spring for sure: cats don't get it wrong."),
+        ("Валенки сушить, сапоги доставать. Каждый год одно и то же, и каждый год приятно.", "Felt boots out to dry, rubber boots out of the cupboard. Same every year, nice every year."),
+    ],
+    "maslenitsa": [
+        ("Блины уже на сковородке. Первый — комом, по закону. Заходите на второй.", "The pancakes are on. The first one's a flop, that's the law. Come in for the second."),
+        ("С горы на чём поедем? На тазу! Таз у нас проверенный.", "What'll we sledge on? The washtub! Our washtub's been tested."),
+        ("Чучело немножко жалко. Всю зиму её ругаем, а как провожать — жалко.", "I feel a bit sorry for the straw doll. We grumble at winter all season, and then it's a pity to see her off."),
+        ("Сметана есть, варенье есть. Ну, держись, зима.", "Sour cream, check. Jam, check. Watch out, winter."),
+    ],
+    "icebreak": [
+        ("Слышно аж досюда: ухает, будто кто-то крышкой погреба хлопает.", "You can hear it from here: booming like someone slamming a cellar hatch."),
+        ("Пойду на высокий берег смотреть. Каждый год смотрю — и каждый год как в первый раз.", "I'm off to the high bank to watch. Every year I watch, and every year it's like the first time."),
+        ("Льдина с чьими-то санками проплыла! Санки пустые, не пугайтесь.", "A floe just went by with somebody's sledge on it! Empty sledge, don't worry."),
+        ("Ну всё, теперь до лета ходим мостом, а лодки конопатим.", "That's it: the bridge till summer now, and time to caulk the boats."),
+    ],
+    "subbotnik": [
+        ("Грабли с вечера у двери стоят. Чтобы не забыть и не передумать.", "The rake's been by the door since last night. So I don't forget, and don't change my mind."),
+        ("Скамейки опять зелёным? Или в этот раз весь день спорить будем?", "Green for the benches again? Or are we arguing all day this time?"),
+        ("Чай с баранками обещали — значит, приду. Это честно.", "They promised tea and bagels, so I'll be there. That's honest."),
+        ("Побелили липы — значит, весна официально. Без побелки она как будто ненастоящая.", "Whitewashed limes mean spring is official. Without it, spring doesn't quite count."),
+    ],
+    "swallows": [
+        ("Под нашей крышей опять гнездо. Напишем юннатам: одна пара. Или две? Посчитаем ещё.", "There's a nest under our roof again. We'll tell the naturalists: one pair. Or two? We'll count again."),
+        ("С утра щебечут под окном — будильник не нужен.", "Twittering under the window from dawn: who needs an alarm clock."),
+        ("Летают низко — к дождю, говорят. А по-моему, просто дразнятся.", "Flying low means rain, they say. I think they're just showing off."),
+        ("Вернулись в то же гнездо. Как они дорогу помнят — вот загадка.", "Back in the same nest. How do they remember the way? That's the mystery."),
+    ],
+    "potato_planting": [
+        ("Семенную перебрали, проросла уже. Просится в землю.", "We've sorted the seed potatoes; they're sprouting already. Begging to go in the ground."),
+        ("Спина заранее ноет, а настроение хорошее. Так и сажаем.", "The back aches in advance, but the mood's good. That's how we plant."),
+        ("Пирог трактористу — с капустой. Наша капуста лучше всякой рыбы.", "The pie for the tractor man will be cabbage. Our cabbage beats any fish."),
+        ("Ряды по верёвочке, как учили. Кривые ряды соседи до осени обсуждать будут.", "Rows along a string, the way we were taught. The neighbours talk about crooked rows till autumn."),
+    ],
+    "nightingales": [
+        ("Окно открыто всю ночь. Не высыпаюсь, зато слушаю.", "The window's open all night. I don't get enough sleep, but I get to listen."),
+        ("Наш, у сарая, не хуже мельничного. Пусть приходят проверять.", "Ours, by the shed, is every bit as good as the one at the mill. Let them come and check."),
+        ("Коленца считать пробовали — сбились на двенадцатом.", "We tried counting his trills. Lost count at twelve."),
+        ("Такой маленький, серенький, а голос — на всю реку.", "So small and grey, and a voice for the whole river."),
+    ],
+    "last_bell": [
+        ("Колокольчик этот помню. Тот самый, только ручка новая.", "I remember that handbell. The very same, just a new handle."),
+        ("Отнесём букет сирени — у нас как раз распустилась.", "We'll bring a bunch of lilac; ours has just come out."),
+        ("Выпускников трое, а провожать — вся деревня. Так и надо.", "Three school-leavers and the whole village seeing them off. As it should be."),
+        ("Платок в карман положу. На всякий случай. Каждый год пригождается.", "I'll put a hanky in my pocket. Just in case. It comes in handy every year."),
+    ],
+    "lilac": [
+        ("Нашли пятилистник! Съели, как положено. На счастье.", "Found a five-petalled one! Ate it, as you should. For luck."),
+        ("Ветку на стол нам срезали аккуратно — спросили по-честному.", "We got a sprig for the table, cut neatly. Asked properly, too."),
+        ("Окно открываю — и сирень прямо в комнату.", "I open the window and the lilac walks straight into the room."),
+        ("У нас белая, у соседей лиловая. Через забор букетами меняемся.", "Ours is white, the neighbours' is purple. We swap bunches over the fence."),
+    ],
+    "cheese_day": [
+        ("Опять поссорятся из-за рецепта — и опять сыр выйдет лучше прошлогоднего.", "They'll quarrel over the recipe again, and the cheese will come out better than last year's again."),
+        ("Наша коза на конкурс не пойдёт, стесняется. Зато дома голосит.", "Our goat won't enter the contest; she's shy. At home, though, she bellows."),
+        ("Хлеба возьму к сыру. Своего, из печи.", "I'll bring bread for the cheese. Our own, from the stove."),
+        ("Молодой сыр с мёдом — вот что надо пробовать.", "Young cheese with honey: that's the thing to try."),
+    ],
+    "kupala": [
+        ("Венок уже сплетён: ромашки, васильки и немного клевера.", "The wreath's woven already: daisies, cornflowers and a little clover."),
+        ("Через маленький костёр прыгну. Через большой — пусть молодёжь.", "I'll jump the small fire. The big one is for the young."),
+        ("Цветок папоротника пойдём искать. А вдруг в этот раз?", "We're going to look for the fern flower. What if this is the year?"),
+        ("Если венок до моста доплывёт — год будет хороший. Проверим.", "If the wreath floats as far as the bridge, it'll be a good year. We'll see."),
+    ],
+    "haymaking": [
+        ("Косу с вечера отбиваем — небось на всю улицу слышно.", "We're sharpening the scythe tonight; the whole street can probably hear."),
+        ("Ради кваса на лугу и в пять утра встать не жалко.", "For kvass in the meadow it's worth getting up at five."),
+        ("Косить не умею, ворошить умею, петь — тем более.", "I can't mow, but I can turn hay, and I can sing even better."),
+        ("Сено пахнет так, будто лето в стог сложили.", "The hay smells like somebody stacked the whole summer."),
+    ],
+    "fishermen_day": [
+        ("Мерить при свидетелях — обидно. Без свидетелей рыба всегда больше.", "Measuring in front of witnesses is a shame. Without witnesses the fish is always bigger."),
+        ("Уху на сто человек варить — это искусство. Каждый год у котла стою, учусь.", "Fish soup for a hundred is an art. Every year I stand by the cauldron and learn."),
+        ("Плоскодонка покрашена, вёсла новые. В этот раз догоним.", "The boat's painted, the oars are new. This time we'll catch them."),
+        ("Байки — после третьей тарелки. Уже не терпится.", "Tales after the third bowl. Can't wait."),
+    ],
+    "berries": [
+        ("Черники набрали: руки синие, язык синий, настроение отличное.", "We've picked bilberries: blue hands, blue tongue, excellent mood."),
+        ("Малина у оврага пошла. Где именно — не скажу.", "The raspberries by the gully are ripe. Exactly where, I'm not saying."),
+        ("Варенье на плите, осы у окна. Каждое лето одно и то же.", "Jam on the stove, wasps at the window. Every summer the same."),
+        ("Медведя не видели. А след у ручья был. Или чей-то сапог.", "We didn't see the bear. There was a print by the stream, though. Or somebody's boot."),
+    ],
+    "railway_day": [
+        ("Три гудка — для всех, кто когда-нибудь ездил. То есть для всех.", "Three blasts: for everyone who's ever taken a train. That is, everyone."),
+        ("Одно слово в телеграмме бесплатно. Думаю какое. Наверное, «спасибо».", "One free word in a telegram. I'm thinking which. Probably “thank you”."),
+        ("Старые фонари до сих пор керосином пахнут. Красивые.", "The old lanterns still smell of paraffin. Lovely things."),
+        ("«Кукушка» в флажках — как на свадьбе. Любим мы её.", "The Cuckoo in flags, like a wedding. We do love her."),
+    ],
+    "honey": [
+        ("Светлое надеваем, духи не трогаем. Пчёлы — народ строгий.", "Light clothes on, no scent. Bees are strict folk."),
+        ("С ложки попробовать — это всегда. А медогонку крутить — уж как получится.", "Tasting off the spoon, always. Turning the extractor, we'll see."),
+        ("Липовый мёд — как янтарь. Наш, липовский, лучше всех.", "Lime honey is like amber. Ours, from Lipovka, is the best of all."),
+        ("Пчела к нам на окно залетала. Понюхала и улетела — разведчица.", "A bee came to our window. Had a sniff and left: a scout."),
+    ],
+    "starfall": [
+        ("Одеяло, термос — готово. Терпение — посмотрим.", "Blanket, flask: ready. Patience: we'll see."),
+        ("Желание короткое придумано, три слова. Какие — не скажу.", "I've got a short wish ready, three words. Which ones, I'm not saying."),
+        ("Одну звезду увидели, а загадать не успели. Ничего, их там много.", "Saw one, but didn't have time to wish. Never mind, there are plenty up there."),
+        ("Лежишь на лугу, и кажется, что небо ближе, чем днём.", "Lying in the meadow, the sky seems closer than it does by day."),
+    ],
+    "apple_day": [
+        ("Самое кривое яблоко у нас точно есть. Приз наш!", "We've definitely got the most crooked apple. The prize is ours!"),
+        ("Пирог с яблоками в печи. На всю улицу пахнет.", "An apple pie's in the oven. The whole street can smell it."),
+        ("Яблок столько, что ветки подпирать пришлось.", "So many apples we've had to prop up the branches."),
+        ("Антоновку на конкурс не отдам — она на зиму, в погреб.", "The Antonovka apples aren't going to the contest: they're for the cellar, for winter."),
+    ],
+    "mushrooms": [
+        ("Белый нашли — вот такой! Червивый, правда. Но красивый.", "Found a cep, this big! Wormy, admittedly. But handsome."),
+        ("С компасом в лес — правильно. Только я его всё время дома забываю.", "Into the woods with a compass, quite right. Only I always leave it at home."),
+        ("Сушим на нитке над печкой. Весь дом лесом пахнет.", "We're drying them on a string over the stove. The whole house smells of forest."),
+        ("Незнакомые не берём, знакомые не отдаём.", "The ones we don't know, we don't pick. The ones we know, we don't give away."),
+    ],
+    "knowledge_day": [
+        ("Гладиолусы срезаны, в ведре стоят. Выше первоклассника.", "The gladioli are cut and standing in a bucket. Taller than a first-grader."),
+        ("Линейка — всегда волнительно, даже когда не тебе за парту.", "The assembly always moves me, even when it's not you going back to school."),
+        ("Арбуз после линейки — хорошая традиция. Нужная.", "Watermelon after the assembly: a good tradition. An essential one."),
+        ("Первый звонок на нашей улице слышно. Каждый год слушаем.", "You can hear the first bell from our street. We listen every year."),
+    ],
+    "town_day": [
+        ("Салют смотрим с моста — оттуда лучше всего.", "We watch the fireworks from the bridge; it's the best spot."),
+        ("Праздничный листок сохраню, в шкаф к прошлогодним.", "I'll keep the holiday sheet, in the cupboard with last year's."),
+        ("Оркестр с утра репетирует. Под окнами. Ну и хорошо.", "The band's been rehearsing since morning. Under our windows. Fine by us."),
+        ("В музей схожу — бесплатно же, да и давно не было.", "I'll go to the museum: it's free, and it's been a while."),
+    ],
+    "potato_digging": [
+        ("Мешки приготовлены. Спина — не очень.", "The sacks are ready. The back, less so."),
+        ("Печёная картошка из костра — ради неё и копаем, если честно.", "A potato baked in the bonfire: that's why we dig, to be honest."),
+        ("Урожай хороший: одна картофелина — на целую сковородку.", "A good crop: one potato fills a whole frying pan."),
+        ("Всем миром копать веселее. Одному — тоска, а вместе — праздник.", "Digging together is more fun. Alone it's a chore, together it's a party."),
+    ],
+    "cranes": [
+        ("Видели клин! Опустим записку: утро, девять часов, двадцать семь птиц.", "We saw a skein! We'll drop a note in: morning, nine o'clock, twenty-seven birds."),
+        ("Курлычут — как будто прощаются. И грустно, и хорошо.", "Calling as if saying goodbye. Sad and lovely at once."),
+        ("Посчитали, сбились, посчитали снова. Пусть будет тридцать, так красивее.", "Counted, lost count, counted again. Let's say thirty, it's a nicer number."),
+        ("Все головы задирают. Даже кошки.", "Everyone's looking up. Even the cats."),
+    ],
+    "forest_day": [
+        ("Лопата с собой. Посажу сосну — пусть сто лет растёт.", "Spade at the ready. I'll plant a pine and let it grow for a hundred years."),
+        ("Пироги с брусникой — повод прийти. Лопата — для порядка.", "Lingonberry pies are the reason to come. The spade is for form's sake."),
+        ("Метеостанцию посмотреть интересно: как это погоду в коробочку ловят.", "I'd like to see the weather station: how they catch the weather in a little box."),
+        ("Сосенки по колено. А лет через двадцать — лес.", "The little pines are knee-high. In twenty years, a forest."),
+    ],
+    "indian_summer": [
+        ("Паутинка на рукаве — к хорошей погоде.", "Gossamer on your sleeve means fine weather."),
+        ("Патефон в клубе — прекрасно. Своих пластинок бы принести.", "A gramophone at the club, lovely. We should bring our own records."),
+        ("Дождь — переносим, не дождь — танцуем. Хорошее правило.", "Rain, we postpone. No rain, we dance. A good rule."),
+        ("Солнце низкое, тёплое — будто лето забыло уйти.", "The sun's low and warm, as if summer forgot to leave."),
+    ],
+    "leaf_fall": [
+        ("Дом из листьев видели? Там даже окошко есть.", "Have you seen the leaf house? It even has a window."),
+        ("Под ногами шуршит — иду и нарочно загребаю.", "Rustling underfoot. I shuffle through on purpose."),
+        ("Липы облетают — будто золотом сыплют.", "The limes are shedding, as if they were scattering gold."),
+        ("Листья в мешки — и на грядки. К весне перепреют.", "Leaves in sacks and onto the beds. They'll have rotted down by spring."),
+    ],
+    "pokrov_fair": [
+        ("За Липовку канат тянуть пойдём. Котлы мыть — не нам.", "We'll pull for Lipovka in the tug of war. Washing pots is not for us."),
+        ("Варенье несём, смородиновое. Три банки.", "We're bringing jam: blackcurrant. Three jars."),
+        ("Калач в два метра ни разу целым до клуба не доносили.", "Nobody's ever got the two-metre kalach to the club in one piece."),
+        ("Карусель на руках — самая весёлая. Крутящих жалко, катающихся — нет.", "The hand-pushed merry-go-round is the most fun. Pity the pushers, not the riders."),
+    ],
+    "first_snow": [
+        ("Валенки достали. Пахнут прошлой зимой.", "Got the felt boots out. They smell of last winter."),
+        ("Следы почтальона не тронули — обошли сбоку.", "We left the postman's footprints alone and walked round them."),
+        ("Снег первый, мокрый — снеговик из него лучший.", "First snow, wet snow: it makes the best snowman."),
+        ("Утром в окно — а там белым-бело. И в доме сразу тихо.", "Looked out this morning and it's all white. The house went quiet at once."),
+    ],
+    "river_freeze": [
+        ("Ночью лёд пел — так и не уснули, слушали.", "The ice was singing last night. We never got to sleep; we just listened."),
+        ("На лёд — ни ногой. До декабря терпим, потом посмотрим.", "Not a foot on the ice. We wait till December, then we'll see."),
+        ("У берега лёд прозрачный — видно, как рыба ходит.", "By the bank the ice is clear as glass; you can see the fish moving."),
+        ("Камешек на лёд бросишь — звенит, как струна.", "Toss a pebble on the ice and it rings like a string."),
+    ],
+    "solstice": [
+        ("Минута к завтрашнему дню — немного, а приятно.", "A minute more tomorrow. Not much, but nice."),
+        ("Лампу в четыре зажигаем. Зато вечер длинный, на всё хватит.", "We light the lamp at four. But the evening's long; there's time for everything."),
+        ("До Нового года — десять минут. До весны — целые часы!", "Ten minutes by New Year. By spring, whole hours!"),
+        ("Самый короткий — значит, дальше только светлее.", "The shortest one means it's only getting lighter from here."),
+    ],
+    "club_tree": [
+        ("Конфеты в библиотеку отнесли, две горсти. Карманы пустые, на душе хорошо.", "We took two handfuls of sweets to the library. Empty pockets, happy heart."),
+        ("Старую игрушку на ёлку дали — стеклянную сосульку.", "We gave an old decoration for the tree: a glass icicle."),
+        ("Кто Дед Мороз — догадываемся, но молчим.", "We've guessed who Ded Moroz is, but we're keeping quiet."),
+        ("Мандаринами пахнет — сразу как в детстве.", "Smells of tangerines: childhood all over again."),
+    ],
+    "carols": [
+        ("Пироги напекли, конфеты в вазе. Откроем сразу — под окном петь холодно.", "Pies baked, sweets in the bowl. We'll open straight away; it's cold singing under windows."),
+        ("Коза у ряженых смешная! Заходите, споём вместе.", "The mummers' goat is so funny! Come in, we'll sing together."),
+        ("Колядовщикам — пятачок и пирожок. Так положено.", "A coin and a pie for the carollers. That's how it's done."),
+        ("Медведь по жребию — в прошлом году достался самому маленькому.", "The bear's chosen by lot. Last year it went to the smallest one."),
+    ],
+    "old_new_year": [
+        ("В варенике пуговица попалась — к обновке, говорят.", "Got a button in my dumpling: new clothes coming, they say."),
+        ("В лото хоть одну конфету да выиграем.", "We'll win at least one sweet at lotto."),
+        ("Ёлку разбирать жалко. Каждую игрушку в газету — до следующего года.", "A shame to take the tree down. Every bauble in newspaper till next year."),
+        ("Частушки готовы, две новые. Одна про почту — не обижайтесь.", "The ditties are ready, two new ones. One is about the post office; no offence."),
+    ],
+    "frosts": [
+        ("Дров не жалеем, печка гудит. Чай на плите — заходите.", "We're not sparing the firewood; the stove's roaring. Tea's on, come in."),
+        ("Нос под шарф, руки в варежки — и всё равно щиплет.", "Nose under the scarf, hands in mittens, and it still nips."),
+        ("Снег скрипит — шаги за два дома слышно.", "The snow squeaks so loud you hear footsteps two houses away."),
+        ("На окнах узоры, как папоротники. Красота, хоть и холодно.", "Patterns on the windows like ferns. Beautiful, cold as it is."),
+    ],
+    "ice_fishing": [
+        ("Лунку подальше, чай поближе — разумный совет.", "Hole further off, tea closer in: sensible advice."),
+        ("Налима поймать — значит, уху на всех варить. И боязно, и хочется.", "Catch a burbot and you're cooking soup for everyone. Scary and tempting."),
+        ("На льду тихо, только лёд иногда ухает. Хорошо там думается.", "It's quiet on the ice, just the odd boom. Good place for thinking."),
+        ("Ящик собран, мормышки разобраны. Рано утром — на озеро.", "The tackle box is packed, the jigs sorted. Off to the lake at dawn."),
+    ],
+}
+
+
 # --------------------------------------------------------------------------- fillers: old
 F("old", ("Двоюродная сестра, Кострома", "A cousin in Kostroma"),
   ("Из Костромы прислали фотографии со свадьбы.", "Wedding photos came from Kostroma."),
@@ -2625,6 +2841,244 @@ F("family", ("Брат, Воронеж", "A brother in Voronezh"),
    "My brother writes, “{name}, expect us in July, we're coming with the whole gang.” The whole gang! So the camp beds come down from the attic. And pies, plenty of them."))
 
 
+# --------------------------------------------------------------------------- fillers: from far away (any house)
+F('any', ('Лесничество, Городок', 'The forestry office, Gorodok'),
+  ('Лесничество зовёт сажать дубки на старой вырубке.', 'The forestry office invites everyone to plant oaks on the old clearing.'),
+  ('Лесничество пишет: «Приходите сажать дубы, лопаты наши, чай тоже наш». Дуб растёт лет двести. Значит, кто-то через двести лет сядет в тень и не узнает, кому сказать спасибо. И не надо.',
+   'The forestry office writes, “Come and plant oaks; the spades are on us, and the tea.” An oak takes two hundred years to grow. Someone will sit in its shade one day and never know whom to thank. Just as well.'))
+F('any', ('Пасечник, Рязань', 'A beekeeper near Ryazan'),
+  ('Незнакомый пасечник прислал липового мёда — «раз уж вы Липовка».', "A beekeeper, a stranger, sent linden honey: “seeing as you're Lipovka.”"),
+  ('Пасечник из-под Рязани, совсем незнакомый, прислал баночку липового мёда. Пишет: «Увидел на карте деревню Липовку — как не послать». Мёд густой, светлый, пахнет июлем. Вот так и начинается дружба: с мёда.',
+   "A beekeeper near Ryazan, a complete stranger, sent a jar of linden honey. He writes, “I saw a village called Lipovka on the map; how could I not.” The honey is thick and pale and smells of July. That's how friendships start: with honey."))
+F('any', ('Почтальон на пенсии, Кимры', 'A retired postman, Kimry'),
+  ('Старый почтальон из Кимр прислал советы нашему почтальону.', 'An old postman from Kimry sent some advice for our postman.'),
+  ('Пишет почтальон на пенсии, сорок лет с сумкой: «Передайте вашему: собак угощать, калитки закрывать, а в дождь письма — за пазуху». Передадим. Хотя он, кажется, и сам всё знает.',
+   "A retired postman, forty years with the bag, writes, “Tell yours: treat the dogs, shut the gates, and in the rain keep the letters inside your coat.” We'll tell him. Though he seems to know it all already."))
+F('any', ('Хор «Рябинушка», Городок', 'The Rowan choir, Gorodok'),
+  ('Хор из Городка ищет басов — хоть одного.', 'The Gorodok choir is looking for basses, even one.'),
+  ('Хор пишет: «Сопрано у нас двенадцать, альтов шесть, а басов ни одного. Если в Липовке кто-то поёт низко — ждём по четвергам». Надо прислушаться, кто это по утрам поёт у колодца.',
+   'The choir writes, “We have twelve sopranos, six altos and not one bass. If anyone in Lipovka sings low, we meet on Thursdays.” Must listen out for whoever sings by the well in the mornings.'))
+F('any', ('Девочка из поезда', 'A girl on a train'),
+  ('Девочка прислала рисунок: Липовка из окна вагона.', 'A girl sent a drawing: Lipovka from a train window.'),
+  ('Рисунок фломастерами: домики, речка, корова и кто-то машет. Подпись: «Ехала мимо, а вы мне помахали. Это вы». Помахали? Может, и помахали. Теперь будем махать каждому поезду, на всякий случай.',
+   "A felt-tip drawing: little houses, a river, a cow and someone waving. Underneath: “I was going past and you waved at me. This is you.” Did we? Maybe we did. From now on we'll wave at every train, just in case."))
+F('any', ('Дачник, прошлое лето', "Last summer's lodger"),
+  ('Дачник, снимавший комнату прошлым летом, вернул увезённую книжку.', "Last summer's lodger sent back a book he took by mistake."),
+  ('Бандероль: книжка, которую прошлым летом увёз дачник. «Простите, прихватил случайно, дочитал в электричке». А в книжке закладка — сушёный клевер, наш, липовский. Так клевер и съездил в Москву и обратно.',
+   "A parcel: the book last summer's lodger took away with him. “Sorry, I took it by mistake, finished it on the train.” And in it a bookmark, a dried clover, one of ours from Lipovka. So the clover went to Moscow and back."))
+F('any', ('Радио, кулинарная передача', 'A radio cookery show'),
+  ('Радио прочитало в эфире наш рецепт пирога и прислало грамоту.', 'The radio read out our pie recipe on air and sent a certificate.'),
+  ('Радио пишет: «Ваш рецепт пирога со щавелем прозвучал в эфире! Грамота прилагается». Грамота с печатью — за пирог. Повесим на кухне. Пусть пирог видит, что его ценят.',
+   "The radio writes, “Your sorrel pie recipe was read out on air! Certificate enclosed.” A certificate with a stamp, for a pie. It'll hang in the kitchen. Let the pie see it's appreciated."))
+F('any', ('Лосиная ферма, Кострома', 'The moose farm, Kostroma'),
+  ('Лосиная ферма прислала открытку с лосёнком и зовёт в гости.', 'The moose farm sent a card with a calf and an invitation.'),
+  ('С открытки смотрит лосёнок: ноги длинные, уши врозь. «Приезжайте, покормим вместе». Лосёнка зовут Пончик. С такими-то ногами — и Пончик.',
+   "A moose calf looks out of the card: long legs, ears every which way. “Come and visit, we'll feed him together.” The calf is called Donut. Legs like that, and Donut."))
+F('any', ('Любители звёзд, Калуга', 'Stargazers in Kaluga'),
+  ('Астрономы-любители пишут, что над Липовкой самое тёмное небо в округе.', 'Amateur astronomers write that Lipovka has the darkest sky for miles.'),
+  ('Клуб любителей астрономии нашёл Липовку на карте: «У вас самое тёмное небо в округе!» Самое тёмное! А мы-то думали, просто фонарей мало. В августе обещают приехать с трубой, на звездопад.',
+   "An astronomy club found Lipovka on a map: “You have the darkest sky for miles!” The darkest! And we thought there just weren't many streetlights. They promise to come with a telescope in August, for the shooting stars."))
+F('any', ('Художница, Плёс', 'An artist in Plyos'),
+  ('Художница прислала акварель: наша улица в дождь.', 'An artist sent a watercolour: our street in the rain.'),
+  ('Художница писала у нас этюды, а теперь прислала акварель: улица в дождь, лужи, лопухи. Даже скамейка у колодца есть — кривая. Надо же, а в жизни казалась прямой.',
+   'An artist painted sketches here and has now sent a watercolour: the street in the rain, puddles, burdocks. Even the bench by the well is there, crooked. Fancy that; in real life it looked straight.'))
+F('any', ('Мальчик-коллекционер, Вологда', 'A boy collector in Vologda'),
+  ('Мальчик собирает почтовые штемпели и просит наш.', 'A boy who collects postmarks asks for ours.'),
+  ('«Здравствуйте! Я собираю штемпели. Пришлите, пожалуйста, конверт с вашей печатью, у меня нет ни одной деревни на букву Л». Ни одной на Л! Отправим. Пусть Липовка будет первой.',
+   "“Hello! I collect postmarks. Please send me an envelope with your postmark, I haven't got a single village starting with L.” Not one! We'll send it. Let Lipovka be the first."))
+F('any', ('Байдарочники, Кострома', 'Canoeists from Kostroma'),
+  ('Байдарочники прислали фото с костром и нашей кружкой.', 'Canoeists sent a photo of their campfire, with our mug.'),
+  ('Байдарочники, что ночевали на нашем берегу, прислали фото: костёр, котелок и наша эмалированная кружка. Увезли! «Вернём осенью, с процентами». С процентами — это, видно, с чаем.',
+   "Canoeists who camped on our riverbank sent a photo: a campfire, a pot, and our enamel mug. They took it! “We'll return it in autumn, with interest.” Interest means tea, I suppose."))
+F('any', ('Кружевницы, Вологда', 'Lacemakers in Vologda'),
+  ('Вологодские кружевницы прислали салфетку со снежинкой.', 'Lacemakers in Vologda sent a doily with a snowflake.'),
+  ('Кружевная салфетка, а посередине снежинка. «Вам на стол, под самовар». Постелили — и самовар сразу важный, как на выставке.',
+   'A lace doily with a snowflake in the middle. “For your table, under the samovar.” We laid it out, and the samovar at once looked grand, as if at an exhibition.'))
+F('any', ('Почта Деда Мороза, Великий Устюг', "Father Frost's post office, Veliky Ustyug"),
+  ('Из Великого Устюга пришёл ответ на письмо, которого никто не помнит.', 'A reply from Veliky Ustyug to a letter nobody remembers writing.'),
+  ('Из Великого Устюга ответ: «Письмо получено, желание записано, исполню в своё время». Какое желание? Кто писал? Никто не сознаётся. Ну что ж, подождём. Своё время когда-нибудь да наступит.',
+   "A reply from Veliky Ustyug: “Letter received, wish noted, will be granted in due course.” What wish? Who wrote? Nobody owns up. Well, we'll wait. Due course comes round eventually."))
+F('any', ('Грибники, Москва', 'Mushroom pickers from Moscow'),
+  ('Грибники благодарят, что их вывели из леса к дороге.', 'Mushroom pickers say thank you for being led out of the forest.'),
+  ('Грибники пишут: «Спасибо, что вывели нас тогда к дороге! Без вас ночевали бы под ёлкой». А ходили-то кругами в двухстах шагах от дороги. Но лес — он такой, водит.',
+   "Mushroom pickers write, “Thank you for leading us back to the road that time! We'd have spent the night under a fir tree.” And they'd been going round in circles two hundred steps from the road. But the forest is like that; it leads you astray."))
+F('any', ('Кружок юных натуралистов, Городок', "The young naturalists' club, Gorodok"),
+  ('Объявлен конкурс скворечников — судить будут скворцы.', 'A birdhouse contest has been announced, judged by the starlings.'),
+  ('Объявление: «Конкурс скворечников! Оценивать будут скворцы». Жюри, значит, пернатое. Взятку не дашь — разве что червяком. Придётся строить честно, с крылечком.',
+   "A notice: “Birdhouse contest! Judged by the starlings.” A feathered jury, then. No bribing them, except perhaps with a worm. We'll have to build it honestly, with a little porch."))
+F('any', ('Деревня Ольховка', 'The village of Olkhovka'),
+  ('Ольховка вызывает Липовку на футбол: деревня на деревню.', 'Olkhovka challenges Lipovka to football, village against village.'),
+  ('Ольховка пишет: «Вызываем Липовку на футбол. Проигравшие косят победителям луг». Луг у них большой. Значит, проигрывать никак нельзя. Пора выяснять, у кого есть мяч.',
+   "Olkhovka writes, “We challenge Lipovka to football. The losers mow the winners' meadow.” Their meadow is big. So losing is out of the question. Time to find out who has a ball."))
+F('any', ('Гончары, Скопин', 'Potters in Skopin'),
+  ('Гончары прислали глиняную свистульку-петушка.', 'Potters sent a clay whistle shaped like a cockerel.'),
+  ('Глиняный петушок-свистулька, расписной. Дунешь — свистит так, что куры оглядываются. Ревнуют, видно. Поставим на окно: пусть будет свой петух, тихий.',
+   "A painted clay cockerel whistle. Blow it and it shrills so the hens turn round. Jealous, I expect. It'll go on the windowsill: a cockerel of our own, a quiet one."))
+F('any', ('Велосипедная мастерская, Городок', 'The bicycle workshop, Gorodok'),
+  ('Веломастерская зовёт на ремонт и обещает звонок в подарок.', 'The bike workshop offers repairs, with a free bell.'),
+  ('«Ремонт велосипедов! Каждому — звонок в подарок». Звонок в подарок — щедро. Хотя звонить на нашей улице, кроме кур, и некому. Но всё равно приятно.',
+   "“Bicycle repairs! A free bell for everyone.” A free bell, how generous. Not that there's anyone on our street to ring it at, apart from the hens. Still nice."))
+F('any', ('Молодожёны, Городок', 'Newlyweds in Gorodok'),
+  ('Молодожёны благодарят Липовку: их свадебную машину вытащили из лужи всей улицей.', 'Newlyweds thank Lipovka: the whole street pulled their wedding car out of a puddle.'),
+  ('«Спасибо Липовке! Если б не вы, сидели бы мы до сих пор в луже в фате». Помним эту лужу, у мостика. Тянули всей улицей, а невеста командовала. Хорошая будет хозяйка.',
+   "“Thank you, Lipovka! If not for you we'd still be sitting in a puddle in a wedding veil.” We remember that puddle by the little bridge. The whole street pulled and the bride gave the orders. She'll run a fine household."))
+F('any', ('Голубятник, Кимры', 'A pigeon fancier, Kimry'),
+  ('Голубятник просит написать, если к нам прилетит его белый голубь.', 'A pigeon fancier asks us to write if his white pigeon turns up.'),
+  ('«Улетел голубь, белый, с колечком на лапке. Если сядет к вам — насыпьте пшена и напишите». Белый, с колечком. Будем поглядывать на крыши. Кто знает, может, он к нам и летел.',
+   "“A pigeon's flown off, white, with a ring on its leg. If it lands at yours, give it some millet and write.” White, with a ring. We'll keep an eye on the roofs. Who knows, maybe it was heading here all along."))
+F('any', ('Пекарня «Каравай», Городок', 'The Karavai bakery, Gorodok'),
+  ('Пекарня хочет возить хлеб в Липовку и прислала сушку для убедительности.', 'The bakery wants to bring bread to Lipovka and sent a bread ring to make its case.'),
+  ('Пекарня пишет: «Хотим возить хлеб в Липовку по субботам. Сколько брать батонов?» И сушку в конверт вложили — для убедительности. Убедили. Батонов брать много.',
+   "The bakery writes, “We'd like to bring bread to Lipovka on Saturdays. How many loaves?” And they slipped a bread ring into the envelope, to make their case. Case made. Lots of loaves."))
+F('any', ('Писатель, Москва', 'A writer in Moscow'),
+  ('Писатель просит разрешения назвать Липовкой деревню в своей повести.', 'A writer asks permission to call the village in his novella Lipovka.'),
+  ('Пишет писатель: «Можно, я назову деревню в повести вашим именем? Очень уж оно тёплое». Можно, конечно. Только пусть у него в повести будет почтальон. Какая же деревня без почтальона?',
+   "A writer writes, “May I give your name to the village in my novella? It's such a warm name.” Of course he may. Only there must be a postman in the story. What's a village without a postman?"))
+F('any', ('Ветеринар, Городок', 'The vet, Gorodok'),
+  ('Ветеринар зовёт на прививки в субботу у клуба.', 'The vet invites everyone for jabs on Saturday by the club.'),
+  ('«Прививки собакам и кошкам — в субботу у клуба. Кошек приносить в корзинах, а не под мышкой». Видно, научены. Под мышкой кошка доезжает только до калитки.',
+   "“Jabs for dogs and cats, Saturday by the club. Cats to be brought in baskets, not under your arm.” They've learned the hard way, by the sound of it. Under an arm, a cat only gets as far as the gate."))
+F('family', ('Сестра, Ярославль', 'A sister in Yaroslavl'),
+  ('Сестра прислала ситец в горошек — «на фартук, как у мамы».', "A sister sent polka-dot cotton: “for an apron like Mum's.”"),
+  ('Сестра прислала ситец в горошек и выкройку. «Помнишь, у мамы был такой фартук? Нашла точно такую ткань». Помню. И карман на нём помню, где всегда лежали леденцы. Карман сошьём побольше.',
+   "My sister sent polka-dot cotton and a pattern. “Remember Mum's apron? I found exactly the same fabric.” I remember. And the pocket that always had boiled sweets in it. We'll make the pocket bigger."))
+F('family', ('Друг семьи, Рыбинск', 'A family friend in Rybinsk'),
+  ('Старый друг семьи прислал копчёного леща и рыбацкую историю.', 'An old family friend sent a smoked bream and a fishing story.'),
+  ('В посылке лещ, копчёный, в газетке, и записка: «Сам поймал, сам коптил, сам не верю». Лещ размером с полено. На газете дата — позапрошлый вторник. Свежая, значит, история.',
+   "In the parcel a smoked bream wrapped in newspaper and a note: “Caught it myself, smoked it myself, can't believe it myself.” The bream is the size of a log. The paper's dated Tuesday before last. A fresh story, then."))
+F('family', ('Кум, Липецк', 'An old pal in Lipetsk'),
+  ('Кум достроил баню и зовёт опробовать.', 'An old pal has finished his bathhouse and invites us to try it.'),
+  ('Кум достроил баню. На фото: баня, веники и сам кум в банной шапке. «Приезжайте пробовать, пар как в сказке». Пар как в сказке — это когда выходишь и не помнишь, как тебя звать. Надо ехать.',
+   "My old pal has finished his bathhouse. The photo: the bathhouse, birch whisks, and him in a felt sauna hat. “Come and try it, the steam's like in a fairy tale.” Fairy-tale steam is when you come out and can't remember your own name. We must go."))
+F('family', ('Тётя, Смоленск', 'An aunt in Smolensk'),
+  ('Тётя прислала двенадцать пар носков — «и гостям хватит».', 'An aunt sent twelve pairs of socks: “enough for guests too.”'),
+  ('Тётя вяжет без остановки. В посылке носки, двенадцать пар. Записка: «Всем по паре, остальные — гостям». У нас столько гостей не бывает. Значит, придётся звать.',
+   "My aunt knits non-stop. In the parcel: socks, twelve pairs. Note: “A pair each, and the rest for guests.” We never have that many guests. So we'll have to invite some."))
+F('family', ('Двоюродный брат, вахта', 'A cousin working up north'),
+  ('Двоюродный брат на вахте прислал фото с оленями.', 'A cousin on a northern shift sent a photo with reindeer.'),
+  ('Брат на вахте, на севере. Прислал фото: сам в ушанке, вокруг олени. «Олени смотрят прямо как наша Зорька». И правда похоже. Только Зорька смотрит строже.',
+   "My cousin's on a shift up north. Sent a photo: him in a fur hat, reindeer all around. “The reindeer look at you just like our Zorka.” It's true. Only Zorka looks sterner."))
+F('family', ('Бывший начальник, Тверь', 'A former boss in Tver'),
+  ('Бывший начальник прислал открытку — впервые без замечаний.', 'A former boss sent a card, for the first time without corrections.'),
+  ('Бывший начальник поздравил открыткой. Двадцать лет каждую бумагу возвращал с красными пометками, а тут ни одной. Только в конце, мелко: «Скучаю по вашим отчётам». Вот это да.',
+   'A former boss sent a greetings card. For twenty years every paper came back covered in red pen, and now not a single mark. Only at the end, small: “I miss your reports.” Well, I never.'))
+F('family', ('Брат, Калининград', 'A brother in Kaliningrad'),
+  ('Брат прислал кусочек янтаря с комаром внутри.', 'A brother sent a piece of amber with a mosquito inside.'),
+  ('Брат прислал янтарь, а в нём комар. «Ему сорок миллионов лет, береги». Сорок миллионов лет, а точь-в-точь как наши у реки. Ничему их, видно, время не учит.',
+   "My brother sent a piece of amber with a mosquito in it. “He's forty million years old, look after him.” Forty million years, and the spitting image of ours by the river. Time teaches them nothing, evidently."))
+F('family', ('Папа', 'Dad'),
+  ('Папа прислал чертёж табуретки: «Сделаешь — проверю».', "Dad sent a drawing of a stool: “Make it and I'll inspect it.”"),
+  ('Папа прислал чертёж табуретки — по линейке, с размерами. «Сделаешь — проверю. Если шатается, значит, пол кривой». У него всегда так: табуретка не виновата.',
+   "Dad sent a drawing of a stool, ruled, with measurements. “Make it and I'll inspect it. If it wobbles, the floor's crooked.” He's always been like that: the stool is never to blame."))
+F('family', ('Папа', 'Dad'),
+  ('Папа продублировал письмом свою эсэмэску — на всякий случай.', 'Dad sent a letter repeating his text message, just in case.'),
+  ('Папа пишет на бумаге: «Отправлял тебе СМС, но не уверен, что дошло. Повторяю: у нас всё хорошо, картошку выкопали». СМС, кстати, дошла. Двенадцать раз.',
+   "Dad writes on paper: “I sent you a text but I'm not sure it got there. Repeating: all well here, the potatoes are dug.” The text did get there, as it happens. Twelve times."))
+F('family', ('Крестница, Рязань', 'A goddaughter in Ryazan'),
+  ('Крестница прислала шоколадку с первой зарплаты.', 'A goddaughter sent a chocolate bar from her first pay.'),
+  ('Крестница устроилась на работу и с первой зарплаты прислала шоколадку. «Это вам, как обещала в пять лет». В пять лет обещала — и помнит. Шоколадку даже есть жалко. Будем на неё смотреть.',
+   "My goddaughter got a job and sent a chocolate bar out of her first pay. “For you, like I promised when I was five.” She promised at five and remembered. It seems a shame to eat it. We'll just look at it."))
+F('family', ('Сестра, Петрозаводск', 'A sister in Petrozavodsk'),
+  ('Сестра прислала рецепт карельских калиток и просит наш в обмен.', 'A sister sent a recipe for Karelian pies and asks for ours in return.'),
+  ('Сестра научилась печь калитки — карельские пирожки с пшённой кашей. Рецепт на две страницы, с рисунком, как защипывать. А в конце: «Пришли свой пирог с капустой. Обмен». Справедливо.',
+   "My sister's learned to bake kalitki, little Karelian pies with millet porridge. The recipe runs to two pages, with a drawing of how to crimp them. And at the end: “Send me your cabbage pie. A swap.” Fair enough."))
+F('family', ('Бывшие коллеги, Ярославль', 'Old workmates in Yaroslavl'),
+  ('Бывшие коллеги прислали общее фото, подписанное всей бухгалтерией.', 'Old workmates sent a group photo signed by the whole accounts office.'),
+  ('На обороте фотографии — подписи всей бухгалтерии. «Помним, любим, ваш калькулятор никто не трогает». Не трогают! Восемь лет стоит. Как памятник.',
+   "On the back of the photo, signatures from the whole accounts office. “We remember you, we love you, nobody touches your calculator.” Nobody touches it! Eight years it's stood there. Like a monument."))
+F('family', ('Племянник, Казань', 'A nephew in Kazan'),
+  ('Племянник поступил в училище и прислал фото в форме.', 'A nephew got into college and sent a photo in uniform.'),
+  ('Племянник прислал фото: форма, фуражка, нос кверху. «Поступил!» Давно ли на этом носу была зелёнка? А теперь фуражка. Растут, растут.',
+   "My nephew sent a photo: uniform, peaked cap, nose in the air. “I got in!” Wasn't it just yesterday that nose was daubed with green antiseptic? Now a peaked cap. They grow, they grow."))
+F('old,family', ('Подруга детства, Тамбов', 'A childhood friend in Tambov'),
+  ('Подруга детства откопала их секретик сорокалетней давности.', 'A childhood friend dug up their forty-year-old buried treasure.'),
+  ('Подруга пишет: «Копала грядку у бабушкиного дома и нашла наш секретик! Стёклышко, фантик и пуговица». Пуговица — от моего пальто. Сорок лет её дома искали, а она в земле лежала.',
+   "A childhood friend writes, “I was digging a bed by Granny's old house and found our secret! The bit of glass, the sweet wrapper and the button.” The button is off my coat. Forty years they searched the house for it, and there it was in the ground."))
+F('family', ('Брат, Владивосток', 'A brother in Vladivostok'),
+  ('Брат прислал панцирь морского ежа — лёгкий, как бумажный.', 'A brother sent a sea urchin shell, as light as paper.'),
+  ('Брат прислал панцирь морского ежа. Лёгкий, круглый, в мелкую точку. «Это ёж. Был колючий, теперь воспитанный». Поставим на полку к ракушкам. Пусть ракушки привыкают к соседу.',
+   "My brother sent a sea urchin's shell. Light, round, finely dotted. “It's an urchin. It used to be prickly; now it's well brought up.” It'll go on the shelf with the seashells. They'll have to get used to the new neighbour."))
+F('old', ('Землячка, Кинешма', 'Someone from back home, Kineshma'),
+  ('Землячка прислала частушки, что пели на гуляньях в молодости.', 'Someone from back home sent the ditties they sang at dances when young.'),
+  ('Прислали частушки, переписанные от руки, — те самые, что пели на гуляньях. Половину помню. А вторую половину, видно, в молодости петь не давали. Теперь можно.',
+   "Someone from back home sent the ditties we used to sing at village dances, copied out by hand. I remember half of them. The other half, I suppose, we weren't allowed to sing when young. Now we can."))
+F('old', ('Внучка', 'A granddaughter'),
+  ('Внучка сходила на выпускной в платье из старого сундука.', 'A granddaughter went to her prom in a dress from the old trunk.'),
+  ('Внучка пошла на выпускной в платье из старого сундука. «Все спрашивали, где купила, а я говорю: из сундука, семейное». Платье шили в шестьдесят восьмом. Хорошая вещь, выходит, не стареет.',
+   "My granddaughter went to her prom in a dress from the old trunk. “Everyone asked where I bought it, and I said: from the trunk, it's a family one.” That dress was made in sixty-eight. A good thing doesn't age, it turns out."))
+F('old', ('Внук', 'A grandson'),
+  ('Внук прислал первую в жизни открытку — с ошибками и сердечком.', 'A grandson sent his first ever card, with mistakes and a heart.'),
+  ('«Я тибя очинь любю». Открытка от внука, первая в жизни. Три ошибки в четырёх словах, зато сердечко нарисовано без единой. Повешу на самое видное место.',
+   '“I luv yu verry much.” A card from my grandson, his first ever. Three mistakes in five words, but the heart is drawn without a single one. It goes in the most prominent place.'))
+F('old', ('Родная школа, Ивановская область', 'The old school, Ivanovo region'),
+  ('Родная школа зовёт на столетний юбилей.', 'The old school invites everyone to its hundredth birthday.'),
+  ('Школе сто лет! Зовут всех, кто учился. Пишут: «Ваша парта стоит в музее». Моя парта — в музее. Надеюсь, там не пишут, сколько замечаний за ней получено.',
+   "The school's a hundred years old! They're inviting everyone who studied there. They write, “Your desk is in the museum.” My desk, in a museum. I hope they don't say how many telling-offs were earned at it."))
+F('old', ('Совет ветеранов, Городок', "The veterans' council, Gorodok"),
+  ('Совет ветеранов зовёт на чаепитие с баяном.', "The veterans' council invites everyone to tea with an accordion."),
+  ('«Чаепитие в Совете ветеранов! Баян будет, пирогов не хватает». Честно написали. Значит, понесём пирог. С капустой — чтобы баянисту понравилось.',
+   "“Tea at the veterans' council! There'll be an accordion; pies are in short supply.” Honestly put. So we'll take a pie. Cabbage, so the accordionist likes it."))
+F('old', ('Старый товарищ, Рыбинск', 'An old friend in Rybinsk'),
+  ('Старый товарищ прислал фото с танцплощадки шестьдесят пятого года.', 'An old friend sent a photo from the dance floor in 1965.'),
+  ('Прислали фото шестьдесят пятого года: танцплощадка, все в беретах. «Узнаёшь, кто с краю?» Узнаю. С краю стою, берет набок. Берет был один на всех, носили по очереди.',
+   "A photo from 1965: the dance floor, everyone in berets. “Recognise who's on the end?” I do. That's me on the end, beret over one ear. There was one beret between us; we took turns."))
+F('old', ('Племянница, Ростов-на-Дону', 'A niece in Rostov-on-Don'),
+  ('Племянница прислала тёплый плед и сушёные абрикосы.', 'A niece sent a warm blanket and dried apricots.'),
+  ('В посылке плед, мягкий, клетчатый, и мешочек сушёных абрикосов. «Плед — от зимы, абрикосы — от тоски». Сочетание правильное. Завернуться и грызть.',
+   "In the parcel a soft checked blanket and a little bag of dried apricots. “The blanket's against the winter, the apricots against the blues.” The right combination. Wrap up and nibble."))
+F('old', ('Сестра, Архангельск', 'A sister in Arkhangelsk'),
+  ('Сестра прислала морошку: белые ночи опять не дают спать.', 'A sister sent cloudberries: the white nights are keeping her up again.'),
+  ('Морошка в банке, янтарная. Сестра пишет: «Ночи опять белые, не спится, вот и варю». Хорошо, что бывают белые ночи. А то откуда бы у нас было варенье.',
+   "Cloudberries in a jar, amber-coloured. My sister writes, “The nights are white again, I can't sleep, so I make jam.” Thank goodness for white nights. Otherwise where would our jam come from."))
+F('old', ('Фотоателье, Городок', 'The photo studio, Gorodok'),
+  ('Фотоателье нашло старый негатив со свадьбы в Липовке.', 'The photo studio found an old negative of a wedding in Lipovka.'),
+  ('Фотоателье разбирало архив и нашло негатив: свадьба, Липовка, семьдесят второй год. Напечатали и прислали: «Может, ваши?» Наши не наши, а лица все знакомые. Пусть висит — у нас все свои.',
+   "The photo studio was sorting its archive and found a negative: a wedding, Lipovka, 1972. They printed it and sent it: “Might these be yours?” Ours or not, every face looks familiar. It'll hang on the wall; everyone here's family."))
+F('old', ('Внучатый племянник, Тула', 'A great-nephew in Tula'),
+  ('Внучатый племянник спрашивает, как жили без телефонов.', 'A great-nephew asks how people lived without phones.'),
+  ('Внучатый племянник пишет: «Нам задали узнать, как жили без телефонов. Как?» Как-как. Письма писали. Вот как он сейчас. Ответим подробно, на трёх листах. Пусть привыкает.',
+   "My great-nephew writes, “We've got homework: find out how people lived without phones. How?” How indeed. We wrote letters. Like he's doing now. We'll answer properly, three pages. Let him get used to it."))
+F('young', ('Одноклассник, Томск', 'A school friend in Tomsk'),
+  ('Одноклассник нашёл запись школьного концерта и прислал на флешке.', 'A school friend found a recording of a school concert and sent it on a USB stick.'),
+  ('Одноклассник нашёл запись нашего школьного концерта и прислал на флешке. Звук ужасный, хлопают трое. Но трое — это тоже публика. Будем считать, что был аншлаг.',
+   "A school friend found a recording of our school concert and sent it on a USB stick. Awful sound, three people clapping. But three is still an audience. We'll call it a sell-out."))
+F('young', ('Друг, Владивосток', 'A friend in Vladivostok'),
+  ('Открытка из Владивостока шла три недели — и пришла утром, как обещала.', 'A card from Vladivostok took three weeks, and came in the morning, as promised.'),
+  ('Открытка из Владивостока шла три недели. На ней: «Пока дойдёт, у вас будет утро». Так и вышло — принесли утром. Всё-таки почта знает, что делает.',
+   "The postcard from Vladivostok took three weeks. On it: “By the time this arrives, it'll be morning where you are.” And so it was: it came in the morning. The post knows what it's doing, after all."))
+F('young', ('Друзья по сетевой игре', 'Friends from an online game'),
+  ('Друзья по сетевой игре прислали настоящую бумажную открытку.', 'Friends from an online game sent a real paper postcard.'),
+  ('Друзья по сетевой игре решили: хватит чатов, пишем по-настоящему. Открытка от пятерых — пять почерков, пять городов. Один почерк совсем не разобрать. Наверное, это тот, кто всегда играет за лекаря.',
+   "Friends from an online game decided: enough chat, let's write for real. A card from five of them: five handwritings, five cities. One hand is completely illegible. Must be the one who always plays the healer."))
+F('young', ('Подруга-альпинистка', 'A climber friend'),
+  ('Подруга взошла на Эльбрус и прислала камешек с вершины.', 'A friend climbed Elbrus and sent a pebble from the top.'),
+  ('Подруга взошла на Эльбрус и прислала камешек с вершины. Маленький, серый, самый обычный. «Но он был выше всех в Европе». Положим на подоконник. Пусть отдохнёт, ему досталось.',
+   "A friend climbed Elbrus and sent a pebble from the summit. Small, grey, perfectly ordinary. “But it was the highest in Europe.” It'll go on the windowsill. Let it rest; it's been through a lot."))
+F('young', ('Друг-волонтёр, заповедник', 'A friend volunteering at a reserve'),
+  ('Друг считает зубров в заповеднике и прислал портрет одного.', 'A friend counting bison at a reserve sent a portrait of one.'),
+  ('Друг волонтёрит в заповеднике, считает зубров. Прислал фото одного, крупным планом. «Это Мирон, он против переписи». По морде видно: против. Но посчитали.',
+   'A friend is volunteering at a reserve, counting bison. Sent a close-up of one. “This is Miron. He objects to the census.” You can tell from his face: he objects. But he got counted.'))
+F('young', ('Подруга, Выборг', 'A friend in Vyborg'),
+  ('Подруга прислала выборгский крендель в жестяной банке.', 'A friend sent a Vyborg pretzel in a tin.'),
+  ('Выборгский крендель, в жестяной банке с башней на крышке. Подруга пишет: «Крендель съешь, банку оставь». Крендель съедим сразу, а банка будет жить долго. Под пуговицы, под нитки, под что-нибудь хорошее.',
+   'A Vyborg pretzel in a tin with a castle tower on the lid. My friend writes, “Eat the pretzel, keep the tin.” The pretzel will go at once, but the tin will live a long time. For buttons, for thread, for something nice.'))
+F('child', ('Кукольный театр, Городок', 'The puppet theatre, Gorodok'),
+  ('Кукольный театр просит придумать имя новой лисе.', 'The puppet theatre asks for a name for its new fox.'),
+  ('Кукольный театр пишет: «У нас новая лиса, а имени нет. Придумайте!» Можно предложить сразу три. Лиса ведь хитрая — одного имени ей мало.',
+   "The puppet theatre writes, “We have a new fox puppet and no name for her. Think of one!” We could send three at once. A fox is crafty; one name won't be enough for her."))
+F('child', ('Двоюродная сестрёнка', 'A little cousin'),
+  ('Маленькая кузина прислала выпавший зуб — показать.', 'A little cousin sent a tooth that fell out, to show it off.'),
+  ('В конверте молочный зуб, приклеенный скотчем к листку. Подпись: «Выпал! Показываю. Потом верни». Покажем всем и вернём. Зуб всё-таки не наш.',
+   "A milk tooth in the envelope, taped to the page. Underneath: “It fell out! Showing you. Send it back after.” We'll show everyone and send it back. It's not ours, after all."))
+F('child', ('Кружок «Умелые руки», Городок', 'The Clever Hands club, Gorodok'),
+  ('Кружок зовёт на выставку поделок из шишек и желудей.', 'The craft club invites entries for a pinecone and acorn show.'),
+  ('«Выставка поделок из шишек и желудей! Принимаются ёжики, совы и всё, что получится». Всё, что получится, — хорошо сказано. У нас обычно получается ёжик. Даже когда делаем сову.',
+   "“A show of things made from pinecones and acorns! Hedgehogs, owls and anything else that turns out.” Anything that turns out: well put. Ours usually turns out a hedgehog. Even when we're making an owl."))
+F('child', ('Бабушка, Ейск', 'Grandma in Yeysk'),
+  ('Бабушка прислала ракушку: «Приложи к уху — там моё море».', "Grandma sent a seashell: “Hold it to your ear, my sea's in there.”"),
+  ('Бабушка прислала большую ракушку. «Приложи к уху — услышишь моё море». Приложили. Шумит! Шумит, будто бабушка совсем рядом и зовёт обедать.',
+   "Grandma sent a big seashell. “Hold it to your ear and you'll hear my sea.” We did. It hums! Hums as if Grandma were right here, calling us in for lunch."))
+
 # --------------------------------------------------------------------------- output
 def cell(s):
     s = s.strip()
@@ -2684,9 +3138,19 @@ def write_all():
             for what, v, lim in (("name", name, 40), ("notice", notice, 340), ("brief", brief, 80)):
                 if len(v[lang]) > lim:
                     warn.append(f"event {key}: {what}_{'ru' if lang == 0 else 'en'} {len(v[lang])} chars (max {lim})")
-        rows.append([key, start, end, d, look, name[0], name[1], notice[0], notice[1], brief[0], brief[1], stamp])
+        says = SAYS.get(key, [])
+        if len(says) < 3:
+            warn.append(f"event {key}: {len(says)} gate lines (a poster goes to 3 houses)")
+        for ru, en in says:
+            if "|" in ru or "|" in en or len(ru) > 200 or len(en) > 200:
+                warn.append(f"event {key}: bad gate line {ru[:40]}")
+        rows.append([key, start, end, d, look, name[0], name[1], notice[0], notice[1], brief[0], brief[1], stamp,
+                     " | ".join(v[0] for v in says), " | ".join(v[1] for v in says)])
+    for key in SAYS:
+        if key not in {e[0] for e in EVENTS}:
+            warn.append(f"SAYS: no event {key}")
     write(C / "events.tsv", ["key", "start", "end", "district", "look", "name_ru", "name_en", "notice_ru", "notice_en",
-                             "brief_ru", "brief_en", "stamp"], rows)
+                             "brief_ru", "brief_en", "stamp", "says_ru", "says_en"], rows)
 
     write(C / "stamps/f.tsv", ["key", "family", "bg", "value", "name_ru", "name_en", "series"], STAMPS)
 
