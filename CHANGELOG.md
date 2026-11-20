@@ -6,6 +6,21 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.29] - 2026-11-20
+
+### Added
+- Seasonal posters come with a word from the house: under the poster at the gate, each neighbour now says something of their own about the ice, the fair or the first snow.
+
+### Fixed
+- Neighbours no longer answer the same letter with the same words. When one letter goes round many houses on the same day, like the power bill, every house gets its own text.
+- The diary no longer repeats one notice for every house it went to: it shows one line with all the names.
+
+<!-- tg
+Новое: у калитки под афишей соседи теперь говорят каждый своё — про лёд, ярмарку, первый снег.
+Исправлено: письма, которые в один день приходят многим (квитанции за свет), больше не повторяются слово в слово.
+В дневнике одна новость для нескольких домов теперь одной строкой со всеми именами.
+-->
+
 ## [1.0.28] - 2026-11-17
 
 ### Added
