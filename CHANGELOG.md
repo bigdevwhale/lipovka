@@ -6,6 +6,29 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.31] - 2026-11-24
+
+### Added
+- A new look for the village: every neighbour, the houses at the gates and on the map, the gifts, the stamps, the dog and the icons are redrawn, with warm winter clothes and snowy roofs in the cold months. Windows still light up in the evening.
+- Choose who carries the post: a postman or a postwoman, three of each, at the start and in the settings. The same figure stands at the gates and walks the map.
+- Share cards: your day, week, month or all your time in Lipovka, a letter, a stamp or a gift as a picture for social networks, with a preview first and a small QR code to the game on Google Play.
+
+### Changed
+- Sharper text and neater panels everywhere: the pixel font now sits on whole screen pixels.
+- The post screen is shorter: your own letters in one card, the bag folded into one line until opened.
+- Settings are split into three tabs, with small switches instead of big buttons.
+- On the map the postman stops at the door instead of walking over the houses, and the names sit right under their houses.
+
+### Fixed
+- The rowan by the gate grows behind the fence instead of hanging in the air.
+
+<!-- tg
+Липовка перерисована: жители, дома, подарки, марки, Бублик и иконки, зимой все в тёплом и крыши в снегу.
+Теперь можно выбрать, кто носит почту: почтальон или почтальонша, по три на выбор.
+Открытки для соцсетей: день, неделя, месяц, всё время, письмо, марка или подарок, с QR-кодом на игру.
+Шрифт стал чётче, экран почты и настройки — компактнее.
+-->
+
 ## [1.0.30] - 2026-11-24
 
 ### Added
