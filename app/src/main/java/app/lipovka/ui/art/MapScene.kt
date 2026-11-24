@@ -74,6 +74,7 @@ class MapScene(private val e: Env, private val open: Int, private val round: Map
         water(b)
         rail(b)
         roads(b)
+        bridge(b)
         woods(b)
         for (hs in World.houses) if (hs.district <= open) building(b, hs)
         post(b)
@@ -228,6 +229,28 @@ class MapScene(private val e: Env, private val open: Int, private val round: Map
         road(b, Pt(114.0, 196.0), Pt(104.0, 140.0), Pt(100.0, 78.0), 2)
         road(b, Pt(100.0, 78.0), Pt(84.0, 60.0), World.house("newspaper")!!.at, 2)
         road(b, Pt(100.0, 78.0), Pt(114.0, 56.0), World.house("museum")!!.at, 2)
+    }
+
+    /** The plank bridge over the Lipka. Until Zarechye opens its middle is gone; then it's mended. */
+    private fun bridge(b: Buf) {
+        val cx = World.BRIDGE.x.roundToInt()
+        val cy = World.BRIDGE.y.roundToInt()
+        val span = (cy - 16..cy + 16).filter { riverD(cx, it) < 9.5 }
+        if (span.isEmpty()) return
+        val y0 = span.first() - 1
+        val y1 = span.last() + 1
+        val gap = if (open >= 1) IntRange.EMPTY else (cy - 2)..(cy + 2)
+        for (y in y0..y1) {
+            if (riverD(cx + 6, y) < 7.5) b.p(cx + 6, y, rgb(0x1e3440), .45f)
+            if (y in gap) continue
+            val plank = if ((y - y0) % 2 == 0) rgb(0x9a6a3e) else rgb(0x845830)
+            for (x in cx - 4..cx + 4) b.p(x, y, if (winter && hash(x, y) > .3) rp(R.snow, .55, x, y) else plank)
+            b.p(cx - 5, y, rgb(0x55331e)); b.p(cx + 5, y, rgb(0x55331e))
+        }
+        for (y in listOf(y0, (y0 + y1) / 2, y1)) {
+            if (y in gap) continue
+            b.r(cx - 6, y - 1, 2, 3, rgb(0x3a2214)); b.r(cx + 5, y - 1, 2, 3, rgb(0x3a2214))
+        }
     }
 
     private fun woods(b: Buf) {
