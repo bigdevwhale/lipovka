@@ -113,6 +113,8 @@
     <string name="source_phone">Телефон</string>
     <string name="source_health">Health Connect</string>
     <string name="source_hint">Телефон считает шаги сам. Или их можно брать из Health Connect: туда свои шаги складывают Samsung Health, Mi Fitness, Zepp Life, Google Fit, часы и браслеты, и в Липовке будет столько же. Huawei Health с Health Connect не делится, но его шаги может переносить приложение Health Sync.</string>
+    <string name="background_hint">Если шаги не считаются, пока Липовка закрыта: в настройках приложения разрешите автозапуск и работу в фоне, а в разделе батареи выберите «Без ограничений». На Xiaomi, Honor, Huawei и OnePlus без этого телефон усыпляет шагомер.</string>
+    <string name="background_open">Открыть настройки приложения</string>
     <string name="health_ok">Шаги берутся из Health Connect.</string>
     <string name="health_denied">Health Connect не разрешил читать шаги.</string>
     <string name="health_install">Сначала нужно установить или обновить Health Connect.</string>

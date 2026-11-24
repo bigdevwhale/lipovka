@@ -146,6 +146,11 @@ private fun StepSource(health: Boolean) {
         else if (c.health.installable) PixelButton(stringResource(R.string.health_get), { pickHealth() }, Modifier.fillMaxWidth())
     }
     Text(stringResource(R.string.source_hint), style = T.Small)
+    // Phone makers put apps to sleep in the background; the user lifts it by hand in the app's settings.
+    Text(stringResource(R.string.background_hint), style = T.Small)
+    PixelButton(stringResource(R.string.background_open), {
+        runCatching { ctx.startActivity(android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, android.net.Uri.fromParts("package", ctx.packageName, null))) }
+    }, Modifier.fillMaxWidth(), kind = Kind.GHOST)
 }
 
 @Composable
