@@ -63,6 +63,11 @@ class RenderArtScenes {
             save("evening-out-$name", frame(EveningScene(e, lit = false)))
             save("map-$name", frame(MapScene(e, k % 6, MapRound(postman = World.house("lebedev")!!.at, pending = setOf("mill", "apiary"), walking = true), true)), 3)
         }
+        // a grandmother and the postman at her gate, for the Play feature graphic (tools/play.py)
+        for (who in listOf("nina", "agafya")) for (name in listOf("winter-day-frost", "autumn-day-clear")) {
+            val r = content.resident(who)!!
+            save("feature-$who-$name", frame(GateScene(envs.toMap().getValue(name), World.house(r.house)!!, r, true)), 2)
+        }
         val e = envs.first().second
         for (r in content.residents) save("who-${r.id}", frame(GateScene(e, World.house(r.house)!!, r, false)), 2)
     }

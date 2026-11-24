@@ -5,6 +5,7 @@ python tools/play.py
 Takes docs/screenshots/<lang>/*.jpg (1080 px wide renders of the demo, see tools/shots.py) and writes
 the 512 px icon, the 1024x500 feature graphics and eight 1080x1920 captioned screenshots per language.
 Play wants screenshots no longer than twice their width, so each screen is cut short under its caption.
+The feature graphic's scene is rendered first: ./gradlew testDebugUnitTest -Prender --tests '*RenderArtScenes*'
 """
 from pathlib import Path
 
@@ -13,6 +14,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "docs/google-play/graphics"
 SHOTS = ROOT / "docs/screenshots"
+FEATURE = ROOT / "app/build/art/scenes/feature-nina-winter-day-frost.png"
 FONT = ROOT / "app/src/main/res/font/m6x11.ttf"
 
 GREEN = (0x3D, 0x5E, 0x43)
@@ -98,9 +100,10 @@ def feature(lang):
     d.fontmode = "1"
     d.rectangle((0, H - 24, W, H), fill=LIGHT)
     airmail(d, H - 24, W)
-    # The postman at the gate with a letter.
-    gate = Image.open(SHOTS / lang / "2-gate.jpg").convert("RGB").crop((0, 0, 1080, 1060))
-    gate = gate.resize((round(gate.width * 380 / gate.height), 380), Image.LANCZOS)
+    # Baba Nina and the postman at her gate on a frosty day, whole, down to their boots
+    # (rendered by RenderArtScenes into app/build/art/scenes, see the module docstring).
+    gate = Image.open(FEATURE).convert("RGB")
+    gate = gate.resize((round(gate.width * 380 / gate.height), 380), Image.NEAREST)
     lay(g, gate, W - gate.width - 52, 60)
     logo = Image.open(ROOT / "docs/logo.png").convert("RGBA").crop((40, 104, 472, 448))
     logo = logo.resize((logo.width // 4, logo.height // 4), Image.NEAREST)
