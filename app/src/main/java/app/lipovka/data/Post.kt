@@ -129,6 +129,12 @@ class Post(private val db: PostDb, val game: Game, private val zone: () -> ZoneI
         game.walk(s, n, day, System.currentTimeMillis())
     }
 
+    /** Every district open at once, to look the whole map over (debug builds). */
+    suspend fun openDistricts() = change { s ->
+        val day = now().toLocalDate().toEpochDay()
+        for (d in 1..5) s.flag("d$d", day)
+    }
+
     suspend fun open(id: Long) = change { s -> game.open(s, id, now().toLocalDate().toEpochDay()) }
 
     suspend fun takeMore() = change { s -> game.takeMore(s, game.mailDay(now())) }

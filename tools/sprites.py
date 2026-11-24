@@ -58,7 +58,8 @@ def background(a):
 
 def cyan(a):
     r, g, b = (a[..., i].astype(int) for i in range(3))
-    return (g - r > 60) & (b - r > 60) & (abs(g - b) < 60) & (g > 120)
+    # the panes are drawn pure cyan; light-blue frames and carving (r about 90) must not count as glass
+    return (g - r > 120) & (b - r > 120) & (abs(g - b) < 60) & (g > 150)
 
 
 def shrink(rgb, keep, box, w, h, glassy):

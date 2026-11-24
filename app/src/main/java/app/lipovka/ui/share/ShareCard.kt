@@ -97,10 +97,18 @@ object ShareCard {
             cv.drawBitmap(frame, src, Rect(dx, M, dx + dw, M + dh), Paint().apply { isFilterBitmap = drawn != null })
         }
 
+        // a line that must stay on the card: smaller type when long, and cut with an ellipsis past the smallest
+        fun line(s: String, size: Float, min: Float, color: Int, x: Float, y: Float) {
+            val room = (W - M - x)
+            val p = text(size, color)
+            while (p.textSize > min && p.measureText(s) > room) p.textSize -= 2f
+            cv.drawText(TextUtils.ellipsize(s, p, room, TextUtils.TruncateAt.END).toString(), x, y, p)
+        }
+
         var y = M + dh + 84f
-        cv.drawText(card.title, M.toFloat(), y, text(80f, INK))
+        line(card.title, 80f, 52f, INK, M.toFloat(), y)
         y += 48f
-        cv.drawText(card.sub, M.toFloat(), y, text(40f, MUTED))
+        line(card.sub, 40f, 32f, MUTED, M.toFloat(), y)
         y += 28f
 
         val footTop = H - 32 - 200

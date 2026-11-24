@@ -30,6 +30,7 @@
     <string name="next_district">%1$s откроется через %2$s км</string>
     <string name="all_open">Все дороги открыты.</string>
     <string name="add_steps">+1000 шагов</string>
+    <string name="open_districts">Открыть все районы</string>
     <string name="steps_permission">Разрешите считать шаги, иначе сумка не сдвинется.</string>
     <string name="allow">Разрешить</string>
     <string name="no_sensor">В этом телефоне нет шагомера. Почта подождёт.</string>

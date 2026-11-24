@@ -30,6 +30,7 @@
     <string name="next_district">%1$s opens in %2$s km</string>
     <string name="all_open">Every road is open.</string>
     <string name="add_steps">+1000 steps</string>
+    <string name="open_districts">Open all districts</string>
     <string name="steps_permission">Let the app count your steps, or the bag won\'t move.</string>
     <string name="allow">Allow</string>
     <string name="no_sensor">This phone has no step counter, so the post will wait.</string>

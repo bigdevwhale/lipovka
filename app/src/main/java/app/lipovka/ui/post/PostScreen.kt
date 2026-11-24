@@ -153,6 +153,7 @@ fun PostScreen(home: Home, onVisits: () -> Unit, onLetter: (Long) -> Unit, onSet
             NextDistrict(home)
             if (eveningTime(home)) Evening(home)
             if (BuildConfig.DEBUG || BuildConfig.DEMO) PixelButton(stringResource(R.string.add_steps), { c.write { post.addSteps(1000) } }, Modifier.fillMaxWidth(), kind = BtnKind.GHOST)
+            if (BuildConfig.DEBUG) PixelButton(stringResource(R.string.open_districts), { c.write { post.openDistricts() } }, Modifier.fillMaxWidth(), kind = BtnKind.GHOST)
             Spacer(Modifier.height(8.dp))
         }
     }
