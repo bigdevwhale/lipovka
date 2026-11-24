@@ -565,9 +565,6 @@ class GateScene(private val e: Env, private val house: House, private val who: R
         Props.fence(b, 0, 64, 136, 30, winter)
         Props.fence(b, 102, 170, 136, 30, winter)
         for (i in 0 until 4) for (y in 138 + i until 164 - i) for (k in 0 until 3) b.p(65 + i * 3 + k, y, rp(R.woodG, .5 - k * .12, 65 + i * 3, y))
-        if (!winter) for ((x, y, r) in listOf(Triple(6, 128, R.glass), Triple(24, 128, R.glass), Triple(114, 128, R.glass), Triple(138, 129, R.brick))) {
-            b.vol(x, y, 8, 9, { u, v -> !(v < 2 && (u < 2 || u > 5)) }, { u, _ -> .5 - u * .06 + if (u == 2) .35 else 0.0 }, r, R.INK)
-        }
     }
 
     private fun street(b: Buf) {
