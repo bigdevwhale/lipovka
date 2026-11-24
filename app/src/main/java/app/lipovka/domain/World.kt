@@ -41,7 +41,7 @@ object World {
     val houses: List<House> = listOf(
         House("shop", 0, Pt(60.0, 560.0), 'G', 'W', setOf("shop")),
         House("club", 0, Pt(140.0, 556.0), 'R', 'Y', setOf("club")),
-        House("kuznetsovy", 0, Pt(38.0, 518.0), 'B', 'W', setOf("swing", "tractor")),
+        House("kuznetsovy", 0, Pt(38.0, 518.0), 'B', 'W', setOf("tractor")),
         House("vetrovy", 0, Pt(140.0, 508.0), 'R', 'W', setOf("rowan")),
         House("sorokina", 0, Pt(76.0, 500.0), 'W', 'B', setOf("well", "cat")),
         House("ryabininy", 0, Pt(22.0, 466.0), 'S', 'G', setOf("antenna")),
@@ -58,7 +58,7 @@ object World {
         House("boatshed", 3, Pt(86.0, 150.0), 'W', 'B', setOf("boat", "nets")),
         House("painter", 3, Pt(78.0, 110.0), 'B', 'W', setOf("easel")),
         House("meteo", 4, Pt(150.0, 100.0), 'S', 'W', setOf("meteo")),
-        House("belkiny", 4, Pt(124.0, 136.0), 'G', 'Y', setOf("swing", "woodpile")),
+        House("belkiny", 4, Pt(124.0, 136.0), 'G', 'Y', setOf("woodpile")),
         House("newspaper", 5, Pt(70.0, 36.0), 'S', 'W', setOf("town")),
         House("museum", 5, Pt(122.0, 30.0), 'G', 'W', setOf("town", "columns")),
     )

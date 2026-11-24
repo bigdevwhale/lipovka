@@ -93,7 +93,7 @@ class AppContainer(context: Context) {
     /** Writes the whole post office to a file the person picked. */
     suspend fun backupTo(uri: Uri) {
         val set = settings.now()
-        val text = Backup.write(post.snapshot(), Carried(set.place, set.notify))
+        val text = Backup.write(post.snapshot(), Carried(set.place, set.notify, set.postman))
         withContext(Dispatchers.IO) {
             (app.contentResolver.openOutputStream(uri, "wt") ?: error("can't write $uri")).use { it.write(text.toByteArray()) }
         }
@@ -106,7 +106,7 @@ class AppContainer(context: Context) {
         }
         val (books, carried) = Backup.read(text)
         post.restore(books)
-        settings.update { it.copy(onboarded = true, place = carried.place, weather = null, notify = carried.notify, milestonesSeen = null, lampOut = -1, calendarTorn = LocalDate.now().toEpochDay()) }
+        settings.update { it.copy(onboarded = true, place = carried.place, weather = null, notify = carried.notify, postman = carried.postman, milestonesSeen = null, lampOut = -1, calendarTorn = LocalDate.now().toEpochDay()) }
         runCatching { refreshWeather(force = true) }
         runCatching { PostWidget.updateAll(app) }
     }

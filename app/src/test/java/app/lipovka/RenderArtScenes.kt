@@ -61,7 +61,7 @@ class RenderArtScenes {
             save("room-$name", frame(RoomScene(e, gifts, true)))
             save("evening-$name", frame(EveningScene(e)))
             save("evening-out-$name", frame(EveningScene(e, lit = false)))
-            save("map-$name", frame(MapScene(e, k % 6, MapRound(postman = World.house("lebedev")!!.at, pending = setOf("mill", "apiary"), walking = true), true)), 2)
+            save("map-$name", frame(MapScene(e, k % 6, MapRound(postman = World.house("lebedev")!!.at, pending = setOf("mill", "apiary"), walking = true), true)), 3)
         }
         val e = envs.first().second
         for (r in content.residents) save("who-${r.id}", frame(GateScene(e, World.house(r.house)!!, r, false)), 2)
@@ -81,7 +81,7 @@ class RenderArtScenes {
     @Test fun sheets() {
         val items = content.items.values.toList()
         val cols = 12
-        val sheet = Buf(cols * 18, ((items.size + cols - 1) / cols) * 20)
+        val sheet = Buf(cols * 18, ((items.size + cols - 1) / cols) * 20, 3)
         sheet.r(0, 0, sheet.w, sheet.h, 0xFFF2E2BB.toInt())
         items.forEachIndexed { i, it -> ItemArt.draw(sheet, it.family, it.variant, (i % cols) * 18 + 9, (i / cols) * 20 + 18) }
         save("items", sheet)
@@ -90,7 +90,7 @@ class RenderArtScenes {
         st.r(0, 0, st.w, st.h, 0xFF1B2B22.toInt())
         stamps.forEachIndexed { i, s ->
             val b = StampArt.draw(s.family, s.bg, s.value)
-            for (y in 0 until b.h) for (x in 0 until b.w) if (b.d[y * b.w + x] ushr 24 != 0) st.p((i % cols) * 36 + 1 + x, (i / cols) * 42 + 1 + y, b.d[y * b.w + x])
+            for (y in 0 until b.h) for (x in 0 until b.w) if (b.get(x, y) ushr 24 != 0) st.p((i % cols) * 36 + 1 + x, (i / cols) * 42 + 1 + y, b.get(x, y))
         }
         save("stamps", st, 2)
     }

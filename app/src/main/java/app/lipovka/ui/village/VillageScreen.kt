@@ -107,17 +107,18 @@ fun VillageScreen(home: Home, onHouse: (String) -> Unit) {
                         val y = o.y / size.width * World.W
                         // The houses open so far, and the school, which stands in the village from the start.
                         val spots = World.houses.filter { it.district <= home.open }.map { it.id to it.at } + (World.SCHOOL_ID to World.SCHOOL)
-                        val hit = spots.minByOrNull { (_, at) -> hypot(at.x - x, at.y - 8 - y) }
-                        if (hit != null && hypot(hit.second.x - x, hit.second.y - 8 - y) < 22) onHouse(hit.first)
+                        val hit = spots.minByOrNull { (_, at) -> hypot(at.x - x, at.y - 15 - y) }
+                        if (hit != null && hypot(hit.second.x - x, hit.second.y - 15 - y) < 24) onHouse(hit.first)
                     }
                 }) {
                     PixelView(scene, Modifier.fillMaxWidth())
                     for (h in World.houses) {
                         if (h.district > home.open) continue
-                        Label(Words.house(h.id, home.ru), h.at.x, h.at.y + 9, scale)
+                        // just under the house, which stands right behind its spot on the road
+                        Label(Words.house(h.id, home.ru), h.at.x, h.at.y + 1, scale)
                     }
-                    Label(Words.house("post", home.ru), World.POST.x, World.POST.y + 10, scale)
-                    Label(Words.house(World.SCHOOL_ID, home.ru), World.SCHOOL.x, World.SCHOOL.y + 9, scale)
+                    Label(Words.house("post", home.ru), World.POST.x, World.POST.y + 1, scale)
+                    Label(Words.house(World.SCHOOL_ID, home.ru), World.SCHOOL.x, World.SCHOOL.y + 1, scale)
                     val next = (home.open + 1).takeIf { it <= 5 }
                     if (next != null) {
                         val y = when (next) { 1 -> 290.0; 2 -> 200.0; 3 -> 140.0; 4 -> 120.0; else -> 40.0 }
@@ -132,8 +133,8 @@ fun VillageScreen(home: Home, onHouse: (String) -> Unit) {
 
 @Composable
 private fun Label(text: String, x: Double, y: Double, scale: Dp, dim: Boolean = false) {
-    Box(Modifier.offset(scale * x.toFloat() - 50.dp, scale * y.toFloat()).width(100.dp), contentAlignment = Alignment.TopCenter) {
-        Text(text, style = T.Small.copy(color = if (dim) C.muted else C.ink), maxLines = 2,
+    Box(Modifier.offset(scale * x.toFloat() - 70.dp, scale * y.toFloat()).width(140.dp), contentAlignment = Alignment.TopCenter) {
+        Text(text, style = T.Tiny.copy(color = if (dim) C.muted else C.ink), maxLines = 1,
             modifier = Modifier.background(if (dim) C.paper.copy(alpha = .8f) else C.light.copy(alpha = .9f)).padding(horizontal = 3.dp))
     }
 }

@@ -31,6 +31,8 @@ data class MapRound(
 
 /** The whole countryside, from the post office at the bottom to the district town at the top. */
 class MapScene(private val e: Env, private val open: Int, private val round: MapRound, private val dog: Boolean) : Scene(World.W, World.H) {
+    override val s = 3
+
     override val key = listOf(e.copy(minute = e.minute / 10), open, round, dog)
 
     private val winter = e.snow
@@ -69,7 +71,27 @@ class MapScene(private val e: Env, private val open: Int, private val round: Map
         else -> R.grass
     }
 
+    /** Window panes of the drawn buildings, lit once the evening has been laid over the map. */
+    private val panes = ArrayList<Long>()
+
+    /** Where the drawn buildings' chimneys smoke, by house id. */
+    private val chimneys = HashMap<String, Pair<Int, Int>>()
+
+    /**
+     * Draws a building from the art sheets standing just behind its spot (cx, cy) on the map, so the lane
+     * ends at its door and the postman stops in front of it rather than on it; false when there's no drawing.
+     */
+    private fun drawn(b: Buf, id: String, cx: Int, cy: Int): Boolean {
+        val s = (if (winter) Sprites.get("map/${id}_w") else null) ?: Sprites.get("map/$id") ?: return false
+        val by = cy - 1
+        for (j in 0 until 3) for (i in 0 until s.lw) b.mul(cx - s.lw / 2 + 3 + i, by - 1 + j, rgb(0x4a4a3a), .4f - j * .1f)
+        b.blit(s, cx, by) { x, y -> panes.add(x.toLong() shl 32 or y.toLong()) }
+        chimneyTop(s)?.let { (x, y) -> chimneys[id] = cx - s.lw / 2 + x to by - s.lh + y }
+        return true
+    }
+
     override fun base(b: Buf) {
+        panes.clear()
         land(b)
         water(b)
         rail(b)
@@ -355,6 +377,10 @@ class MapScene(private val e: Env, private val open: Int, private val round: Map
         val cx = hs.at.x.roundToInt()
         val cy = hs.at.y.roundToInt()
         val lit = e.phase.lamps
+        if (drawn(b, hs.id, cx, cy)) {
+            seasonal(b, hs, cx, cy)
+            return
+        }
         when (hs.id) {
             "mill" -> {
                 hut(b, cx + 4, cy, 22, R.thatch, frameOf(hs.frame), lit, wins = 1)
@@ -392,6 +418,21 @@ class MapScene(private val e: Env, private val open: Int, private val round: Map
         extras(b, hs, cx, cy)
     }
 
+    /** What changes with the season around a drawn building: the rowan, the garden beds. */
+    private fun seasonal(b: Buf, hs: House, cx: Int, cy: Int) {
+        val ps = hs.props
+        if ("rowan" in ps) {
+            Props.leafy(b, cx - 22, cy + 4, 6, e.leaves, rgb(0xd82a1a))
+            if (e.leaves == Leaves.BARE && e.month in listOf(11, 12, 1)) for (k in 0 until 5) b.p(cx - 22 + (hash(k, 1) * 8 - 4).toInt(), cy - 4 + (hash(k, 2) * 6).toInt(), rgb(0xd82a1a))
+        }
+        if ("garden" in ps) {
+            val x0 = cx - 14
+            val y0 = cy + 10
+            for (x in x0 until x0 + 16 step 2) { b.p(x, y0, rgb(0x8a7a62)); b.p(x, y0 + 8, rgb(0x8a7a62)) }
+            if (!winter && e.season != Season.SPRING) for (y in y0 + 2 until y0 + 7 step 3) for (x in x0 + 2 until x0 + 15 step 3) { b.disc(x, y, 1, rgb(0x7e9c62)); b.p(x, y, rgb(0xb8d08a)) }
+        }
+    }
+
     private fun extras(b: Buf, hs: House, cx: Int, cy: Int) {
         val ps = hs.props
         if ("hives" in ps) for (k in 0 until 6) {
@@ -411,7 +452,7 @@ class MapScene(private val e: Env, private val open: Int, private val round: Map
         if ("antenna" in ps) { b.line(cx + 6, cy - 34, cx + 6, cy - 14, rgb(0x55504c)); b.line(cx, cy - 32, cx + 12, cy - 32, rgb(0x55504c)); b.line(cx + 2, cy - 28, cx + 10, cy - 28, rgb(0x55504c)) }
         if ("telescope" in ps) { b.line(cx + 16, cy + 2, cx + 18, cy - 4, rgb(0x2a2a30)); b.line(cx + 20, cy + 2, cx + 18, cy - 4, rgb(0x2a2a30)); b.line(cx + 15, cy - 8, cx + 22, cy - 3, rgb(0xc8952e)) }
         if ("goat" in ps && !winter) { val x = cx - 20; b.r(x, cy, 5, 3, rgb(0xe8e2d4)); b.r(x + 4, cy - 2, 2, 2, rgb(0xe8e2d4)); b.p(x, cy + 3, rgb(0x2a2420)); b.p(x + 4, cy + 3, rgb(0x2a2420)) }
-        if ("garden" in ps || "swing" in ps) {
+        if ("garden" in ps) {
             val x0 = cx - 14
             val y0 = cy + 8
             for (x in x0 until x0 + 16 step 2) { b.p(x, y0, rgb(0x8a7a62)); b.p(x, y0 + 10, rgb(0x8a7a62)) }
@@ -428,6 +469,7 @@ class MapScene(private val e: Env, private val open: Int, private val round: Map
     }
 
     private fun post(b: Buf) {
+        if (drawn(b, "post", World.POST.x.roundToInt(), World.POST.y.roundToInt())) return
         val px = World.POST.x.roundToInt() - 19
         val py = World.POST.y.roundToInt() - 18
         for (j in 0 until 4) for (i in 0 until 42) b.mul(px + 3 + i, py + 24 + j, rgb(0x4a4a3a), .4f - j * .08f)
@@ -456,8 +498,16 @@ class MapScene(private val e: Env, private val open: Int, private val round: Map
 
     /** The school, the square, the trees of the village. */
     private fun village(b: Buf) {
-        hut(b, World.SCHOOL.x.roundToInt(), World.SCHOOL.y.roundToInt(), 30, R.thatch, rgb(0xf2ece0), e.phase.lamps && e.month !in listOf(6, 7, 8))
-        b.r(130, 404, 3, 8, rgb(0x7c4e30)); b.r(129, 403, 5, 2, rgb(0x4a2c1a)); b.disc(131, 408, 1, rgb(0xe8bf58))
+        val sx = World.SCHOOL.x.roundToInt()
+        val sy = World.SCHOOL.y.roundToInt()
+        val n = panes.size
+        if (drawn(b, "school", sx, sy)) {
+            // the school is dark in the summer holidays
+            if (e.month in listOf(6, 7, 8)) while (panes.size > n) panes.removeAt(panes.size - 1)
+        } else {
+            hut(b, sx, sy, 30, R.thatch, rgb(0xf2ece0), e.phase.lamps && e.month !in listOf(6, 7, 8))
+            b.r(130, 404, 3, 8, rgb(0x7c4e30)); b.r(129, 403, 5, 2, rgb(0x4a2c1a)); b.disc(131, 408, 1, rgb(0xe8bf58))
+        }
         for ((x, y, k) in listOf(Triple(60, 540, 1), Triple(160, 530, 2), Triple(14, 500, 3), Triple(90, 444, 4), Triple(160, 480, 5), Triple(56, 452, 6)))
             Props.leafy(b, x, y, 5 + k % 2, e.leaves, if (k % 2 == 0) rgb(0xd83a2a) else null)
         for ((x, y) in listOf(166 to 420, 8 to 590, 150 to 600)) Props.birch(b, x, y, 18, e.leaves, alt = x > 100)
@@ -498,6 +548,11 @@ class MapScene(private val e: Env, private val open: Int, private val round: Map
     /** Lamps and lit windows glowing after dark. */
     private fun lights(b: Buf) {
         if (!e.phase.lamps) return
+        for (k in panes) {
+            val x = (k shr 32).toInt()
+            val y = k.toInt()
+            b.fine(x, y, if ((x + y) % 5 == 0) rgb(0xfff0b0) else rgb(0xf6c860))
+        }
         for (hs in World.houses) if (hs.district <= open) b.glow(hs.at.x.roundToInt(), hs.at.y.roundToInt() - 4, 14, rgb(0xffc060), .22f, 4)
         b.glow(World.POST.x.roundToInt(), World.POST.y.roundToInt() - 2, 22, rgb(0xffc060), .3f, 5)
         for ((x, y) in listOf(110 to 560, 104 to 500, 106 to 440, 104 to 372)) {
@@ -547,28 +602,27 @@ class MapScene(private val e: Env, private val open: Int, private val round: Map
                 b.p((pt.first + cos(an) * r * 1.4).roundToInt(), (pt.second + sin(an) * r * .7).roundToInt(), rgb(0xd0e4e8), (.6 * (1 - r / 3.4)).toFloat())
             }
         }
-        // the mill wheel turning (still in hard frost)
+        // the mill wheel turning (still in hard frost); a drawn mill has its own wheel, and only the splashes are added
         val mill = World.house("mill")!!
         val wx = mill.at.x.roundToInt() - 12
         val wy = mill.at.y.roundToInt() - 2
-        b.disc(wx, wy, 7, rgb(0x3a2214)); b.disc(wx, wy, 5, if (iced) rgb(0xc8d4e0) else rgb(0x5a8090))
-        val wa = if (iced) .3 else t * .15
-        for (q in 0 until 8) {
-            val an = wa + q * PI / 4
-            b.line(wx.toDouble(), wy.toDouble(), wx + cos(an) * 7, wy + sin(an) * 7, rgb(0x8e5a34))
+        if (Sprites.get("map/mill") == null) {
+            b.disc(wx, wy, 7, rgb(0x3a2214)); b.disc(wx, wy, 5, if (iced) rgb(0xc8d4e0) else rgb(0x5a8090))
+            val wa = if (iced) .3 else t * .15
+            for (q in 0 until 8) {
+                val an = wa + q * PI / 4
+                b.line(wx.toDouble(), wy.toDouble(), wx + cos(an) * 7, wy + sin(an) * 7, rgb(0x8e5a34))
+            }
         }
         if (!iced) for (i in 0 until 5) { val ph = (t + i * 3) % 8; b.p((wx - 4 - ph * .5 + i).roundToInt(), (wy + 7 - ph * .3).roundToInt(), rgb(0xe4f2f4), (.8 * (1 - ph / 8.0)).toFloat()) }
         // chimneys
         for ((i, hs) in World.houses.filter { it.district <= open }.withIndex()) {
             val still = e.temp < -10
-            Props.smoke(b, hs.at.x.roundToInt() + 6, hs.at.y.roundToInt() - 26, t + i * 7, 7, if (still) 34 else 26, rgb(0xd0ccc6), .5f, if (still) .02 else .4)
+            val (sx, sy) = chimneys[hs.id] ?: if (Sprites.get("map/${hs.id}") != null) continue else hs.at.x.roundToInt() + 6 to hs.at.y.roundToInt() - 26
+            Props.smoke(b, sx, sy - 1, t + i * 7, 7, if (still) 34 else 26, rgb(0xd0ccc6), .5f, if (still) .02 else .4)
         }
-        Props.smoke(b, World.POST.x.roundToInt() - 9, World.POST.y.roundToInt() - 25, t, 7, 26, rgb(0xd0ccc6), .55f)
-        // the post office flag
-        for (j in 0 until 5) for (i in 0 until 8) {
-            val off = sin(t * .5 - i * .6).roundToInt()
-            b.p(World.POST.x.roundToInt() + 24 + i, World.POST.y.roundToInt() - 24 + j + off, if (j < 2) rgb(0xe8e0d8) else if (j < 4) rgb(0x2c4070) else rgb(0xa83e28))
-        }
+        val (px0, py0) = chimneys["post"] ?: (World.POST.x.roundToInt() - 9 to World.POST.y.roundToInt() - 24)
+        Props.smoke(b, px0, py0 - 1, t, 7, 26, rgb(0xd0ccc6), .55f)
         // bees, cranes, the train now and then
         if (e.season == Season.SUMMER || (e.season == Season.SPRING && e.month == 5)) {
             val ap = World.house("apiary")!!.at
@@ -623,24 +677,47 @@ class MapScene(private val e: Env, private val open: Int, private val round: Map
     private fun drawRound(b: Buf, t: Int) {
         dots(b, round.later, false, rgb(0xfff0c0))
         dots(b, round.ahead, false, rgb(0xf6c440))
+        val done = Sprites.get("icons/map_done")
+        val letter = Sprites.get("icons/map_letter")
         for (id in round.visited) {
             val hs = World.house(id) ?: continue
+            if (done != null) { b.blit(done, hs.at.x.roundToInt() + 8, hs.at.y.roundToInt() - 28); continue }
             val x = hs.at.x.roundToInt() + 6
-            val y = hs.at.y.roundToInt() - 30
+            val y = hs.at.y.roundToInt() - 38
             b.r(x, y, 9, 8, R.INK); b.r(x + 1, y + 1, 7, 6, rgb(0x426442))
             for ((dx, dy) in listOf(2 to 4, 3 to 5, 4 to 4, 5 to 3, 6 to 2)) b.p(x + dx, y + dy, rgb(0xfbf3dc))
         }
         for ((i, id) in round.pending.withIndex()) {
             val hs = World.house(id) ?: continue
+            if (letter != null) {
+                // the sign sways a fine pixel, each a little out of step with the others
+                val o = if (Art.still) 0 else ((t / 6 + i) % 2)
+                b.blit(letter, hs.at.x.roundToInt(), hs.at.y.roundToInt() - 30, dy = o)
+                continue
+            }
             val o = if (Art.still) 0 else ((t / 5 + i) % 2)
             val x = hs.at.x.roundToInt() - 6
-            val y = hs.at.y.roundToInt() - 34 + o
+            val y = hs.at.y.roundToInt() - 44 + o
             b.r(x - 1, y - 1, 14, 10, R.INK); b.r(x, y, 12, 8, rgb(0xfbf3dc)); Props.envelope(b, x + 1, y + 1, 10, 6); b.r(x + 5, y + 9, 2, 2, R.INK)
         }
         val f = if (round.walking && !Art.still) (t / 3) % 2 else 0
         val px = round.postman.x.roundToInt()
         val py = round.postman.y.roundToInt()
-        People.mini(b, px - 3, py, winter, f)
-        if (dog) People.dogMini(b, px + 4, py, f)
+        val pm = Postman.sprite(Art.postman, winter, map = true)
+        if (pm != null) {
+            // the same postman as at the gates, small: he faces the way he walks and bobs along
+            val left = round.walking && (round.ahead.firstOrNull { abs(it.x - round.postman.x) > .5 }?.x ?: round.postman.x) < round.postman.x
+            for (i in -3..3) b.mul(px + i, py, rgb(0x303040), .35f)
+            // a soft step: one fine pixel up and down, not a whole art pixel
+            val step = if (round.walking && !Art.still) (t / 2) % 2 else 0
+            b.blit(pm, px, py + 1, flip = left, dy = -step)
+            val dm = (if (winter) Sprites.get("people/dog_walk_w") else null) ?: Sprites.get("people/dog_walk")
+            // Bublik trots at his heels
+            if (dog && dm != null) b.blit(dm, px + if (left) 6 else -6, py + 1, flip = left, dy = step - 1)
+            else if (dog) People.dogMini(b, px + 4, py, f)
+        } else {
+            People.mini(b, px - 3, py, winter, f)
+            if (dog) People.dogMini(b, px + 4, py, f)
+        }
     }
 }

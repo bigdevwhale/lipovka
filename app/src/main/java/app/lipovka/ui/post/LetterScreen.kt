@@ -51,7 +51,10 @@ fun LetterScreen(home: Home, id: Long, onDone: () -> Unit) {
         TopBar(stringResource(R.string.letter_for_you), onDone, dark = true)
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Column(Modifier.fillMaxWidth().pixelBox(C.light).padding(horizontal = 18.dp, vertical = 16.dp)) {
-                Eyebrow(stringResource(R.string.letter_date, Words.date(ctx, m.day)))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Eyebrow(stringResource(R.string.letter_date, Words.date(ctx, m.day)), Modifier.weight(1f))
+                    app.lipovka.ui.share.ShareLetter(home, m)
+                }
                 Text(t.from, style = T.Heading.copy(color = C.blue))
                 Spacer(Modifier.width(1.dp))
                 Text(t.news, style = T.Letter, modifier = Modifier.padding(top = 10.dp))

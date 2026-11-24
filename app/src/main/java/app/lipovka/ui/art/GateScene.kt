@@ -13,6 +13,8 @@ import kotlin.math.sin
 
 /** At the gate: the resident's house up close, the resident with the opened letter, the postman. */
 class GateScene(private val e: Env, private val house: House, private val who: Resident?, private val dog: Boolean) : Scene(170, 190) {
+    override val s = 4
+
     override val key = listOf(e.copy(minute = e.minute / 10), house.id, who?.id, dog)
 
     private val winter = e.snow
@@ -26,6 +28,19 @@ class GateScene(private val e: Env, private val house: House, private val who: R
 
     /** Where the sky still shows past the house, the trees and the props. */
     private var skyShows = Mask(0, 0)
+
+    /** The house drawn from the art sheets, when there is a drawing of it. */
+    private val drawn: Sprite? = (if (winter) Sprites.get("gate/${house.id}_w") else null) ?: Sprites.get("gate/${house.id}")
+
+    /** Its bottom centre: standing on the ground behind the fence, in the space right of the gate. */
+    private val drawnX = drawn?.let { minOf(114, 168 - it.lw / 2) } ?: 0
+    private val drawnY = 156
+
+    /** Window panes of the drawn house, lit after the evening is laid over the picture. */
+    private val panes = ArrayList<Long>()
+
+    /** The top of the drawn house's chimney, where the smoke rises from. */
+    private val drawnSmoke: Pair<Int, Int>? = drawn?.let { s -> chimneyTop(s)?.let { (x, y) -> drawnX - s.lw / 2 + x to drawnY - s.lh + y } }
 
     private fun roof() = when (house.roof) {
         'R' -> R.roofR
@@ -48,8 +63,14 @@ class GateScene(private val e: Env, private val house: House, private val who: R
         skyShows = Mask(w, h).apply { open(0, 0, w, h) }
         b.cover(skyShows) {
             hills(b)
-            if (town) townHouse(b) else izba(b)
+            val s = drawn
+            if (s != null) {
+                panes.clear()
+                b.blit(s, drawnX, drawnY) { x, y -> panes.add(x.toLong() shl 32 or y.toLong()) }
+            } else if (town) townHouse(b) else izba(b)
             ground(b)
+            // the tree on the left grows in the yard, behind the fence: a rowan, or a birch
+            if ("rowan" in house.props || (!town && house.id.hashCode() % 2 == 0)) rowan(b) else if (!town) Props.birch(b, 18, 66, 70, e.leaves, alt = true)
             if (!town) fence(b) else street(b)
             props(b)
         }
@@ -557,8 +578,6 @@ class GateScene(private val e: Env, private val house: House, private val who: R
 
     private fun props(b: Buf) {
         val ps = house.props
-        // the tree on the left: a rowan, or a birch
-        if ("rowan" in ps || (!town && house.id.hashCode() % 2 == 0)) rowan(b) else if (!town) Props.birch(b, 18, 66, 70, e.leaves, alt = true)
         if ("well" in ps) well(b)
         if ("hives" in ps) for (k in 0 until 3) {
             // on little legs in the grass in front of the fence
@@ -589,7 +608,6 @@ class GateScene(private val e: Env, private val house: House, private val who: R
         if ("cheese" in ps) for (k in 0 until 3) b.vol(118 + k * 12, 158, 10, 6, ell(5.0, 3.0, 5.0, 3.0), sph(4.0, 2.0, 5.0, 3.0, .3), R.honey, rgb(0x5a3006))
         // hung on the fence rail
         if ("carvings" in ps) for (k in 0 until 3) { val x = 116 + k * 14; b.r(x, 140, 10, 14, rgb(0xc88e58)); b.r(x + 2, 142, 6, 10, rgb(0x8e5a34)); b.p(x + 4, 144, rgb(0xf8d070)) }
-        if ("swing" in ps) { shadow(b, 126, 164, 172); b.line(130, 100, 130, 172, rgb(0x55331e)); b.line(160, 100, 160, 172, rgb(0x55331e)); b.line(128, 100, 162, 100, rgb(0x55331e)); b.line(140, 100, 140, 150, rgb(0x8e857a)); b.line(150, 100, 150, 150, rgb(0x8e857a)); b.r(138, 150, 14, 2, rgb(0x8e5a34)) }
         if ("books" in ps) bench(b)
         if ("books" in ps) for (k in 0 until 4) b.r(118 + k * 4, 156, 3, 8, intArrayOf(rgb(0x842a24), rgb(0x304474), rgb(0x426442), rgb(0xc8952e))[k])
         if ("garden" in ps && !winter) for (k in 0 until 6) { val x = 112 + k * 8; b.disc(x, 170, 3, rgb(0x5c7e50)); b.disc(x, 169, 2, rgb(0x8ab478)) }
@@ -637,7 +655,7 @@ class GateScene(private val e: Env, private val house: House, private val who: R
     }
 
     private fun rowan(b: Buf) {
-        b.r(18, 92, 4, 64, rgb(0x2a1a10))
+        b.r(18, 92, 4, 60, rgb(0x2a1a10))
         b.line(20, 110, 6, 96, rgb(0x2a1a10)); b.line(20, 104, 36, 88, rgb(0x2a1a10)); b.line(21, 100, 30, 80, rgb(0x2a1a10))
         val ramp = when (e.leaves) {
             Leaves.BARE -> null
@@ -663,6 +681,19 @@ class GateScene(private val e: Env, private val house: House, private val who: R
     }
 
     private fun lights(b: Buf) {
+        if (drawn != null) {
+            // the panes light up, and each window throws a glow: one per patch of lit panes
+            val seen = HashMap<Int, IntArray>()
+            for (k in panes) {
+                val x = (k shr 32).toInt()
+                val y = k.toInt()
+                b.fine(x, y, if ((x * 3 + y) % 7 == 0) rgb(0xfff0b0) else rgb(0xf6c860))
+                // back to art pixels for the glow
+                seen.getOrPut((x / b.s / 12) * 1000 + y / b.s / 12) { IntArray(3) }.let { it[0] += x / b.s; it[1] += y / b.s; it[2]++ }
+            }
+            for (v in seen.values) if (v[2] >= 4 * b.s * b.s) b.glow(v[0] / v[2], v[1] / v[2], 14, rgb(0xffc860), .16f, 4)
+            return
+        }
         b.glow(hx + 22, hy + hh + 14, 26, rgb(0xffc860), .22f, 4)
         b.glow(hx + 70, hy + hh + 14, 26, rgb(0xffc860), .22f, 4)
     }
@@ -670,23 +701,25 @@ class GateScene(private val e: Env, private val house: House, private val who: R
     override fun anim(b: Buf, t: Int) {
         if (e.phase.dark && !e.sky.grey) Air.stars(b, 0, 0, 170, 60, t, 14) { x, y -> skyShows(x, y) && !(x in 22..38 && y in 16..32) }
         Air.clouds(b, 0, 0, 170, 70, t, e, if (e.sky.grey) 5 else 2) { x, y -> skyShows(x, y) }
-        if (!town && face.chimney) Props.smoke(b, chimneyX, chimneyY - 2, t, 9, 34, if (e.phase.dark) rgb(0x6a6a80) else rgb(0xb8a8b8), .5f, if (e.temp < -10) .05 else .5)
+        val smoke = if (drawn != null) drawnSmoke else if (!town && face.chimney) chimneyX to chimneyY - 2 else null
+        if (smoke != null) Props.smoke(b, smoke.first, smoke.second, t, 9, 34, if (e.phase.dark) rgb(0x6a6a80) else rgb(0xb8a8b8), .5f, if (e.temp < -10) .05 else .5)
         if ("cat" in house.props) {
             val y = Art.still || (t / 14) % 6 != 0
+            // on the old house the cat sits on the window sill; by a drawn one, on the fence
             b.spr(listOf(".k...k...", "kgk.kgk..", "kgggggk..", "kgygyggk.", "kgggpggk.", ".kgwwgk..", ".kggggk..", "kgggwggk.", "kgggwgggk", "kggggggk."),
-                124, 131, mapOf('k' to R.INK, 'g' to rgb(0x55504c), 'y' to if (y) rgb(0xe8c040) else rgb(0x3e3a38), 'p' to rgb(0xd08080), 'w' to rgb(0x8a837a)))
+                if (drawn != null) 146 else 124, if (drawn != null) 126 else 131, mapOf('k' to R.INK, 'g' to rgb(0x55504c), 'y' to if (y) rgb(0xe8c040) else rgb(0x3e3a38), 'p' to rgb(0xd08080), 'w' to rgb(0x8a837a)))
         }
         val r = who
-        if (r != null) People.draw(b, r.sprite, r.look, 82, 178, winter)
+        if (r != null) People.draw(b, r.sprite, r.look, 82, 178, winter, r.id)
         People.postman(b, 128, 178, winter)
-        if (dog) People.dogSit(b, 110, 178, if (Art.still) 0 else t / 2)
+        if (dog) People.dogSit(b, 110, 178, if (Art.still) 0 else t / 2, winter)
         if (e.leaves == Leaves.FALLING || e.leaves == Leaves.GOLD) for (i in 0 until 7) {
             val ph = (t * .4 + i * 30) % 110
             val x = (10 + rnd(i) * 40 + sin(t * .12 + i) * 6 + ph * .3).roundToInt()
             val y = (80 + ph).roundToInt()
             b.p(x, y, if (i % 2 == 0) rgb(0xd8782a) else rgb(0xa8381e)); b.p(x + 1, y, if (i % 2 == 0) rgb(0xe8a040) else rgb(0xc04a2a))
         }
-        if (lit) b.glow(88, 112, 10, rgb(0xfff0a0), (.05 + .04 * sin(t * .6)).toFloat(), 3)
+        if (lit && drawn == null) b.glow(88, 112, 10, rgb(0xfff0a0), (.05 + .04 * sin(t * .6)).toFloat(), 3)
         Air.precip(b, e, t, 0, 0, 170, 190, 1.0, still = Art.still)
         Air.fog(b, e, t, 0, 60, 170, 130, .4f)
     }

@@ -103,14 +103,17 @@ fun DiaryScreen(home: Home, onLetter: (Long) -> Unit) {
     var allToMe by rememberSaveable { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize().background(C.paper).verticalScroll(rememberScrollState()).statusBarsPadding().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Text(stringResource(R.string.diary_tab), style = T.Display)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.diary_tab), style = T.Display, modifier = Modifier.weight(1f))
+            app.lipovka.ui.share.SharePeriods(home)
+        }
         Text(stringResource(R.string.served, home.year), style = T.Sub)
         Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Stat(Words.km(home.s.total), stringResource(R.string.s_km), Modifier.weight(1f))
+            Stat(Words.km(home.s.total), stringResource(R.string.s_km), Modifier.weight(1f), icon = "km")
             val n = home.s.mail.count { it.state == St.SEEN || it.state == St.DELIVERED }
-            Stat(n.toString(), pluralStringResource(R.plurals.s_letters, n), Modifier.weight(1f))
+            Stat(n.toString(), pluralStringResource(R.plurals.s_letters, n), Modifier.weight(1f), icon = "letters")
             val walked = home.s.days.count { it.value > 0 }
-            Stat(walked.toString(), pluralStringResource(R.plurals.s_days, walked), Modifier.weight(1f))
+            Stat(walked.toString(), pluralStringResource(R.plurals.s_days, walked), Modifier.weight(1f), icon = "days")
         }
 
         val ym = YearMonth.of(month / 12, month % 12 + 1)

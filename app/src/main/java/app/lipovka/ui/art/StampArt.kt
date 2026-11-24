@@ -26,9 +26,23 @@ object StampArt {
     }
 
     fun draw(family: String, bgName: String, value: Int, empty: Boolean = false): Buf {
-        val b = Buf(W, H)
+        // the picture drawn from the art sheets, when there is one; the stamp is then as fine as it is
+        val drawn = if (empty) null else Sprites.get("stamps/${family}_$bgName")
+        val b = Buf(W, H, drawn?.scale ?: 1)
         b.r(0, 0, W, H, if (empty) rgb(0xd9c290) else rgb(0xfbf3dc))
-        if (empty) {
+        if (drawn != null) {
+            val s = b.s
+            val pw = 28 * s
+            val ph = 30 * s
+            val back = bg(bgName)[bg(bgName).size / 2]
+            for (j in 0 until ph) for (i in 0 until pw) {
+                val c = drawn.px[(j * drawn.h / ph) * drawn.w + i * drawn.w / pw]
+                b.fine(3 * s + i, 3 * s + j, if (c == 0) back else c)
+            }
+            b.r(3, 34, 28, 4, rgb(0xfbf3dc))
+            b.digits(value.coerceIn(1, 99).toString(), 4, 34, rgb(0x842a24))
+            b.r(W - 13, 36, 10, 1, rgb(0x8e857a))
+        } else if (empty) {
             b.r(3, 3, W - 6, H - 6, rgb(0xcdb27c))
             for ((x, y) in listOf(14 to 12, 15 to 11, 16 to 11, 17 to 11, 18 to 12, 18 to 13, 17 to 14, 16 to 15, 16 to 16, 16 to 19)) { b.p(x, y, rgb(0xa88a58)); b.p(x + 1, y, rgb(0xa88a58)) }
         } else {
@@ -40,8 +54,9 @@ object StampArt {
             b.digits(value.coerceIn(1, 99).toString(), 4, 34, rgb(0x842a24))
             b.r(W - 13, 36, 10, 1, rgb(0x8e857a))
         }
-        for (i in 1 until W step 3) { b.d[i] = 0; b.d[(H - 1) * W + i] = 0 }
-        for (j in 1 until H step 3) { b.d[j * W] = 0; b.d[j * W + W - 1] = 0 }
+        // the perforation: little bites out of every edge
+        for (i in 1 until W step 3) { b.hole(i, 0); b.hole(i, H - 1) }
+        for (j in 1 until H step 3) { b.hole(0, j); b.hole(W - 1, j) }
         return b
     }
 

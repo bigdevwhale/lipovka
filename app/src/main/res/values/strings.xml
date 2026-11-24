@@ -255,6 +255,33 @@
         <item>The post goes out to the Pine Cordon now, to the weather station in the forest.</item>
         <item>Gorodok is open: the newspaper office and the local history museum.</item>
     </string-array>
+    <string name="postman_title">The postman</string>
+    <string name="postman_who">Who carries the post?</string>
+    <string name="postman_man">A man</string>
+    <string name="postman_woman">A woman</string>
+    <string name="set_tab_world">World</string>
+    <string name="set_tab_sound">Sounds</string>
+    <string name="set_tab_more">More</string>
+    <string name="bag_show">show</string>
+    <string name="bag_hide">hide</string>
+    <string name="desk_more">%1$d more</string>
+    <string name="share">Share</string>
+    <string name="share_card">Share a card</string>
+    <string name="share_p_day">Day</string>
+    <string name="share_p_week">Week</string>
+    <string name="share_p_month">Month</string>
+    <string name="share_p_all">All</string>
+    <string name="share_day_title">My day in Lipovka</string>
+    <string name="share_week_title">A week on the round</string>
+    <string name="share_month_title">A month on the round</string>
+    <string name="share_all_title">My service in Lipovka</string>
+    <string name="share_letter_title">A letter from Lipovka</string>
+    <string name="share_stamps">stamps</string>
+    <string name="share_tagline">a cosy village where your steps carry the post</string>
+    <string name="share_text">Lipovka Post: a cosy village where your real steps carry the letters. %1$s</string>
+    <string name="close">Close</string>
+    <string name="share_stamp_sub">A stamp from the Lipovka album</string>
+    <string name="share_gift_line">A present from %1$s, for carrying the post.</string>
     <string name="sounds">Sounds</string>
     <string name="ambience_text">Post office sounds</string>
     <string name="ambience_hint">While the app is open: the wall clock ticks, and outside there\'s rain or wind, birds in summer, crickets on a summer evening, the stove crackling in winter.</string>

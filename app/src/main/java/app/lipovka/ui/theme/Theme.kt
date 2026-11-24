@@ -43,18 +43,38 @@ object C {
  */
 val Pixel = FontFamily(Font(R.font.m6x11, FontWeight.Normal))
 
+/**
+ * The text styles. m6x11 is drawn on a grid of 16 font units to the em, so it is only crisp when a font pixel
+ * is a whole number of screen pixels: every size here is snapped to the nearest multiple of 16 px on this
+ * screen (and the line heights to whole font pixels), or strokes come out one and two pixels thick by turns.
+ */
 object T {
-    val Display = TextStyle(fontFamily = Pixel, fontSize = 32.sp, lineHeight = 32.sp, color = C.ink)
-    val Title = TextStyle(fontFamily = Pixel, fontSize = 27.sp, lineHeight = 28.sp, color = C.ink)
-    val Heading = TextStyle(fontFamily = Pixel, fontSize = 23.sp, lineHeight = 24.sp, color = C.ink)
-    val Eyebrow = TextStyle(fontFamily = Pixel, fontSize = 16.sp, lineHeight = 17.sp, letterSpacing = 0.04.em, color = C.muted)
-    val Body = TextStyle(fontFamily = Pixel, fontSize = 20.sp, lineHeight = 22.sp, color = C.ink)
-    val Letter = TextStyle(fontFamily = Pixel, fontSize = 21.sp, lineHeight = 24.sp, color = C.ink)
-    val Sub = TextStyle(fontFamily = Pixel, fontSize = 18.sp, lineHeight = 19.sp, color = C.muted)
-    val Small = TextStyle(fontFamily = Pixel, fontSize = 16.sp, lineHeight = 17.sp, color = C.muted)
-    val Number = TextStyle(fontFamily = Pixel, fontSize = 28.sp, lineHeight = 26.sp, color = C.ink)
-    val Button = TextStyle(fontFamily = Pixel, fontSize = 22.sp, lineHeight = 22.sp)
-    val Hand = TextStyle(fontFamily = Pixel, fontSize = 21.sp, lineHeight = 22.sp, color = C.blue)
+    /** Screen pixels to an sp, with the person's own text size. */
+    private val spPx: Float = android.content.res.Resources.getSystem().let { r -> r.displayMetrics.density * r.configuration.fontScale }.coerceAtLeast(.5f)
+
+    /** The crisp size nearest to [sp]: a whole number of screen pixels per font pixel. */
+    private fun crisp(sp: Float): Int = kotlin.math.max(1, kotlin.math.round(sp * spPx / 16f).toInt())
+
+    /** A text style at the crisp size nearest [sp], its lines [lead] font pixels apart beyond the 16 of the font. */
+    private fun style(sp: Float, lead: Int, color: androidx.compose.ui.graphics.Color = androidx.compose.ui.graphics.Color.Unspecified, spacing: Float = 0f): TextStyle {
+        val k = crisp(sp)
+        return TextStyle(fontFamily = Pixel, fontSize = (16 * k / spPx).sp, lineHeight = ((16 + lead) * k / spPx).sp, color = color, letterSpacing = spacing.em)
+    }
+
+    val Display = style(27f, 0, C.ink)
+    val Title = style(23f, 1, C.ink)
+    val Heading = style(23f, 1, C.ink)
+    val Eyebrow = style(16f, 1, C.muted, .04f)
+    val Body = style(20f, 2, C.ink)
+    val Letter = style(21f, 4, C.ink)
+    val Sub = style(18f, 1, C.muted)
+    val Small = style(16f, 1, C.muted)
+
+    /** For the names on the map: the smallest crisp size, two screen pixels to a font pixel on most phones. */
+    val Tiny = style(12f, 1, C.ink)
+    val Number = style(28f, 0, C.ink)
+    val Button = style(19f, 0)
+    val Hand = style(21f, 2, C.blue)
 }
 
 @Composable

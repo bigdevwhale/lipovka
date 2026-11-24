@@ -4,8 +4,8 @@ import app.lipovka.domain.Place
 import org.json.JSONArray
 import org.json.JSONObject
 
-/** What a backup restores from the settings: the town for the weather and the notifications. The step source stays the phone's own. */
-data class Carried(val place: Place?, val notify: Boolean)
+/** What a backup restores from the settings: the town for the weather, the notifications and who carries the post. The step source stays the phone's own. */
+data class Carried(val place: Place?, val notify: Boolean, val postman: String = app.lipovka.ui.art.Postman.DEFAULT)
 
 /**
  * A backup file: the post office's books and a few settings as JSON, so progress moves to a new phone.
@@ -37,6 +37,7 @@ object Backup {
         put("meta", JSONObject(b.meta))
         put("settings", JSONObject().apply {
             put("notify", c.notify)
+            put("postman", c.postman)
             c.place?.let { p -> put("place", JSONObject().put("name", p.name).put("region", p.region).put("lat", p.lat).put("lon", p.lon)) }
         })
     }.toString()
@@ -71,6 +72,7 @@ object Backup {
         val carried = Carried(
             place = p?.let { Place(it.getString("name"), it.optString("region"), it.getDouble("lat"), it.getDouble("lon")) },
             notify = s?.optBoolean("notify", true) ?: true,
+            postman = s?.optString("postman")?.takeIf { it.isNotEmpty() } ?: app.lipovka.ui.art.Postman.DEFAULT,
         )
         return books to carried
     }

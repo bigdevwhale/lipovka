@@ -283,6 +283,33 @@
         <item>Почта теперь ходит на Сосновый кордон, к метеостанции в лесу.</item>
         <item>Открылся Городок: редакция газеты и краеведческий музей.</item>
     </string-array>
+    <string name="postman_title">Почтальон</string>
+    <string name="postman_who">Кто будет носить почту?</string>
+    <string name="postman_man">Мужчина</string>
+    <string name="postman_woman">Женщина</string>
+    <string name="set_tab_world">Мир</string>
+    <string name="set_tab_sound">Звуки</string>
+    <string name="set_tab_more">Ещё</string>
+    <string name="bag_show">показать</string>
+    <string name="bag_hide">скрыть</string>
+    <string name="desk_more">ещё %1$d</string>
+    <string name="share">Поделиться</string>
+    <string name="share_card">Поделиться открыткой</string>
+    <string name="share_p_day">День</string>
+    <string name="share_p_week">Неделя</string>
+    <string name="share_p_month">Месяц</string>
+    <string name="share_p_all">Всё</string>
+    <string name="share_day_title">Мой день в Липовке</string>
+    <string name="share_week_title">Неделя на маршруте</string>
+    <string name="share_month_title">Месяц на маршруте</string>
+    <string name="share_all_title">Моя служба в Липовке</string>
+    <string name="share_letter_title">Письмо из Липовки</string>
+    <string name="share_stamps">марок</string>
+    <string name="share_tagline">уютная деревня, где ваши шаги носят почту</string>
+    <string name="share_text">Почта в Липовке: уютная деревня, где настоящие шаги разносят письма. %1$s</string>
+    <string name="close">Закрыть</string>
+    <string name="share_stamp_sub">Марка из альбома Липовки</string>
+    <string name="share_gift_line">Подарок от: %1$s. За то, что ношу почту.</string>
     <string name="sounds">Звуки</string>
     <string name="ambience_text">Звуки почты</string>
     <string name="ambience_hint">Пока приложение открыто: тикают ходики, а за стеной то дождь, то ветер, летом поют птицы, вечером стрекочут сверчки, зимой трещит печка.</string>

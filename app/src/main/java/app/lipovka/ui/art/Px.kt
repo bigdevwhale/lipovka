@@ -13,18 +13,31 @@ import kotlin.math.sqrt
 /**
  * A small ARGB pixel buffer every scene is painted into, one art pixel per cell. Screens scale it up
  * with nearest-neighbour filtering. Colours are 0xAARRGGBB ints; drawing past the edges is ignored.
+ *
+ * With a density [s] above 1 every art pixel is s×s finer pixels: everything painted in art pixels fills
+ * the whole block, while drawn sprites ([blit]) put their own detail into the finer grid. [d] holds the fine
+ * pixels, [sw] × [sh] of them.
  */
-class Buf(val w: Int, val h: Int) {
-    val d = IntArray(w * h)
+class Buf(val w: Int, val h: Int, val s: Int = 1) {
+    val sw = w * s
+    val sh = h * s
+    val d = IntArray(sw * sh)
 
     fun copyFrom(o: Buf) = System.arraycopy(o.d, 0, d, 0, d.size)
 
-    fun get(x: Int, y: Int): Int = if (x < 0 || y < 0 || x >= w || y >= h) 0 else d[y * w + x]
+    fun get(x: Int, y: Int): Int = if (x < 0 || y < 0 || x >= w || y >= h) 0 else d[y * s * sw + x * s]
 
     /** Paints a pixel, blending by [a] (0..1) over what is there. */
     fun p(x: Int, y: Int, c: Int, a: Float = 1f) {
         if (x < 0 || y < 0 || x >= w || y >= h || a <= 0f) return
-        val i = y * w + x
+        if (s == 1) return fine(x, y, c, a)
+        for (j in 0 until s) for (i in 0 until s) fine(x * s + i, y * s + j, c, a)
+    }
+
+    /** Paints one fine pixel (in [sw] × [sh]), blending by [a]. */
+    fun fine(x: Int, y: Int, c: Int, a: Float = 1f) {
+        if (x < 0 || y < 0 || x >= sw || y >= sh || a <= 0f) return
+        val i = y * sw + x
         if (a >= 1f || d[i] ushr 24 == 0) {
             d[i] = if (a >= 1f) c or 0xFF000000.toInt() else (c and 0xFFFFFF) or ((a * 255).toInt() shl 24)
             return
@@ -42,28 +55,32 @@ class Buf(val w: Int, val h: Int) {
     /** Screen blend: lightens, for light falling on things. */
     fun scr(x: Int, y: Int, c: Int, a: Float) {
         if (x < 0 || y < 0 || x >= w || y >= h || a <= 0f) return
-        val i = y * w + x
-        val o = d[i]
-        fun one(sh: Int): Int {
-            val s = ch(c, sh) / 255f
-            val v = ch(o, sh) / 255f
-            val out = v + ((1 - (1 - s) * (1 - v)) - v) * a
-            return (out * 255).roundToInt().coerceIn(0, 255)
+        for (j in 0 until s) for (k in 0 until s) {
+            val i = (y * s + j) * sw + x * s + k
+            val o = d[i]
+            fun one(sh: Int): Int {
+                val cs = ch(c, sh) / 255f
+                val v = ch(o, sh) / 255f
+                val out = v + ((1 - (1 - cs) * (1 - v)) - v) * a
+                return (out * 255).roundToInt().coerceIn(0, 255)
+            }
+            d[i] = (o and 0xFF000000.toInt()) or (one(16) shl 16) or (one(8) shl 8) or one(0)
         }
-        d[i] = (o and 0xFF000000.toInt()) or (one(16) shl 16) or (one(8) shl 8) or one(0)
     }
 
     /** Multiply blend: darkens and tints, for night and shadow. */
     fun mul(x: Int, y: Int, c: Int, a: Float) {
         if (x < 0 || y < 0 || x >= w || y >= h || a <= 0f) return
-        val i = y * w + x
-        val o = d[i]
-        fun one(sh: Int): Int {
-            val s = ch(c, sh) / 255f
-            val v = ch(o, sh) / 255f
-            return ((v + (v * s - v) * a) * 255).roundToInt().coerceIn(0, 255)
+        for (j in 0 until s) for (k in 0 until s) {
+            val i = (y * s + j) * sw + x * s + k
+            val o = d[i]
+            fun one(sh: Int): Int {
+                val cs = ch(c, sh) / 255f
+                val v = ch(o, sh) / 255f
+                return ((v + (v * cs - v) * a) * 255).roundToInt().coerceIn(0, 255)
+            }
+            d[i] = (o and 0xFF000000.toInt()) or (one(16) shl 16) or (one(8) shl 8) or one(0)
         }
-        d[i] = (o and 0xFF000000.toInt()) or (one(16) shl 16) or (one(8) shl 8) or one(0)
     }
 
     fun r(x: Int, y: Int, w: Int, h: Int, c: Int, a: Float = 1f) {
@@ -71,6 +88,12 @@ class Buf(val w: Int, val h: Int) {
     }
 
     fun clear() = d.fill(0)
+
+    /** Makes an art pixel empty again, all its fine pixels. */
+    fun hole(x: Int, y: Int) {
+        if (x < 0 || y < 0 || x >= w || y >= h) return
+        for (j in 0 until s) for (i in 0 until s) d[(y * s + j) * sw + x * s + i] = 0
+    }
 
     companion object {
         fun ch(c: Int, sh: Int) = (c shr sh) and 0xFF
@@ -285,7 +308,10 @@ class Mask(val w: Int, val h: Int) {
 fun Buf.cover(vararg masks: Mask, draw: () -> Unit) {
     val before = d.copyOf()
     draw()
-    for (i in d.indices) if (d[i] != before[i]) for (m in masks) m.shut(i)
+    for (i in d.indices) if (d[i] != before[i]) {
+        val k = (i / sw / s) * w + (i % sw) / s
+        for (m in masks) m.shut(k)
+    }
 }
 
 fun cosD(a: Double) = cos(a)

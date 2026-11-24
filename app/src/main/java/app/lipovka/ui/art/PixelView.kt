@@ -31,6 +31,9 @@ object Art {
     /** Screenshots and renders want a still frame: no loop, a fixed moment. */
     @Volatile var still = false
 
+    /** Which drawn postman carries the post (see [Postman]); set from the settings. */
+    @Volatile var postman = Postman.DEFAULT
+
     /** Art pixels advance about this often. */
     const val FRAME_MS = 110L
 }
@@ -46,6 +49,9 @@ enum class Toy { CAT, DOG, KETTLE, CLOCK, CALENDAR }
  * top for every frame with a growing tick.
  */
 abstract class Scene(val w: Int, val h: Int) {
+    /** How many fine pixels to an art pixel: scenes with drawn sprites keep their detail at 3. */
+    open val s: Int = 1
+
     abstract val key: Any
     abstract fun base(b: Buf)
     open fun anim(b: Buf, t: Int) = Unit
@@ -161,7 +167,7 @@ abstract class Scene(val w: Int, val h: Int) {
 
     /** A single finished frame, for widgets and renders. */
     fun frame(t: Int = 7): Buf {
-        val b = Buf(w, h)
+        val b = Buf(w, h, s)
         base(b)
         anim(b, t)
         return b
@@ -197,14 +203,14 @@ private const val HEAD_LIFT = 3
 
 private val HEART = listOf(0 to 0, 2 to 0, 0 to 1, 1 to 1, 2 to 1, 1 to 2)
 
-fun Buf.toBitmap(): Bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888).also { it.setPixels(d, 0, w, 0, 0, w, h) }
+fun Buf.toBitmap(): Bitmap = Bitmap.createBitmap(sw, sh, Bitmap.Config.ARGB_8888).also { it.setPixels(d, 0, sw, 0, 0, sw, sh) }
 
 /** Shows a scene scaled up with hard pixels, animating while on screen. Width fills, height follows. */
 @Composable
 fun PixelView(scene: Scene, modifier: Modifier = Modifier) {
-    val base = remember(scene.key, scene.w, scene.h) { Buf(scene.w, scene.h).also { scene.base(it) } }
-    val frame = remember(scene.w, scene.h) { Buf(scene.w, scene.h) }
-    val bitmap = remember(scene.w, scene.h) { Bitmap.createBitmap(scene.w, scene.h, Bitmap.Config.ARGB_8888) }
+    val base = remember(scene.key, scene.w, scene.h) { Buf(scene.w, scene.h, scene.s).also { scene.base(it) } }
+    val frame = remember(scene.w, scene.h) { Buf(scene.w, scene.h, scene.s) }
+    val bitmap = remember(scene.w, scene.h) { Bitmap.createBitmap(frame.sw, frame.sh, Bitmap.Config.ARGB_8888) }
     val image = remember(bitmap) { bitmap.asImageBitmap() }
     var tick by remember { mutableIntStateOf(if (Art.still) 7 else 0) }
     if (!Art.still) {
@@ -233,9 +239,9 @@ fun PixelView(scene: Scene, modifier: Modifier = Modifier) {
         val t = tick
         frame.copyFrom(base)
         scene.anim(frame, t)
-        bitmap.setPixels(frame.d, 0, frame.w, 0, 0, frame.w, frame.h)
+        bitmap.setPixels(frame.d, 0, frame.sw, 0, 0, frame.sw, frame.sh)
         val scale = size.width / scene.w
-        drawImage(image, srcOffset = IntOffset.Zero, srcSize = IntSize(scene.w, scene.h),
+        drawImage(image, srcOffset = IntOffset.Zero, srcSize = IntSize(frame.sw, frame.sh),
             dstOffset = IntOffset.Zero, dstSize = IntSize(size.width.roundToInt(), (scene.h * scale).roundToInt()), filterQuality = FilterQuality.None)
     }
 }

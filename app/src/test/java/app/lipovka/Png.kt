@@ -17,7 +17,7 @@ object Png {
             for (y in 0 until h) {
                 z.write(0)
                 for (x in 0 until w) {
-                    val c = b.d[(y / scale) * b.w + x / scale]
+                    val c = b.d[(y * b.s / scale) * b.sw + x * b.s / scale]
                     z.write(c shr 16 and 0xFF); z.write(c shr 8 and 0xFF); z.write(c and 0xFF); z.write(c ushr 24)
                 }
             }

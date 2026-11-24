@@ -78,6 +78,7 @@ fun Gate(home: Home, m: Mail, total: Int = 1, preview: Boolean = false, onDone: 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Eyebrow(stringResource(R.string.at_gate, Words.house(house.id, home.ru)), Modifier.weight(1f))
                     if (total > 1) Text("1 / $total", style = T.Small)
+                    if (!preview) app.lipovka.ui.share.ShareLetter(home, m)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Tag(Words.kind(ctx, kind), if (kind == Kind.TELEGRAM) C.red else C.green)
@@ -127,6 +128,7 @@ fun Gate(home: Home, m: Mail, total: Int = 1, preview: Boolean = false, onDone: 
                         }, Modifier.weight(1f), kind = if (replied) BtnKind.PRIMARY else BtnKind.GHOST)
                     }
                 }
+
                 Spacer(Modifier.height(8.dp))
             }
         }

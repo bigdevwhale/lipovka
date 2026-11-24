@@ -45,6 +45,7 @@ object ItemArt {
 
     /** Draws one item with its bottom centre at (cx, by). */
     fun draw(b: Buf, family: String, variant: String, cx: Int, by: Int) {
+        sprite(family, variant)?.let { b.blit(it, cx, by); return }
         val x = cx - W / 2
         val y = by - H
         val ink = R.INK
@@ -172,6 +173,14 @@ object ItemArt {
     }
 
     /** An item alone, for lists. */
-    fun single(family: String, variant: String): Buf = Buf(W + 2, H + 2).also { draw(it, family, variant, W / 2 + 1, H + 1) }
+    fun single(family: String, variant: String): Buf {
+        val s = sprite(family, variant)
+        val w = maxOf(W, s?.lw ?: 0) + 2
+        val h = maxOf(H, s?.lh ?: 0) + 2
+        return Buf(w, h, s?.scale ?: 1).also { draw(it, family, variant, w / 2, h - 1) }
+    }
+
+    /** The drawn gift from the art sheets, if there is one. */
+    private fun sprite(family: String, variant: String) = Sprites.get("items/${family}_$variant")
 
 }

@@ -47,7 +47,8 @@ object People {
      * Draws a resident standing with the opened letter, feet at (cx, feetY). [look] is hair, top,
      * bottom and then traits; [winter] wraps them up.
      */
-    fun draw(b: Buf, sprite: String, look: List<String>, cx: Int, feetY: Int, winter: Boolean) {
+    fun draw(b: Buf, sprite: String, look: List<String>, cx: Int, feetY: Int, winter: Boolean, id: String? = null) {
+        if (id != null && drawn(b, id, cx, feetY, winter)) return
         val hairKey = look.getOrElse(0) { "brown" }
         val traits = look.drop(3).toSet()
         val woman = sprite.startsWith("woman") || sprite == "girl"
@@ -313,8 +314,21 @@ object People {
     // ------------------------------------------------------------ the postman and the dog
 
     /** The postman in his uniform with the bag, feet at (x+7, feetY). */
+    /** A resident drawn from the art sheets, winter clothes and all; false when there's no drawing of them. */
+    private fun drawn(b: Buf, id: String, cx: Int, feetY: Int, winter: Boolean): Boolean {
+        val s = (if (winter) Sprites.get("people/${id}_w") else null) ?: Sprites.get("people/$id") ?: return false
+        for (i in -s.lw / 2 - 1..s.lw / 2 + 1) b.mul(cx + i, feetY, rgb(0x303040), .35f)
+        b.blit(s, cx, feetY + 1)
+        return true
+    }
+
     fun postman(b: Buf, x: Int, feetY: Int, winter: Boolean, frame: Int = 0) {
         val cx = x + 7
+        val s = Postman.sprite(Art.postman, winter)
+        if (s != null) {
+            for (i in -s.lw / 2 - 1..s.lw / 2 + 1) b.mul(cx + i, feetY, rgb(0x303040), .35f)
+            return b.blit(s, cx, feetY + 1)
+        }
         val p = Painter(b, cx, feetY)
         val bd = body("man")
         val uni = rgb(0x2c3c64)
@@ -389,7 +403,13 @@ object People {
         b.spr(DOG_LEGS[frame % 2], x, feetY - 2, dogPal)
     }
 
-    fun dogSit(b: Buf, x: Int, feetY: Int, wag: Int) {
+    /** Bublik sitting by the postman's feet, drawn from the art sheet when there's a drawing; [winter] snows on him. */
+    fun dogSit(b: Buf, x: Int, feetY: Int, wag: Int, winter: Boolean = false) {
+        val s = (if (winter) Sprites.get("people/dog_w") else null) ?: Sprites.get("people/dog")
+        if (s != null) {
+            for (i in -s.lw / 2..s.lw / 2) b.mul(x + 7 + i, feetY, rgb(0x303040), .3f)
+            return b.blit(s, x + 7, feetY + 1)
+        }
         b.spr(DOG_SIT, x, feetY - DOG_SIT.size, dogPal)
         b.p(x + (wag % 2) + 1, feetY - 4, dogPal.getValue('t'))
         b.p(x + (wag % 2), feetY - 5, dogPal.getValue('t'))

@@ -75,7 +75,7 @@ private val STORIES = listOf(
 )
 
 /** The little story of a stamp, and who the letter it came on was from; null if that letter isn't in the books. */
-private fun story(ctx: android.content.Context, home: Home, st: Stamp): Pair<String, String>? {
+internal fun story(ctx: android.content.Context, home: Home, st: Stamp): Pair<String, String>? {
     val m = home.s.mail.filter { it.stamp == st.key && it.deliveredAt > 0 }.minByOrNull { it.deliveredAt } ?: return null
     val t = Words.mail(ctx, home.content, m, home.ru, home.year)
     val from = t.from.takeIf { it.isNotBlank() }
@@ -116,6 +116,7 @@ fun AlbumScreen(home: Home) {
                 story?.let { Text(it.first, style = T.Body, modifier = Modifier.fillMaxWidth()) }
                 if (got != null) Text(listOfNotNull(story?.second?.takeIf { it.isNotEmpty() }, stringResource(R.string.stamp_got, Words.date(ctx, got.day)),
                     if (got.count > 1) "×${got.count}" else null).joinToString(" · "), style = T.Small, modifier = Modifier.fillMaxWidth())
+                if (got != null) app.lipovka.ui.share.ShareThing({ app.lipovka.ui.share.Cards.stamp(ctx, home, st) })
             }
         }
     }
@@ -127,7 +128,10 @@ fun AlbumScreen(home: Home) {
         }
         if (honors) { HonorsPage(home); return@Column }
         Text(stringResource(R.string.album_title), style = T.Display.copy(color = C.paper))
-        Text("${have.size} / ${home.content.stamps.size}", style = T.Sub.copy(color = C.lamp))
+        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+            Text("${have.size} / ${home.content.stamps.size}", style = T.Sub.copy(color = C.lamp), modifier = Modifier.weight(1f))
+            app.lipovka.ui.share.ShareLink(home, app.lipovka.ui.share.Period.ALL, color = C.lamp)
+        }
         for ((key, title) in SERIES) {
             val list = all[key].orEmpty().sortedBy { it.key }
             if (list.isEmpty()) continue

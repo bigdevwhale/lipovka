@@ -38,6 +38,8 @@ object Icons {
     }
 
     fun gear(): Buf {
+        // the cog drawn on the art sheet, when there is one
+        Sprites.get("icons/settings")?.let { s -> return Buf(s.lw, s.lh, s.scale).also { it.blit(s, s.lw / 2, s.lh) } }
         val b = Buf(12, 12)
         b.disc(6, 6, 4, R.INK); b.disc(6, 6, 2, rgb(0xf2e2bb))
         for ((x, y) in listOf(6 to 0, 6 to 11, 0 to 6, 11 to 6, 2 to 2, 10 to 2, 2 to 10, 10 to 10)) b.r(x - 1, y - 1, 2, 2, R.INK)

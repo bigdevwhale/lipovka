@@ -58,6 +58,7 @@ fun RoomScreen(home: Home) {
                         Text(item.name(home.ru), style = T.Body)
                         Text(stringResource(R.string.from_whom, from, Words.date(ctx, o.day)), style = T.Small)
                     }
+                    app.lipovka.ui.share.ShareThing({ app.lipovka.ui.share.Cards.gift(ctx, home, o) })
                 }
             }
             Spacer(Modifier.height(12.dp))

@@ -1,5 +1,6 @@
 package app.lipovka.ui.components
 
+import app.lipovka.ui.art.blit
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -48,7 +49,8 @@ val PX: Dp = 2.dp
 
 /** A pixel box: a dark outline with notched corners, a fill, a light bevel on top and a darker lip below. */
 fun Modifier.pixelBox(fill: Color, outline: Color = C.ink, bevel: Color? = Color.White.copy(alpha = .5f), lip: Color? = Color(0x38502814), pressed: Boolean = false): Modifier = drawBehind {
-    val p = PX.toPx()
+    // whole screen pixels, so every outline and notch is the same thickness all round
+    val p = kotlin.math.max(1f, kotlin.math.round(PX.toPx()))
     val w = size.width
     val h = size.height
     drawRect(outline, Offset(p, 0f), Size(w - 2 * p, h))
@@ -98,7 +100,7 @@ fun PixelButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier
             .offset { IntOffset(0, if (pressed) PX.roundToPx() else 0) }
             .pixelBox(fill.copy(alpha = a), C.ink, Color.White.copy(alpha = .35f * a), lip, pressed)
             .clickable(interactionSource = interaction, indication = null, enabled = enabled, onClick = onClick)
-            .padding(horizontal = 14.dp, vertical = 11.dp),
+            .padding(horizontal = 12.dp, vertical = 8.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(text, style = T.Button.copy(color = ink.copy(alpha = a)), textAlign = TextAlign.Center)
@@ -132,7 +134,7 @@ fun Eyebrow(text: String, modifier: Modifier = Modifier, color: Color = C.muted)
 fun BufImage(buf: Buf, modifier: Modifier = Modifier, scale: Dp = 2.dp) {
     val image = remember(buf) { buf.toBitmap().asImageBitmap() }
     Canvas(modifier.size(scale * buf.w, scale * buf.h)) {
-        drawImage(image, srcOffset = IntOffset.Zero, srcSize = IntSize(buf.w, buf.h), dstOffset = IntOffset.Zero,
+        drawImage(image, srcOffset = IntOffset.Zero, srcSize = IntSize(buf.sw, buf.sh), dstOffset = IntOffset.Zero,
             dstSize = IntSize(size.width.roundToInt(), size.height.roundToInt()), filterQuality = FilterQuality.None)
     }
 }
@@ -160,12 +162,54 @@ fun TopBar(title: String, onBack: () -> Unit, modifier: Modifier = Modifier, dar
 @Composable
 fun Spacer8() = Spacer(Modifier.height(8.dp))
 
+/**
+ * A number and what it counts, with a little picture of it ([icon] is a stat icon from the art sheet:
+ * steps, km, letters, days, stamps, streak). Fills the row's height, so boxes side by side stand level.
+ */
 @Composable
-fun Stat(value: String, label: String, modifier: Modifier = Modifier) {
-    // Fills the row's height, so boxes side by side stand level even when a label wraps.
-    Column(modifier.fillMaxHeight().pixelBox(C.paper2).padding(horizontal = 10.dp, vertical = 6.dp)) {
-        Text(value, style = T.Number)
-        Text(label, style = T.Small)
+fun Stat(value: String, label: String, modifier: Modifier = Modifier, icon: String? = null) {
+    val pic = remember(icon) { icon?.let { app.lipovka.ui.art.Sprites.get("icons/stat_$it") }?.let { s -> Buf(s.lw, s.lh, s.scale).also { b -> b.blit(s, s.lw / 2, s.lh) } } }
+    Row(modifier.fillMaxHeight().pixelBox(C.light, lip = null).padding(horizontal = 8.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+        if (pic != null) {
+            BufImage(pic, scale = 2.dp)
+            Spacer(Modifier.width(6.dp))
+        }
+        Column {
+            Text(value, style = T.Heading, maxLines = 1)
+            Text(label, style = T.Small, maxLines = 1)
+        }
+    }
+}
+
+/** A row of tabs: small, even, one line each; the chosen one filled. */
+@Composable
+fun Tabs(labels: List<String>, selected: Int, modifier: Modifier = Modifier, onSelect: (Int) -> Unit) {
+    Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        labels.forEachIndexed { i, label ->
+            val sel = i == selected
+            Box(Modifier.weight(1f).pixelBox(if (sel) C.green else C.light, lip = null).clickable { onSelect(i) }.padding(vertical = 7.dp), contentAlignment = Alignment.Center) {
+                Text(label, style = T.Body.copy(color = if (sel) C.light else C.green), maxLines = 1, textAlign = TextAlign.Center)
+            }
+        }
+    }
+}
+
+/** An on/off switch in pixels: a little track with a knob that sits right and turns green when on. */
+@Composable
+fun Toggle(on: Boolean, onChange: (Boolean) -> Unit, modifier: Modifier = Modifier) {
+    Box(modifier.size(52.dp, 28.dp).pixelBox(if (on) C.green else C.paper2, lip = null).clickable { onChange(!on) }.padding(4.dp),
+        contentAlignment = if (on) Alignment.CenterEnd else Alignment.CenterStart) {
+        Box(Modifier.size(20.dp).pixelBox(C.light, lip = null))
+    }
+}
+
+/** A line of settings: what it does on the left, its switch on the right. */
+@Composable
+fun SwitchRow(text: String, on: Boolean, onChange: (Boolean) -> Unit) {
+    Row(Modifier.fillMaxWidth().clickable { onChange(!on) }.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(text, style = T.Body, modifier = Modifier.weight(1f))
+        Spacer(Modifier.width(12.dp))
+        Toggle(on, onChange)
     }
 }
 

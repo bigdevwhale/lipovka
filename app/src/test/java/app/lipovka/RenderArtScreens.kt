@@ -78,7 +78,7 @@ abstract class ScreensBase {
         }
     }
 
-    @Test fun welcome() = shot("0-welcome") { Onboarding() }
+    @Test fun welcome() = shot("0-welcome") { Onboarding(app.lipovka.ui.art.Postman.DEFAULT) }
     @Test fun post() = home().let { h -> shot("1-post") { PostScreen(h, {}, {}, {}) } }
     @Test fun gate() = home().let { h ->
         val m = h.s.mail.lastOrNull { it.state == St.DELIVERED && it.src.startsWith("arc:") } ?: h.s.mail.last { it.state == St.SEEN && it.src.startsWith("arc:") && it.to != "me" }

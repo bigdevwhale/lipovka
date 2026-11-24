@@ -127,17 +127,21 @@ fun PostScreen(home: Home, onVisits: () -> Unit, onLetter: (Long) -> Unit, onSet
         Column(Modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Header(home)
             Permissions(home)
-            for (m in home.desk) DeskCard(home, m) { onLetter(m.id) }
+            // what wants doing first: people at the gates, letters for the postman; then the road and the bag
             if (home.visits.isNotEmpty()) VisitsCard(home, onVisits)
+            DeskCard(home, onLetter)
             Round(home)
             // Today's walk; the whole road so far is in the line under the bag.
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Eyebrow(stringResource(R.string.today))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Eyebrow(stringResource(R.string.today), Modifier.weight(1f))
+                    app.lipovka.ui.share.ShareLink(home, app.lipovka.ui.share.Period.DAY)
+                }
                 Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     val n = delivered(home)
-                    Stat(Words.num(home.stepsToday), pluralStringResource(R.plurals.s_steps, Words.q(home.stepsToday)), Modifier.weight(1f))
-                    Stat(Words.km(home.stepsToday.toLong()), stringResource(R.string.s_km), Modifier.weight(1f))
-                    Stat(n.toString(), pluralStringResource(R.plurals.s_letters, n), Modifier.weight(1f))
+                    Stat(Words.num(home.stepsToday), pluralStringResource(R.plurals.s_steps, Words.q(home.stepsToday)), Modifier.weight(1f), icon = "steps")
+                    Stat(Words.km(home.stepsToday.toLong()), stringResource(R.string.s_km), Modifier.weight(1f), icon = "km")
+                    Stat(n.toString(), pluralStringResource(R.plurals.s_letters, n), Modifier.weight(1f), icon = "letters")
                 }
                 Before(home)
                 // the run of days on the round, once there is one; the rest of it is with the certificates in the album
@@ -146,12 +150,6 @@ fun PostScreen(home: Home, onVisits: () -> Unit, onLetter: (Long) -> Unit, onSet
                     if (streak.today) "" else " · " + stringResource(R.string.streak_today_open), style = T.Small.copy(color = C.redDeep))
             }
             Bag(home)
-            val shelf = s.shelf.size
-            // One more letter per press, up to a full bag; with the shelf empty, an everyday one for a neighbour.
-            if (s.bag.size < Game.BAG_MAX) {
-                Text(if (shelf > 0) stringResource(R.string.shelf_hint, shelf) else stringResource(R.string.more_hint), style = T.Sub)
-                PixelButton(stringResource(R.string.bag_more), { c.write { post.takeMore() } }, Modifier.fillMaxWidth(), kind = BtnKind.GHOST)
-            }
             NextDistrict(home)
             if (eveningTime(home)) Evening(home)
             if (BuildConfig.DEBUG || BuildConfig.DEMO) PixelButton(stringResource(R.string.add_steps), { c.write { post.addSteps(1000) } }, Modifier.fillMaxWidth(), kind = BtnKind.GHOST)
@@ -196,21 +194,31 @@ private fun Permissions(home: Home) {
     }
 }
 
+/** The letters waiting on the desk for the postman, all in one card: a line each, tapped to read. */
 @Composable
-private fun DeskCard(home: Home, m: Mail, onOpen: () -> Unit) {
+private fun DeskCard(home: Home, onLetter: (Long) -> Unit) {
     val ctx = LocalContext.current
-    val t = Words.mail(ctx, home.content, m, home.ru, home.year)
-    Panel(fill = C.telegram, onClick = onOpen) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            BufImage(Icons.kind(Kind.of(m.kind)), scale = 2.dp)
-            Spacer(Modifier.width(10.dp))
-            Column(Modifier.weight(1f)) {
-                Text(stringResource(R.string.letter_for_you), style = T.Heading.copy(color = C.redDeep))
-                Text(t.from, style = T.Sub)
+    if (home.desk.isEmpty()) return
+    // a few at a time; a long pile opens on a tap
+    var all by rememberSaveable { mutableStateOf(false) }
+    Panel(fill = C.telegram) {
+        Text(stringResource(R.string.letter_for_you) + if (home.desk.size > 1) " · ${home.desk.size}" else "", style = T.Heading.copy(color = C.redDeep))
+        for (m in if (all) home.desk else home.desk.take(DESK_SHOWN)) {
+            val t = Words.mail(ctx, home.content, m, home.ru, home.year)
+            Row(Modifier.fillMaxWidth().clickable { onLetter(m.id) }.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                BufImage(Icons.kind(Kind.of(m.kind)), scale = 1.5.dp)
+                Spacer(Modifier.width(8.dp))
+                Text(t.from, style = T.Sub, modifier = Modifier.weight(1f), maxLines = 1)
+                Text("›", style = T.Heading.copy(color = C.redDeep))
             }
         }
+        if (home.desk.size > DESK_SHOWN) Text(if (all) stringResource(R.string.bag_hide) else stringResource(R.string.desk_more, home.desk.size - DESK_SHOWN),
+            style = T.Sub.copy(color = C.blue), modifier = Modifier.fillMaxWidth().clickable { all = !all }.padding(top = 4.dp))
     }
 }
+
+/** How many of the postman's own letters show before the rest fold away. */
+private const val DESK_SHOWN = 3
 
 @Composable
 private fun VisitsCard(home: Home, onVisits: () -> Unit) {
@@ -279,13 +287,21 @@ private fun Before(home: Home) {
     if (parts.isNotEmpty()) Text(parts.joinToString(" · "), style = T.Small)
 }
 
+/**
+ * The bag: one line with how many letters are in it, opened to the whole list; and the press for one more
+ * letter (up to a full bag; with the shelf empty, an everyday one for a neighbour).
+ */
 @Composable
 private fun Bag(home: Home) {
     val ctx = LocalContext.current
-    if (home.plan.isEmpty()) return
+    val c = ctx.container
+    var open by rememberSaveable { mutableStateOf(false) }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(pluralStringResource(R.plurals.n_bag, home.s.bag.size, home.s.bag.size), style = T.Sub)
-        for (stop in home.plan) for (m in stop.mail) {
+        if (home.plan.isNotEmpty()) Row(Modifier.fillMaxWidth().clickable { open = !open }.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(pluralStringResource(R.plurals.n_bag, home.s.bag.size, home.s.bag.size), style = T.Heading, modifier = Modifier.weight(1f))
+            Text(stringResource(if (open) R.string.bag_hide else R.string.bag_show), style = T.Sub.copy(color = C.blue))
+        }
+        if (open) for (stop in home.plan) for (m in stop.mail) {
             val t = Words.mail(ctx, home.content, m, home.ru, home.year)
             val kind = Kind.of(m.kind)
             val left = max(0, stop.cum - home.s.leg)
@@ -306,6 +322,11 @@ private fun Bag(home: Home) {
                     }
                 }
             }
+        }
+        val shelf = home.s.shelf.size
+        if (home.s.bag.size < Game.BAG_MAX) {
+            if (open || home.plan.isEmpty()) Text(if (shelf > 0) stringResource(R.string.shelf_hint, shelf) else stringResource(R.string.more_hint), style = T.Small)
+            PixelButton(stringResource(R.string.bag_more), { c.write { post.takeMore() } }, Modifier.fillMaxWidth(), kind = BtnKind.GHOST)
         }
     }
 }

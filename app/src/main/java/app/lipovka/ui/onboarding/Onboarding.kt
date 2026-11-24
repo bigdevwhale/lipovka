@@ -39,13 +39,14 @@ import app.lipovka.ui.components.Kind
 import app.lipovka.ui.components.PixelButton
 import app.lipovka.ui.settings.BackupSection
 import app.lipovka.ui.settings.PlacePicker
+import app.lipovka.ui.settings.PostmanPicker
 import app.lipovka.ui.theme.C
 import app.lipovka.ui.theme.T
 import java.time.LocalDateTime
 
 /** Four short pages: the appointment, the steps, the weather, the notifications. */
 @Composable
-fun Onboarding(startPage: Int = 0) {
+fun Onboarding(postman: String, startPage: Int = 0) {
     val ctx = LocalContext.current
     val c = ctx.container
     var page by rememberSaveable { mutableIntStateOf(startPage) }
@@ -68,6 +69,8 @@ fun Onboarding(startPage: Int = 0) {
                 0 -> {
                     Text(stringResource(R.string.ob_title), style = T.Display)
                     Text(stringResource(R.string.ob_text), style = T.Letter)
+                    Text(stringResource(R.string.postman_who), style = T.Title)
+                    PostmanPicker(postman)
                     PixelButton(stringResource(R.string.next), { page = 1 }, Modifier.fillMaxWidth())
                     // Coming from another phone: the whole post office from a backup file, and straight in.
                     BackupSection(save = false)
