@@ -6,6 +6,17 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.33] - 2026-11-24
+
+### Fixed
+- On the map the trees by the shop and the club no longer grow out of their roofs.
+- No more blue caps on the fence posts at the gate: the little jars drying there read as caps, so they are gone.
+
+<!-- tg
+Исправлено: на карте деревья у магазина и клуба больше не растут из крыш.
+У калиток с кольев забора пропали синие «колпаки» — это были банки, но на банки не походили.
+-->
+
 ## [1.0.32] - 2026-11-24
 
 ### Fixed
