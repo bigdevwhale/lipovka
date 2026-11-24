@@ -6,6 +6,19 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.30] - 2026-11-24
+
+### Added
+- Settings, under the step source: if steps stop counting while Lipovka is closed, a note on allowing autostart and background work, and a button straight to the app's system settings.
+
+### Fixed
+- The bridge over the Lipka is on the map. Before Zarechye opens it stands broken in the middle; once the bridge is mended, it's whole.
+
+<!-- tg
+Новое: в настройках подсказка, что делать, если шаги не считаются, пока Липовка закрыта, и кнопка сразу в настройки приложения.
+Исправлено: на карте появился мост через Липку. Пока Заречье закрыто, он сломан, а после письма про мост стоит целый.
+-->
+
 ## [1.0.29] - 2026-11-20
 
 ### Added
