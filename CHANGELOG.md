@@ -6,6 +6,17 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.32] - 2026-11-24
+
+### Fixed
+- A long name on a share card, like the brass key's, now fits on the card instead of running off its edge.
+- At night only the windows light up on the map and at the gates: the light-blue frames and carving on the Lastochkins' house, the boat shed and Sorokina's house no longer glow yellow with them.
+
+<!-- tg
+Исправлено: длинное название на открытке (как у латунного ключа) теперь помещается целиком.
+Ночью на карте и у калитки светятся только окна: голубые наличники и резьба у Ласточкиных, лодочного сарая и Сорокиной больше не горят жёлтым.
+-->
+
 ## [1.0.31] - 2026-11-24
 
 ### Added
