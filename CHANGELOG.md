@@ -6,6 +6,15 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.34] - 2026-11-25
+
+### Fixed
+- The evening diary no longer closes the keyboard after the first letter: the line can be written straight through.
+
+<!-- tg
+Исправлено: в вечернем дневнике клавиатура больше не закрывается после первой буквы и экран не прыгает — строчку можно писать сразу целиком.
+-->
+
 ## [1.0.33] - 2026-11-24
 
 ### Fixed
