@@ -456,7 +456,12 @@ fun Evening(home: Home) {
                 },
                 textStyle = T.Hand, cursorBrush = SolidColor(C.blue),
                 onTextLayout = { layout = it },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp).focusRequester(focusField).bringIntoViewRequester(cursorView).onFocusChanged { focused = it.isFocused },
+                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp).focusRequester(focusField).bringIntoViewRequester(cursorView).onFocusChanged {
+                    focused = it.isFocused
+                    // An empty field is tapped straight into, not unfolded: without this the first letter would
+                    // fold the entry away, taking the field, its focus and the keyboard with it.
+                    if (it.isFocused) editing = true
+                },
                 decorationBox = { inner -> Box { if (text.isEmpty()) Text(stringResource(R.string.diary_hint), style = T.Hand.copy(color = C.faint)); inner() } },
             )
             // Putting the lamp out writes the line down and ends the evening; lighting it again lets you go on.
