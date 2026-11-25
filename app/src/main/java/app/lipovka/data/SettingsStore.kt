@@ -49,6 +49,8 @@ data class Settings(
     val milestonesSeen: Set<String>? = null,
     /** Which drawn postman or postwoman carries the post (see [app.lipovka.ui.art.Postman]). */
     val postman: String = app.lipovka.ui.art.Postman.DEFAULT,
+    /** Whether the bag's list of letters is shown opened on the post screen: it stays as it was last left. */
+    val bagOpen: Boolean = false,
 )
 
 class SettingsStore(context: Context) {
@@ -76,6 +78,7 @@ class SettingsStore(context: Context) {
             toysVolume = (this[TOYS_VOL] ?: VOLUME_MAX).coerceIn(0, VOLUME_MAX),
             milestonesSeen = this[MILESTONES],
             postman = this[POSTMAN] ?: app.lipovka.ui.art.Postman.DEFAULT,
+            bagOpen = this[BAG_OPEN] ?: false,
         )
     }
 
@@ -110,6 +113,7 @@ class SettingsStore(context: Context) {
             val seen = s.milestonesSeen
             if (seen != null) it[MILESTONES] = seen else it.remove(MILESTONES)
             it[POSTMAN] = s.postman
+            it[BAG_OPEN] = s.bagOpen
         }
     }
 
@@ -135,5 +139,6 @@ class SettingsStore(context: Context) {
         val TOYS_VOL = intPreferencesKey("toys_volume")
         val MILESTONES = stringSetPreferencesKey("milestones_seen")
         val POSTMAN = stringPreferencesKey("postman")
+        val BAG_OPEN = booleanPreferencesKey("bag_open")
     }
 }

@@ -296,9 +296,11 @@ private fun Before(home: Home) {
 private fun Bag(home: Home) {
     val ctx = LocalContext.current
     val c = ctx.container
-    var open by rememberSaveable { mutableStateOf(false) }
+    // Opened once, the list stays open, also after a restart: no unfolding it every time, and no reaching for
+    // "show" right above "take more" and taking a letter by mistake.
+    val open = home.settings.bagOpen
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        if (home.plan.isNotEmpty()) Row(Modifier.fillMaxWidth().clickable { open = !open }.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+        if (home.plan.isNotEmpty()) Row(Modifier.fillMaxWidth().clickable { c.write { settings.update { it.copy(bagOpen = !open) } } }.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(pluralStringResource(R.plurals.n_bag, home.s.bag.size, home.s.bag.size), style = T.Heading, modifier = Modifier.weight(1f))
             Text(stringResource(if (open) R.string.bag_hide else R.string.bag_show), style = T.Sub.copy(color = C.blue))
         }
@@ -326,7 +328,11 @@ private fun Bag(home: Home) {
         }
         val shelf = home.s.shelf.size
         if (home.s.bag.size < Game.BAG_MAX) {
-            if (open || home.plan.isEmpty()) Text(if (shelf > 0) stringResource(R.string.shelf_hint, shelf) else stringResource(R.string.more_hint), style = T.Small)
+            // The hint always stands between "show" and "take more", with room around it: the two used to sit
+            // right on top of each other, and a tap meant for the list took a letter instead.
+            if (!open && home.plan.isNotEmpty()) Spacer(Modifier.height(8.dp))
+            Text(if (shelf > 0) stringResource(R.string.shelf_hint, shelf) else stringResource(R.string.more_hint), style = T.Small)
+            Spacer(Modifier.height(4.dp))
             PixelButton(stringResource(R.string.bag_more), { c.write { post.takeMore() } }, Modifier.fillMaxWidth(), kind = BtnKind.GHOST)
         }
     }
