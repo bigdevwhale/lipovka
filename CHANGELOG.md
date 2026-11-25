@@ -6,6 +6,17 @@ line "<!-- tg", then 2-4 short lines in Russian for users (what is new, what is 
 then close it like any HTML comment. The release notes carry it, and the chat bot posts those lines.
 -->
 
+## [1.0.35] - 2026-11-25
+
+### Changed
+- The list of letters in the bag stays as you left it: opened once, it is still open next time, so there is no unfolding it every day.
+- "Take more" is set further away from "show", with the shelf hint between them, so a tap meant for the list no longer takes an extra letter.
+
+<!-- tg
+Список писем в сумке теперь запоминается: раскрыли один раз — он остаётся раскрытым, не нужно каждый раз нажимать «показать».
+Кнопка «Взять ещё» стоит дальше от «показать», так что лишнее письмо случайно не возьмётся.
+-->
+
 ## [1.0.34] - 2026-11-25
 
 ### Fixed
